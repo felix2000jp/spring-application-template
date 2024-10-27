@@ -1,4 +1,4 @@
-CREATE TABLE event_publication
+CREATE TABLE IF NOT EXISTS event_publication
 (
     id               uuid PRIMARY KEY         NOT NULL,
     listener_id      text                     NOT NULL,

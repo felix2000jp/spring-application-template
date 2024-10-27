@@ -1,7 +1,7 @@
-CREATE TABLE note
+CREATE TABLE IF NOT EXISTS note
 (
     id         uuid PRIMARY KEY,
-    appuser_id uuid REFERENCES appuser (id) NOT NULL,
-    title      text                         NOT NULL,
-    content    text                         NOT NULL
+    appuser_id uuid,
+    title      text NOT NULL,
+    content    text NOT NULL
 );
