@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: spring-application-template
+  docker:
+    compose:
+      file: compose.yaml
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  datasource:
+    url: jdbc:postgresql://localhost:5432/application-db
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    user: postgres
+    password: postgres
+jwt:
+  rsa:
+    public-key: classpath:certificates/public.pem
+    private-key: classpath:certificates/private.pem
