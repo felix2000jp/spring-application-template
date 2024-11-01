@@ -1,6 +1,6 @@
 FROM eclipse-temurin:21
 
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN groupadd spring && useradd -m -g spring spring
 USER spring:spring
 
 ARG JAR_FILE=target/*.jar
