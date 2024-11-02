@@ -1,6 +1,6 @@
 titleOnly: true
 types:
-  - feat # A new feature
+  - feat
   - fix
   - docs
   - style
