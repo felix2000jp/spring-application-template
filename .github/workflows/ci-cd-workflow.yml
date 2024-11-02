@@ -10,14 +10,24 @@ env:
   APPLICATION_NAME: spring-application-template
 
 jobs:
+  analyze-application:
+    name: Analyze the Application with Sonar Cloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   build-and-test:
     name: Build and Test Application
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - name: Setup temurin JDK
         uses: actions/setup-java@v4
         with:
@@ -28,7 +38,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=felix2000jp_spring-application-template
+        run: mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
       - name: Upload JAR file artifact
         uses: actions/upload-artifact@v4
         with:
