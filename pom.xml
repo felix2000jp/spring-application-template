@@ -31,6 +31,9 @@
         <java.version>21</java.version>
         <spring-modulith.version>1.2.5</spring-modulith.version>
         <mapstruct.version>1.6.2</mapstruct.version>
+
+        <sonar.organization>felix2000jp</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencies>
