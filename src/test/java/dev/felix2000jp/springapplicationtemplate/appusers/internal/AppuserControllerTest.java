@@ -95,7 +95,7 @@ class AppuserControllerTest {
                 }
                 """, createAppuserDto.username(), createAppuserDto.password());
 
-        when(appuserService.create(eq(createAppuserDto))).thenReturn(appuserDto);
+        when(appuserService.create(createAppuserDto)).thenReturn(appuserDto);
 
         mockMvc
                 .perform(post("/app/appusers").contentType(MediaType.APPLICATION_JSON).content(createAppuserDtoJson))
@@ -114,7 +114,7 @@ class AppuserControllerTest {
                 }
                 """, createAppuserDto.username(), createAppuserDto.password());
 
-        when(appuserService.create(eq(createAppuserDto))).thenThrow(new AppuserConflictException());
+        when(appuserService.create(createAppuserDto)).thenThrow(new AppuserConflictException());
 
         mockMvc
                 .perform(post("/app/appusers").contentType(MediaType.APPLICATION_JSON).content(createAppuserDtoJson))

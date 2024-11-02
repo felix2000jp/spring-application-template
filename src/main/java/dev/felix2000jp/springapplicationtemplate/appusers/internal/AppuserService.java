@@ -84,7 +84,7 @@ public class AppuserService implements UserDetailsService {
     }
 
     @Transactional
-    AppuserDto delete(Appuser principal) {
+    public AppuserDto delete(Appuser principal) {
         var userToDelete = appuserRepository
                 .findById(principal.getId())
                 .orElseThrow(AppuserNotFoundException::new);
