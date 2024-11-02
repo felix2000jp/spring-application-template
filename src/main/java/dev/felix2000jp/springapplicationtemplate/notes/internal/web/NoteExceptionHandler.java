@@ -1,8 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.notes.internal.web;
 
 import dev.felix2000jp.springapplicationtemplate.notes.internal.exceptions.NoteNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +10,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @RestControllerAdvice
 class NoteExceptionHandler extends ResponseEntityExceptionHandler {
-
-    private static final Logger logger = LoggerFactory.getLogger(NoteExceptionHandler.class);
 
     @ExceptionHandler(NoteNotFoundException.class)
     ResponseEntity<ProblemDetail> handleNoteNotFoundException(NoteNotFoundException ex) {

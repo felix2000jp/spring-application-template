@@ -45,9 +45,9 @@ class NoteRepositoryTest {
 
     @Test
     void findByAppuserId_should_return_empty_when_title_not_exists() {
-        var actual = noteRepository.findByAppuserId(note.getAppuserId());
+        var actual = noteRepository.findByAppuserId(UUID.randomUUID());
 
-        assertThat(actual).usingRecursiveComparison().isEqualTo(List.of(note));
+        assertThat(actual).usingRecursiveComparison().isEqualTo(List.of());
     }
 
     @Test
