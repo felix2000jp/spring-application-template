@@ -11,7 +11,6 @@ env:
 
 jobs:
   build-and-test:
-    needs: [ analyze-code ]
     name: Build and Test Application
     runs-on: ubuntu-latest
     steps:
