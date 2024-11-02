@@ -62,8 +62,8 @@ image with the resulting JAR file and push it to docker hub, finally it will dep
 This job is the **FIRST** to run on the workflow.
 
 It sets up temurin JDK and maven and then runs the command "mvn clean verify". This command will compile the code, test
-it, package it in a JAR file and run linting analysis performed by sonar. It then uploads the resulting JAR file, so it
-can be used in other jobs.
+it, package it in a JAR file and run code analysis performed by sonar. It then uploads the resulting JAR file, so it can
+be used in other jobs.
 
 #### Build and Push Image
 
@@ -99,5 +99,6 @@ the [angular commit message guidelines](https://github.com/angular/angular/blob/
 
 ### GitHub applications - SonarCloud Code Analysis
 
-This application will look at your linting results from [Sonar Cloud](https://sonarcloud.io) and block any merge that introduces new issues, be
+This application will look at your linting results from [Sonar Cloud](https://sonarcloud.io) and block any merge that
+introduces new issues, be
 it bugs, vulnerabilities, technical debt, decreased coverage or an increased code duplication.
