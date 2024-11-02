@@ -35,6 +35,7 @@
         <sonar.organization>felix2000jp</sonar.organization>
         <sonar.projectKey>felix2000jp_spring-application-template</sonar.projectKey>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <dependencies>
