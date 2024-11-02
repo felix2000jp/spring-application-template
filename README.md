@@ -50,7 +50,7 @@ To protect both the main branch and the git history a couple of rules are in pla
 #### Dependabot
 
 To help with keeping the application dependencies always up to date, this repository has dependabot configured to, on a
-weekly basis open PRs with version updates for both the dependencies listed in pom.xml file and actions used.
+weekly basis open PRs with version updates for both the maven and actions dependencies used.
 
 ### GitHub actions - CI CD Workflow
 
@@ -61,7 +61,7 @@ image with the resulting JAR file and push it to docker hub.
 
 This job is the **FIRST** to run on the workflow.
 
-It sets up JDK 21 (temurin) and maven and then runs the command "mvn clean package" command to compile, test and package
+It sets up temurin JDK and maven and then runs the command "mvn clean package" command to compile, test and package
 the application. It then uploads the resulting JAR file, so it can be used in other jobs.
 
 #### Build and Push Image
@@ -69,7 +69,8 @@ the application. It then uploads the resulting JAR file, so it can be used in ot
 This job is dependent on [Build and Test Application](#build-and-test-application).
 
 It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the docker
-registry.
+registry. This step is configured to only actually push the image to the registry when it is running on main branch to
+avoid cluttering the registry.
 
 #### Deploy Application
 
