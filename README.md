@@ -3,7 +3,7 @@
 This project serves as template for new spring applications. It follows a modular monolith architecture enforced with
 the spring modulith package. It currently has 3 modules: appusers (for user related stuff), notes (for note related
 stuff) and shared (for common stuff like configurations). Modules can interact with each other either by direct method
-calls or by events, either way this interactions are all described in `SomeModuleManagement` classes (
+calls or by events, either way these interactions are all described in `SomeModuleManagement` classes (
 ex: `AppuserManagement` and `NoteManagement`). The spring modulith package enforces the modular monolith architecture
 with tests - during the context tests a verification of the architecture will be performed. For more information on the
 architecture click on this [link](https://spring.io/projects/spring-modulith).
