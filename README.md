@@ -99,5 +99,5 @@ the [angular commit message guidelines](https://github.com/angular/angular/blob/
 
 ### GitHub applications - SonarCloud Code Analysis
 
-This application will look at your linting results from Sonar Cloud and block any merge that introduces new issues, be
+This application will look at your linting results from [Sonar Cloud](https://sonarcloud.io) and block any merge that introduces new issues, be
 it bugs, vulnerabilities, technical debt, decreased coverage or an increased code duplication.
