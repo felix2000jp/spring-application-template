@@ -13,13 +13,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 class NoteExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(NoteExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(NoteExceptionHandler.class);
 
     @ExceptionHandler(NoteNotFoundException.class)
     ResponseEntity<ProblemDetail> handleNoteNotFoundException(NoteNotFoundException ex) {
         var problemDetails = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
 
-        logger.warn(ex.getMessage(), ex);
+        log.warn(ex.getMessage(), ex);
         return ResponseEntity.of(problemDetails).build();
     }
 

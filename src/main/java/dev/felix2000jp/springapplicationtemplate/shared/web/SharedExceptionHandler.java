@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 class SharedExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(SharedExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(SharedExceptionHandler.class);
 
     @ExceptionHandler(Throwable.class)
     ResponseEntity<ProblemDetail> handleThrowable(Throwable ex) {
@@ -20,7 +20,7 @@ class SharedExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetails.setTitle("Internal Server Error");
         problemDetails.setDetail("An error occurred while processing the request");
 
-        logger.error(ex.getMessage(), ex);
+        log.error(ex.getMessage(), ex);
         return ResponseEntity.of(problemDetails).build();
     }
 
