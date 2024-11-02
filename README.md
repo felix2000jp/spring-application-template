@@ -54,15 +54,16 @@ weekly basis open PRs with version updates for both the maven and actions depend
 
 ### GitHub actions - CI CD Workflow
 
-This workflow is made of 2 different steps and its intent is to build and test your changes and then to build a docker
-image with the resulting JAR file and push it to docker hub.
+This workflow is made of 3 different steps and its intent is to build and test your changes and then to build a docker
+image with the resulting JAR file and push it to docker hub, finally it will deploy your image.
 
 #### Build and Test Application
 
 This job is the **FIRST** to run on the workflow.
 
-It sets up temurin JDK and maven and then runs the command "mvn clean package" command to compile, test and package
-the application. It then uploads the resulting JAR file, so it can be used in other jobs.
+It sets up temurin JDK and maven and then runs the command "mvn clean verify". This command will compile the code, test
+it, package it in a JAR file and run linting analysis performed by sonar. It then uploads the resulting JAR file, so it
+can be used in other jobs.
 
 #### Build and Push Image
 
@@ -78,7 +79,7 @@ This job is dependent on [Build and Push Image](#build-and-push-image).
 
 In this step we should make the necessary changes to deploy the application to wherever it should be deployed.
 
-### GitHub applications - Semantic PRs
+### GitHub applications - Semantic PR
 
 It verifies your Pull Request title follows the conventional commit guidelines. For more information on the rules being
 enforced, take a look at
@@ -95,3 +96,8 @@ the [angular commit message guidelines](https://github.com/angular/angular/blob/
 - ci: Changes to our CI configuration files and scripts (example scopes: Travis, Circle, BrowserStack, SauceLabs)
 - chore: Changes that don't modify the source code directly but are important for maintaining the project
 - revert: Revert existing code
+
+### GitHub applications - SonarCloud Code Analysis
+
+This application will look at your linting results from Sonar Cloud and block any merge that introduces new issues, be
+it bugs, vulnerabilities, technical debt, decreased coverage or an increased code duplication.
