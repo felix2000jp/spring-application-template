@@ -57,7 +57,7 @@ weekly basis open PRs with version updates for both the maven and actions depend
 This workflow is made of 3 different steps and its intent is to build and test your changes and then to build a docker
 image with the resulting JAR file and push it to docker hub, finally it will deploy your image.
 
-#### Build and Test Application
+#### Build and Test
 
 This job is the **FIRST** to run on the workflow.
 
@@ -65,17 +65,26 @@ It sets up temurin JDK and maven and then runs the command "mvn clean verify". T
 it, package it in a JAR file and run code analysis performed by sonar. It then uploads the resulting JAR file, so it can
 be used in other jobs.
 
-#### Build and Push Image
+#### Build and Push
 
-This job is dependent on [Build and Test Application](#build-and-test-application).
+This job is dependent on [Build and Test](#build-and-test).
 
 It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the docker
-registry. This step is configured to only actually push the image to the registry when it is running on main branch to
+registry and uploads an artifact with the image to be used in the next stage. This step is configured to only actually
+push the image to the registry when it is running on main branch to
 avoid cluttering the registry.
 
-#### Deploy Application
+#### Scan the image
 
-This job is dependent on [Build and Push Image](#build-and-push-image).
+This job is dependent on [Build and Push](#build-and-push).
+
+This steps downloads the docker image artifact uploaded in the last step and runs a trivy scan on it. The results are
+then uploaded to the GitHub security tab. Merges are blocked if results are found with medium or higher severity as well
+as any errors warnings.
+
+#### Deploy the Application
+
+This job is dependent on [Scan the image](#scan-the-image).
 
 In this step we should make the necessary changes to deploy the application to wherever it should be deployed.
 

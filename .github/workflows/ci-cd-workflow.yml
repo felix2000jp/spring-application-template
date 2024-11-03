@@ -8,10 +8,11 @@ on:
 
 env:
   APPLICATION_NAME: spring-application-template
+  GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   build-and-test:
-    name: Build and Test Application
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -21,8 +22,8 @@ jobs:
       - name: Setup temurin JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: temurin
+          java-version: 21
           cache: maven
       - name: Verify and package application
         env:
@@ -32,11 +33,11 @@ jobs:
       - name: Upload JAR file artifact
         uses: actions/upload-artifact@v4
         with:
-          path: target/*.jar
+          path: 'target/*.jar'
           name: ${{ env.APPLICATION_NAME }}
           if-no-files-found: error
   build-and-push:
-    name: Build and Push Image
+    name: Build and Push
     needs: [ build-and-test ]
     runs-on: ubuntu-latest
     steps:
@@ -55,7 +56,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
-          tags: type=raw,value=${{ github.event.pull_request.head.sha || github.sha }}
+          tags: type=raw,value=${{ env.GITHUB_SHA }}
         id: docker_meta
       - name: Build and push image
         uses: docker/build-push-action@v6
@@ -63,10 +64,36 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+          outputs: type=docker,dest=${{ env.GITHUB_SHA }}.tar
           build-args: JAR_FILE=*.jar
-  deploy-image:
-    name: Deploy Application
+      - name: Upload docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: '*.tar'
+          name: ${{ env.GITHUB_SHA }}
+          if-no-files-found: error
+  run-trivy-scan:
+    name: Scan the Image
     needs: [ build-and-push ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.GITHUB_SHA }}
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          input: ${{ env.GITHUB_SHA }}.tar
+          format: sarif
+          output: trivy-results.sarif
+      - name: Upload Trivy scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+  deploy-image:
+    name: Deploy the Application
+    needs: [ run-trivy-scan ]
     runs-on: ubuntu-latest
     steps:
       - name: Setup deploy env
