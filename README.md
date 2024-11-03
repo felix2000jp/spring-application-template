@@ -78,8 +78,9 @@ avoid cluttering the registry.
 
 This job is dependent on [Build and Push](#build-and-push).
 
-This steps downloads the docker image artifact uploaded in the last step and runs a trivy scan on it, looking for
-medium, high and critical vulnerabilities. The results are then uploaded to the GitHub security tab.
+This steps downloads the docker image artifact uploaded in the last step and runs a trivy scan on it. The results are
+then uploaded to the GitHub security tab. Merges are blocked if results are found with medium or higher severity as well
+as any errors warnings.
 
 #### Deploy the Application
 
