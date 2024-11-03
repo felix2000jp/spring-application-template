@@ -73,17 +73,20 @@ It downloads the JAR file artifact and build a docker image with it. After build
 registry. This step is configured to only actually
 push the image to the registry when it is running on main branch to avoid cluttering the registry.
 
-#### Scan the image
+#### Deploy the Application
 
 This job is dependent on [Build and Push](#build-and-push).
 
-This step runs a trivy scan on the git repository. The results are then uploaded to the GitHub security tab.
-
-#### Deploy the Application
-
-This job is dependent on [Scan the image](#scan-the-image).
-
 In this step we should make the necessary changes to deploy the application to wherever it should be deployed.
+
+### GitHub actions - Code scanning results
+
+This workflow runs a trivy scan on the repository and then publishes the results to the GitHub Security code scanning
+tab.
+
+#### Run Trivy Scan
+
+This step runs a trivy scan on the git repository. The results are then uploaded to the GitHub security tab.
 
 ### GitHub applications - Semantic PR
 
