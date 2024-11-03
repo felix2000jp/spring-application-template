@@ -70,17 +70,14 @@ be used in other jobs.
 This job is dependent on [Build and Test](#build-and-test).
 
 It downloads the JAR file artifact and build a docker image with it. After building the image it pushes it to the docker
-registry and uploads an artifact with the image to be used in the next stage. This step is configured to only actually
-push the image to the registry when it is running on main branch to
-avoid cluttering the registry.
+registry. This step is configured to only actually
+push the image to the registry when it is running on main branch to avoid cluttering the registry.
 
 #### Scan the image
 
 This job is dependent on [Build and Push](#build-and-push).
 
-This steps downloads the docker image artifact uploaded in the last step and runs a trivy scan on it. The results are
-then uploaded to the GitHub security tab. Merges are blocked if results are found with medium or higher severity as well
-as any errors warnings.
+This step runs a trivy scan on the git repository. The results are then uploaded to the GitHub security tab.
 
 #### Deploy the Application
 
@@ -112,5 +109,7 @@ This application will look at your linting results from [Sonar Cloud](https://so
 introduces new issues, be
 it bugs, vulnerabilities, technical debt, decreased coverage or an increased code duplication.
 
+### GitHub Security - Trivy Scan Results
 
-
+GitHub code scanning results are configured to read form the trivy scan results. Merges are blocked if results are found
+with medium or higher severity as well as any errors or warnings.

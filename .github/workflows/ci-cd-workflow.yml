@@ -64,33 +64,12 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-          outputs: type=docker,dest=${{ env.GITHUB_SHA }}.tar
           build-args: JAR_FILE=*.jar
-      - name: Upload docker image artifact
-        uses: actions/upload-artifact@v4
-        with:
-          path: '*.tar'
-          name: ${{ env.GITHUB_SHA }}
-          if-no-files-found: error
   run-trivy-scan:
     name: Scan the Image
     needs: [ build-and-push ]
     runs-on: ubuntu-latest
     steps:
-    #  - name: Download docker image artifact
-    #    uses: actions/download-artifact@v4
-    #    with:
-    #      name: ${{ env.GITHUB_SHA }}
-    #  - name: Run Trivy vulnerability scanner
-    #    uses: aquasecurity/trivy-action@0.28.0
-    #    with:
-    #      input: ${{ env.GITHUB_SHA }}.tar
-    #      format: sarif
-    #      output: trivy-results.sarif
-    #  - name: Upload Trivy scan results to GitHub Security
-    #    uses: github/codeql-action/upload-sarif@v3
-    #    with:
-    #      sarif_file: trivy-results.sarif
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Run Trivy vulnerability scanner in repo mode
@@ -99,12 +78,12 @@ jobs:
           scan-type: fs
           format: 'sarif'
           output: 'trivy-results.sarif'
-
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
   deploy-image:
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy the Application
     needs: [ run-trivy-scan ]
     runs-on: ubuntu-latest
