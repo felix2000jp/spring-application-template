@@ -77,20 +77,33 @@ jobs:
     needs: [ build-and-push ]
     runs-on: ubuntu-latest
     steps:
-      - name: Download docker image artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.GITHUB_SHA }}
-      - name: Run Trivy vulnerability scanner
+    #  - name: Download docker image artifact
+    #    uses: actions/download-artifact@v4
+    #    with:
+    #      name: ${{ env.GITHUB_SHA }}
+    #  - name: Run Trivy vulnerability scanner
+    #    uses: aquasecurity/trivy-action@0.28.0
+    #    with:
+    #      input: ${{ env.GITHUB_SHA }}.tar
+    #      format: sarif
+    #      output: trivy-results.sarif
+    #  - name: Upload Trivy scan results to GitHub Security
+    #    uses: github/codeql-action/upload-sarif@v3
+    #    with:
+    #      sarif_file: trivy-results.sarif
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Run Trivy vulnerability scanner in repo mode
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          input: ${{ env.GITHUB_SHA }}.tar
-          format: sarif
-          output: trivy-results.sarif
-      - name: Upload Trivy scan results to GitHub Security
+          scan-type: fs
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: trivy-results.sarif
+          sarif_file: 'trivy-results.sarif'
   deploy-image:
     name: Deploy the Application
     needs: [ run-trivy-scan ]
