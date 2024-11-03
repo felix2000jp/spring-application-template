@@ -5,7 +5,7 @@ import dev.felix2000jp.springapplicationtemplate.shared.AuthorityValue;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface AppuserMapper {
+interface AppuserMapper {
 
     AppuserDto toDto(Appuser appuser);
 

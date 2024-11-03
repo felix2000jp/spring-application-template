@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import java.util.Collection;
 
 @Mapper(componentModel = "spring")
-public interface NoteMapper {
+interface NoteMapper {
 
     NoteDto toDto(Note note);
 
