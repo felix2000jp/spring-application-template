@@ -8,6 +8,7 @@ on:
 
 env:
   APPLICATION_NAME: spring-application-template
+  GITHUB_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
 
 jobs:
   build-and-test:
@@ -21,8 +22,8 @@ jobs:
       - name: Setup temurin JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: temurin
+          java-version: 21
           cache: maven
       - name: Verify and package application
         env:
@@ -55,7 +56,7 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.APPLICATION_NAME }}
-          tags: type=raw,value=${{ github.event.pull_request.head.sha || github.sha }}
+          tags: type=raw,value=${{ env.GITHUB_SHA }}
         id: docker_meta
       - name: Build and push image
         uses: docker/build-push-action@v6
@@ -63,10 +64,39 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
+          outputs: type=docker,dest=${{ env.GITHUB_SHA }}.tar
           build-args: JAR_FILE=*.jar
+      - name: Upload docker image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.GITHUB_SHA }}
+          path: ${{ env.GITHUB_SHA }}.tar
+          if-no-files-found: error
+  run-trivy-scan:
+    name: Trivy scan the image
+    needs: [ build-and-push ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download docker image artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.GITHUB_SHA }}
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.GITHUB_SHA }}
+          format: sarif
+          output: trivy-results.sarif
+      - name: Upload Trivy scan results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-results.sarif
+          exit-code: 1
+          format: table
+          severity: 'MEDIUM,HIGH,CRITICAL'
   deploy-image:
     name: Deploy Application
-    needs: [ build-and-push ]
+    needs: [ run-trivy-scan ]
     runs-on: ubuntu-latest
     steps:
       - name: Setup deploy env
