@@ -12,7 +12,7 @@ env:
 
 jobs:
   build-and-test:
-    name: Build and Test Application
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -33,11 +33,11 @@ jobs:
       - name: Upload JAR file artifact
         uses: actions/upload-artifact@v4
         with:
-          path: target/*.jar
+          path: 'target/*.jar'
           name: ${{ env.APPLICATION_NAME }}
           if-no-files-found: error
   build-and-push:
-    name: Build and Push Image
+    name: Build and Push
     needs: [ build-and-test ]
     runs-on: ubuntu-latest
     steps:
@@ -69,11 +69,11 @@ jobs:
       - name: Upload docker image artifact
         uses: actions/upload-artifact@v4
         with:
+          path: '*.tar'
           name: ${{ env.GITHUB_SHA }}
-          path: /*.tar
           if-no-files-found: error
   run-trivy-scan:
-    name: Trivy scan the image
+    name: Scan the Image
     needs: [ build-and-push ]
     runs-on: ubuntu-latest
     steps:
@@ -95,7 +95,7 @@ jobs:
           format: table
           severity: 'MEDIUM,HIGH,CRITICAL'
   deploy-image:
-    name: Deploy Application
+    name: Deploy the Application
     needs: [ run-trivy-scan ]
     runs-on: ubuntu-latest
     steps:
