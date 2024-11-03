@@ -87,13 +87,12 @@ jobs:
           input: ${{ env.GITHUB_SHA }}.tar
           format: sarif
           output: trivy-results.sarif
+          severity: 'MEDIUM,HIGH,CRITICAL'
+          exit-code: '1'
       - name: Upload Trivy scan results to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: trivy-results.sarif
-          exit-code: 1
-          format: table
-          severity: 'MEDIUM,HIGH,CRITICAL'
   deploy-image:
     name: Deploy the Application
     needs: [ run-trivy-scan ]
