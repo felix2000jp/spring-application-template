@@ -54,12 +54,19 @@ weekly basis open PRs with version updates for both the maven and actions depend
 
 ### GitHub actions - CI CD Workflow
 
-This workflow is made of 3 different steps and its intent is to build and test your changes and then to build a docker
-image with the resulting JAR file and push it to docker hub, finally it will deploy your image.
+This workflow is made of 4 different jobs and its intent is to scan the code for vulnerabilities, build and test your
+changes and then to build a docker image with the resulting JAR file and push it to docker hub, finally it will deploy
+your image.
+
+#### Run Trivy Scan
+
+This is the **first** job in this workflow.
+
+This step runs a trivy scan on the git repository. The results are then uploaded to the GitHub security tab.
 
 #### Build and Test
 
-This job is the **FIRST** to run on the workflow.
+This job is dependent on [Run Trivy Scan](#run-trivy-scan).
 
 It sets up temurin JDK and maven and then runs the command "mvn clean verify". This command will compile the code, test
 it, package it in a JAR file and run code analysis performed by sonar. It then uploads the resulting JAR file, so it can
@@ -78,15 +85,6 @@ push the image to the registry when it is running on main branch to avoid clutte
 This job is dependent on [Build and Push](#build-and-push).
 
 In this step we should make the necessary changes to deploy the application to wherever it should be deployed.
-
-### GitHub actions - Code scanning results
-
-This workflow runs a trivy scan on the repository and then publishes the results to the GitHub Security code scanning
-tab.
-
-#### Run Trivy Scan
-
-This step runs a trivy scan on the git repository. The results are then uploaded to the GitHub security tab.
 
 ### GitHub applications - Semantic PR
 
