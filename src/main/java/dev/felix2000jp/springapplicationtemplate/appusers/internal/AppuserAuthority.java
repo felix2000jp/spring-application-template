@@ -1,6 +1,5 @@
 package dev.felix2000jp.springapplicationtemplate.appusers.internal;
 
-import dev.felix2000jp.springapplicationtemplate.shared.AuthorityValue;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,24 +15,23 @@ public class AppuserAuthority implements GrantedAuthority {
     private UUID id;
 
     @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "authority_value")
-    private AuthorityValue authorityValue;
+    @Column(name = "scope_value")
+    private String scopeValue;
 
     public AppuserAuthority() {
     }
 
-    public AppuserAuthority(AuthorityValue authorityValue) {
-        this.authorityValue = authorityValue;
+    AppuserAuthority(String scopeValue) {
+        this.scopeValue = scopeValue;
     }
 
-    public AuthorityValue getAuthorityValue() {
-        return authorityValue;
+    public String getScopeValue() {
+        return scopeValue;
     }
 
     @Override
     public String getAuthority() {
-        return authorityValue.name();
+        return "SCOPE_" + scopeValue;
     }
 
 }

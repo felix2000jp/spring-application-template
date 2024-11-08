@@ -1,16 +1,17 @@
 package dev.felix2000jp.springapplicationtemplate.appusers.internal;
 
-import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AppuserDto;
-import dev.felix2000jp.springapplicationtemplate.shared.AuthorityValue;
+import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AuthenticatedAppuserDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 interface AppuserMapper {
 
-    AppuserDto toDto(Appuser appuser);
+    AppuserDTO toDto(Appuser appuser);
+    AuthenticatedAppuserDTO toAuthenticatedDto(Appuser appuser);
 
-    default AuthorityValue toAuthorityValue(AppuserAuthority authority) {
-        return authority.getAuthorityValue();
+    default String toAuthorityValue(AppuserAuthority authority) {
+        return authority.getScopeValue();
     }
 
 }

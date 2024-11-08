@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface NoteRepository extends JpaRepository<Note, UUID> {
+interface NoteRepository extends JpaRepository<Note, UUID> {
 
     Collection<Note> findByAppuserId(UUID appuserId);
 
