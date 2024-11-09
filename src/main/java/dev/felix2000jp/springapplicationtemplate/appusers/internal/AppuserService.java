@@ -62,7 +62,7 @@ public class AppuserService implements UserDetailsService {
         var principal = authentication.getPrincipal();
 
         if (principal instanceof Appuser appuser) {
-            return appuserMapper.toAuthenticatedDto(appuser);
+            return appuserMapper.toAuthenticatedDTO(appuser);
         }
 
         if (principal instanceof Jwt jwt) {
@@ -81,7 +81,7 @@ public class AppuserService implements UserDetailsService {
         var principal = authentication.getPrincipal();
 
         if (principal instanceof Appuser appuser) {
-            return appuserMapper.toAuthenticatedDto(appuser);
+            return appuserMapper.toAuthenticatedDTO(appuser);
         }
 
         if (principal instanceof Jwt jwt) {
@@ -111,7 +111,7 @@ public class AppuserService implements UserDetailsService {
                 .findById(appuserDTO.id())
                 .orElseThrow(AppuserNotFoundException::new);
 
-        return appuserMapper.toDto(appuser);
+        return appuserMapper.toDTO(appuser);
     }
 
     AppuserDTO create(CreateAppuserDTO createAppuserDTO) {
@@ -128,7 +128,7 @@ public class AppuserService implements UserDetailsService {
         appuserCreated.addApplicationAuthority();
 
         var appuserSaved = appuserRepository.save(appuserCreated);
-        return appuserMapper.toDto(appuserSaved);
+        return appuserMapper.toDTO(appuserSaved);
     }
 
     AppuserDTO update(UpdateAppuserDTO updateAppuserDTO) {
@@ -153,7 +153,7 @@ public class AppuserService implements UserDetailsService {
                 passwordEncoder.encode(updateAppuserDTO.password())
         );
         var appuserSaved = appuserRepository.save(appuserToUpdate);
-        return appuserMapper.toDto(appuserSaved);
+        return appuserMapper.toDTO(appuserSaved);
     }
 
     AppuserDTO delete() {
@@ -168,7 +168,7 @@ public class AppuserService implements UserDetailsService {
         var appuserDeletedEvent = new AppuserDeletedEvent(userToDelete.getId());
         events.publishEvent(appuserDeletedEvent);
 
-        return appuserMapper.toDto(userToDelete);
+        return appuserMapper.toDTO(userToDelete);
     }
 
     String generateToken() {

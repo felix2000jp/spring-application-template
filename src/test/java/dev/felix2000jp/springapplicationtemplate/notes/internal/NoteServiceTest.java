@@ -2,10 +2,10 @@ package dev.felix2000jp.springapplicationtemplate.notes.internal;
 
 import dev.felix2000jp.springapplicationtemplate.appusers.AppuserManagement;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AuthenticatedAppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.CreateNoteDto;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteDto;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteListDto;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.UpdateNoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.CreateNoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteListDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.UpdateNoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.internal.exceptions.NoteNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,13 +38,13 @@ class NoteServiceTest {
     private NoteService noteService;
 
     private Note note;
-    private NoteDto noteDto;
+    private NoteDTO noteDTO;
     private AuthenticatedAppuserDTO authenticatedAppuserDTO;
 
     @BeforeEach
     void setUp() {
         note = new Note(UUID.randomUUID(), "title", "content", UUID.randomUUID());
-        noteDto = new NoteDto(note.getId(), note.getTitle(), note.getContent());
+        noteDTO = new NoteDTO(note.getId(), note.getTitle(), note.getContent());
         authenticatedAppuserDTO = new AuthenticatedAppuserDTO(note.getAppuserId(), "username", Set.of("APPLICATION"));
     }
 
@@ -55,7 +55,7 @@ class NoteServiceTest {
 
         var actual = noteService.findAll();
 
-        var expected = new NoteListDto(List.of(noteDto));
+        var expected = new NoteListDTO(List.of(noteDTO));
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
@@ -66,7 +66,7 @@ class NoteServiceTest {
 
         var actual = noteService.findAll();
 
-        var expected = new NoteListDto(List.of());
+        var expected = new NoteListDTO(List.of());
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
@@ -77,7 +77,7 @@ class NoteServiceTest {
 
         var actual = noteService.find(note.getId());
 
-        assertThat(actual).usingRecursiveComparison().isEqualTo(noteDto);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(noteDTO);
     }
 
     @Test
@@ -93,37 +93,37 @@ class NoteServiceTest {
     @Test
     void create_should_return_note_when_note_is_created() {
         when(appuserManagement.verifyAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        var createNoteDto = new CreateNoteDto(note.getTitle(), note.getContent());
+        var createNoteDTO = new CreateNoteDTO(note.getTitle(), note.getContent());
 
         when(noteRepository.save(any(Note.class))).thenReturn(note);
 
-        var actual = noteService.create(createNoteDto);
+        var actual = noteService.create(createNoteDTO);
 
-        assertThat(actual).usingRecursiveComparison().isEqualTo(noteDto);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(noteDTO);
     }
 
     @Test
     void update_should_return_note_when_note_is_updated() {
         when(appuserManagement.verifyAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        var updateNoteDto = new UpdateNoteDto("new title", "new content");
+        var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
 
         when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuserDTO.id())).thenReturn(Optional.of(note));
         when(noteRepository.save(any(Note.class))).thenReturn(note);
 
-        var actual = noteService.update(note.getId(), updateNoteDto);
+        var actual = noteService.update(note.getId(), updateNoteDTO);
 
-        var expectedNote = new NoteDto(note.getId(), "new title", "new content");
+        var expectedNote = new NoteDTO(note.getId(), "new title", "new content");
         assertThat(actual).usingRecursiveComparison().isEqualTo(expectedNote);
     }
 
     @Test
     void update_should_throw_not_found_when_note_is_not_found() {
         when(appuserManagement.verifyAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        var updateNoteDto = new UpdateNoteDto("new title", "new content");
+        var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
 
         when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuserDTO.id())).thenReturn(Optional.empty());
 
-        var actual = catchThrowable(() -> noteService.update(note.getId(), updateNoteDto));
+        var actual = catchThrowable(() -> noteService.update(note.getId(), updateNoteDTO));
 
         assertThat(actual).isInstanceOf(NoteNotFoundException.class);
     }

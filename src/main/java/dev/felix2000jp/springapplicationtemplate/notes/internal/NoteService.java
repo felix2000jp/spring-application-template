@@ -1,10 +1,10 @@
 package dev.felix2000jp.springapplicationtemplate.notes.internal;
 
 import dev.felix2000jp.springapplicationtemplate.appusers.AppuserManagement;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.CreateNoteDto;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteDto;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteListDto;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.UpdateNoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.CreateNoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteListDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.UpdateNoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.internal.exceptions.NoteNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -23,45 +23,45 @@ public class NoteService {
         this.appuserManagement = appuserManagement;
     }
 
-    NoteListDto findAll() {
+    NoteListDTO findAll() {
         var appuserDTO = appuserManagement.getAuthenticatedAppuserDTO();
 
         var notes = noteRepository.findByAppuserId(appuserDTO.id());
 
-        return noteMapper.toDto(notes);
+        return noteMapper.toDTO(notes);
     }
 
-    NoteDto find(UUID id) {
+    NoteDTO find(UUID id) {
         var appuserDTO = appuserManagement.getAuthenticatedAppuserDTO();
 
         var note = noteRepository
                 .findByIdAndAppuserId(id, appuserDTO.id())
                 .orElseThrow(NoteNotFoundException::new);
 
-        return noteMapper.toDto(note);
+        return noteMapper.toDTO(note);
     }
 
-    NoteDto create(CreateNoteDto createNoteDto) {
+    NoteDTO create(CreateNoteDTO createNoteDTO) {
         var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
 
-        var newNote = new Note(createNoteDto.title(), createNoteDto.content(), appuserDTO.id());
+        var newNote = new Note(createNoteDTO.title(), createNoteDTO.content(), appuserDTO.id());
         var noteSaved = noteRepository.save(newNote);
-        return noteMapper.toDto(noteSaved);
+        return noteMapper.toDTO(noteSaved);
     }
 
-    NoteDto update(UUID noteId, UpdateNoteDto updateNoteDto) {
+    NoteDTO update(UUID noteId, UpdateNoteDTO updateNoteDTO) {
         var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
 
         var noteToUpdate = noteRepository
                 .findByIdAndAppuserId(noteId, appuserDTO.id())
                 .orElseThrow(NoteNotFoundException::new);
 
-        noteToUpdate.updateTitleAndContent(updateNoteDto.title(), updateNoteDto.content());
+        noteToUpdate.updateTitleAndContent(updateNoteDTO.title(), updateNoteDTO.content());
         var noteSaved = noteRepository.save(noteToUpdate);
-        return noteMapper.toDto(noteSaved);
+        return noteMapper.toDTO(noteSaved);
     }
 
-    NoteDto delete(UUID id) {
+    NoteDTO delete(UUID id) {
         var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
 
         var noteToDelete = noteRepository
@@ -69,7 +69,7 @@ public class NoteService {
                 .orElseThrow(NoteNotFoundException::new);
 
         noteRepository.delete(noteToDelete);
-        return noteMapper.toDto(noteToDelete);
+        return noteMapper.toDTO(noteToDelete);
     }
 
     public void deleteAllByAppuserId(UUID id) {

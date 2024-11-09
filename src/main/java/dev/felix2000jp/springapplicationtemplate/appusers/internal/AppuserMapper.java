@@ -7,8 +7,8 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 interface AppuserMapper {
 
-    AppuserDTO toDto(Appuser appuser);
-    AuthenticatedAppuserDTO toAuthenticatedDto(Appuser appuser);
+    AppuserDTO toDTO(Appuser appuser);
+    AuthenticatedAppuserDTO toAuthenticatedDTO(Appuser appuser);
 
     default String toAuthorityValue(AppuserAuthority authority) {
         return authority.getScopeValue();

@@ -1,7 +1,7 @@
 package dev.felix2000jp.springapplicationtemplate.notes.internal;
 
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteDto;
-import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteListDto;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteListDTO;
 import org.mapstruct.Mapper;
 
 import java.util.Collection;
@@ -9,11 +9,11 @@ import java.util.Collection;
 @Mapper(componentModel = "spring")
 interface NoteMapper {
 
-    NoteDto toDto(Note note);
+    NoteDTO toDTO(Note note);
 
-    default NoteListDto toDto(Collection<Note> notes) {
-        var noteDtos = notes.stream().map(this::toDto).toList();
-        return new NoteListDto(noteDtos);
+    default NoteListDTO toDTO(Collection<Note> notes) {
+        var noteDTOs = notes.stream().map(this::toDTO).toList();
+        return new NoteListDTO(noteDTOs);
     }
 
 }

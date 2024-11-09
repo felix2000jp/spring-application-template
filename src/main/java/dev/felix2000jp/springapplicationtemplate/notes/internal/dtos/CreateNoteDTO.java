@@ -3,7 +3,7 @@ package dev.felix2000jp.springapplicationtemplate.notes.internal.dtos;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public record CreateNoteDto(
+public record CreateNoteDTO(
         @Size(min = 3, max = 150)
         @NotBlank
         String title,
