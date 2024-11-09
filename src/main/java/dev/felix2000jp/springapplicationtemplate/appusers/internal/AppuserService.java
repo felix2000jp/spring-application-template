@@ -132,7 +132,7 @@ public class AppuserService implements UserDetailsService {
     }
 
     AppuserDTO update(UpdateAppuserDTO updateAppuserDTO) {
-        var appuserDTO = getAuthenticatedAppuserDTO();
+        var appuserDTO = verifyAuthenticatedAppuserDTO();
 
         var appuserToUpdate = appuserRepository
                 .findById(appuserDTO.id())
@@ -157,7 +157,7 @@ public class AppuserService implements UserDetailsService {
     }
 
     AppuserDTO delete() {
-        var appuserDTO = getAuthenticatedAppuserDTO();
+        var appuserDTO = verifyAuthenticatedAppuserDTO();
 
         var userToDelete = appuserRepository
                 .findById(appuserDTO.id())

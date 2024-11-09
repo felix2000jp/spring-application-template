@@ -42,7 +42,7 @@ public class NoteService {
     }
 
     NoteDto create(CreateNoteDto createNoteDto) {
-        var appuserDTO = appuserManagement.getAuthenticatedAppuserDTO();
+        var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
 
         var newNote = new Note(createNoteDto.title(), createNoteDto.content(), appuserDTO.id());
         var noteSaved = noteRepository.save(newNote);
@@ -50,7 +50,7 @@ public class NoteService {
     }
 
     NoteDto update(UUID noteId, UpdateNoteDto updateNoteDto) {
-        var appuserDTO = appuserManagement.getAuthenticatedAppuserDTO();
+        var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
 
         var noteToUpdate = noteRepository
                 .findByIdAndAppuserId(noteId, appuserDTO.id())
@@ -62,7 +62,7 @@ public class NoteService {
     }
 
     NoteDto delete(UUID id) {
-        var appuserDTO = appuserManagement.getAuthenticatedAppuserDTO();
+        var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
 
         var noteToDelete = noteRepository
                 .findByIdAndAppuserId(id, appuserDTO.id())
