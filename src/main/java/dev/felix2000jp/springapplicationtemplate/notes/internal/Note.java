@@ -32,14 +32,14 @@ public class Note {
     public Note() {
     }
 
-    public Note(String title, String content, UUID appuserId) {
+    Note(UUID id, String title, String content, UUID appuserId) {
+        this.id = id;
         this.title = title;
         this.content = content;
         this.appuserId = appuserId;
     }
 
-    public Note(UUID id, String title, String content, UUID appuserId) {
-        this.id = id;
+    Note(String title, String content, UUID appuserId) {
         this.title = title;
         this.content = content;
         this.appuserId = appuserId;
@@ -61,7 +61,7 @@ public class Note {
         return appuserId;
     }
 
-    public void updateTitleAndContent(String title, String content) {
+    void updateTitleAndContent(String title, String content) {
         this.title = title;
         this.content = content;
     }

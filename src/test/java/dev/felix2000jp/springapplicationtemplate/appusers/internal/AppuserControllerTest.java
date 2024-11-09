@@ -1,168 +1,165 @@
 package dev.felix2000jp.springapplicationtemplate.appusers.internal;
 
-import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AppuserDto;
-import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.CreateAppuserDto;
-import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.UpdateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.CreateAppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.UpdateAppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.exceptions.AppuserConflictException;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.AuthorityValue;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityConfig;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Set;
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@Import(SecurityConfig.class)
-@WebMvcTest(controllers = {AppuserController.class})
+@WebMvcTest(controllers = AppuserController.class)
 class AppuserControllerTest {
 
     @MockBean
     private AppuserService appuserService;
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
     private MockMvc mockMvc;
 
-    private AppuserDto appuserDto;
-    private String appuserDtoJson;
+    private AppuserDTO appuserDTO;
+    private String appuserDTOJson;
 
     @BeforeEach
     void setUp() {
-        var encodedPassword = passwordEncoder.encode("password");
-        var appuser = new Appuser(UUID.randomUUID(), "username", encodedPassword, AuthorityValue.APPLICATION);
-
-        when(appuserService.loadUserByUsername("username")).thenReturn(appuser);
-
-        appuserDto = new AppuserDto(appuser.getId(), appuser.getUsername(), appuser.getAuthorityValues());
-        appuserDtoJson = String.format("""
+        appuserDTO = new AppuserDTO(UUID.randomUUID(), "username", Set.of("APPLICATION"));
+        appuserDTOJson = String.format("""
                 {
                     "id": "%s",
                     "username": "%s",
                     "authorities": %s
                 }
-                """, appuserDto.id(), appuserDto.username(), appuserDto.authorities());
+                """, appuserDTO.id(), appuserDTO.username(), appuserDTO.authorities());
     }
 
     @Test
+    @WithMockUser
     void find_should_return_ok_when_appuser_is_found() throws Exception {
-        when(appuserService.find(any(Appuser.class))).thenReturn(appuserDto);
+        when(appuserService.find()).thenReturn(appuserDTO);
 
         mockMvc
-                .perform(get("/app/appusers").with(httpBasic("username", "password")))
+                .perform(get("/api/appusers"))
                 .andExpect(status().isOk())
-                .andExpect(content().json(appuserDtoJson));
+                .andExpect(content().json(appuserDTOJson));
     }
 
     @Test
+    @WithMockUser
     void find_should_return_not_found_when_appuser_is_not_found() throws Exception {
-        when(appuserService.find(any(Appuser.class))).thenThrow(new AppuserNotFoundException());
+        when(appuserService.find()).thenThrow(new AppuserNotFoundException());
 
         mockMvc
-                .perform(get("/app/appusers").with(httpBasic("username", "password")))
+                .perform(get("/api/appusers"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Not Found"))
                 .andExpect(jsonPath("$.status").value(404));
     }
 
     @Test
-    void find_should_return_unauthorized_when_credentials_are_wrong() throws Exception {
-        mockMvc
-                .perform(get("/app/appusers").with(httpBasic("username", "wrong password")))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
+    @WithMockUser
     void create_should_return_created_with_location_when_appuser_is_created() throws Exception {
-        var createAppuserDto = new CreateAppuserDto("new username", "new password");
-        var createAppuserDtoJson = String.format("""
+        var createAppuserDTO = new CreateAppuserDTO("new username", "new password");
+        var createAppuserDTOJson = String.format("""
                 {
                     "username": "%s",
                     "password": "%s"
                 }
-                """, createAppuserDto.username(), createAppuserDto.password());
+                """, createAppuserDTO.username(), createAppuserDTO.password());
 
-        when(appuserService.create(createAppuserDto)).thenReturn(appuserDto);
+        when(appuserService.create(createAppuserDTO)).thenReturn(appuserDTO);
 
         mockMvc
-                .perform(post("/app/appusers").contentType(MediaType.APPLICATION_JSON).content(createAppuserDtoJson))
+                .perform(
+                        post("/api/appusers")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(createAppuserDTOJson)
+                )
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/app/appusers"))
-                .andExpect(content().json(appuserDtoJson));
+                .andExpect(content().json(appuserDTOJson));
     }
 
     @Test
+    @WithMockUser
     void create_should_return_conflict_when_appuser_already_exists() throws Exception {
-        var createAppuserDto = new CreateAppuserDto("new username", "new password");
-        var createAppuserDtoJson = String.format("""
+        var createAppuserDTO = new CreateAppuserDTO("new username", "new password");
+        var createAppuserDTOJson = String.format("""
                 {
                     "username": "%s",
                     "password": "%s"
                 }
-                """, createAppuserDto.username(), createAppuserDto.password());
+                """, createAppuserDTO.username(), createAppuserDTO.password());
 
-        when(appuserService.create(createAppuserDto)).thenThrow(new AppuserConflictException());
+        when(appuserService.create(createAppuserDTO)).thenThrow(new AppuserConflictException());
 
         mockMvc
-                .perform(post("/app/appusers").contentType(MediaType.APPLICATION_JSON).content(createAppuserDtoJson))
+                .perform(
+                        post("/api/appusers")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(createAppuserDTOJson)
+                )
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.title").value("Conflict"))
                 .andExpect(jsonPath("$.status").value(409));
     }
 
     @Test
+    @WithMockUser
     void update_should_return_no_content_when_appuser_updated() throws Exception {
-        var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
-        var updateAppuserDtoJson = String.format("""
+        var updateAppuserDTO = new UpdateAppuserDTO("new username", "new password");
+        var updateAppuserDTOJson = String.format("""
                 {
                     "username": "%s",
                     "password": "%s"
                 }
-                """, updateAppuserDto.username(), updateAppuserDto.password());
+                """, updateAppuserDTO.username(), updateAppuserDTO.password());
 
-        when(appuserService.update(any(Appuser.class), eq(updateAppuserDto))).thenReturn(appuserDto);
+        when(appuserService.update(updateAppuserDTO)).thenReturn(appuserDTO);
 
         mockMvc
                 .perform(
-                        put("/app/appusers")
+                        put("/api/appusers")
+                                .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(updateAppuserDtoJson)
-                                .with(httpBasic("username", "password"))
+                                .content(updateAppuserDTOJson)
                 )
                 .andExpect(status().isNoContent());
     }
 
     @Test
+    @WithMockUser
     void update_should_return_not_found_when_appuser_not_found() throws Exception {
-        var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
-        var updateAppuserDtoJson = String.format("""
+        var updateAppuserDTO = new UpdateAppuserDTO("new username", "new password");
+        var updateAppuserDTOJson = String.format("""
                 {
                     "username": "%s",
                     "password": "%s"
                 }
-                """, updateAppuserDto.username(), updateAppuserDto.password());
+                """, updateAppuserDTO.username(), updateAppuserDTO.password());
 
-        when(appuserService.update(any(Appuser.class), eq(updateAppuserDto))).thenThrow(new AppuserNotFoundException());
+        when(appuserService.update(updateAppuserDTO)).thenThrow(new AppuserNotFoundException());
 
         mockMvc
                 .perform(
-                        put("/app/appusers")
+                        put("/api/appusers")
+                                .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(updateAppuserDtoJson)
-                                .with(httpBasic("username", "password"))
+                                .content(updateAppuserDTOJson)
                 )
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Not Found"))
@@ -170,23 +167,24 @@ class AppuserControllerTest {
     }
 
     @Test
+    @WithMockUser
     void update_should_return_conflict_when_username_already_exists() throws Exception {
-        var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
-        var updateAppuserDtoJson = String.format("""
+        var updateAppuserDTO = new UpdateAppuserDTO("new username", "new password");
+        var updateAppuserDTOJson = String.format("""
                 {
                     "username": "%s",
                     "password": "%s"
                 }
-                """, updateAppuserDto.username(), updateAppuserDto.password());
+                """, updateAppuserDTO.username(), updateAppuserDTO.password());
 
-        when(appuserService.update(any(Appuser.class), eq(updateAppuserDto))).thenThrow(new AppuserConflictException());
+        when(appuserService.update(updateAppuserDTO)).thenThrow(new AppuserConflictException());
 
         mockMvc
                 .perform(
-                        put("/app/appusers")
+                        put("/api/appusers")
+                                .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(updateAppuserDtoJson)
-                                .with(httpBasic("username", "password"))
+                                .content(updateAppuserDTOJson)
                 )
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.title").value("Conflict"))
@@ -194,50 +192,25 @@ class AppuserControllerTest {
     }
 
     @Test
-    void update_should_return_unauthorized_when_credentials_are_wrong() throws Exception {
-        var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
-        var updateAppuserDtoJson = String.format("""
-                {
-                    "username": "%s",
-                    "password": "%s"
-                }
-                """, updateAppuserDto.username(), updateAppuserDto.password());
-
-        mockMvc
-                .perform(
-                        put("/app/appusers")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(updateAppuserDtoJson)
-                                .with(httpBasic("username", "wrong password"))
-                )
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
+    @WithMockUser
     void delete_should_return_no_content_when_appuser_is_deleted() throws Exception {
-        when(appuserService.delete(any(Appuser.class))).thenReturn(appuserDto);
+        when(appuserService.delete()).thenReturn(appuserDTO);
 
         mockMvc
-                .perform(delete("/app/appusers").with(httpBasic("username", "password")))
+                .perform(delete("/api/appusers").with(csrf()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
+    @WithMockUser
     void delete_should_return_not_found_when_appuser_is_not_found() throws Exception {
-        when(appuserService.delete(any(Appuser.class))).thenThrow(new AppuserNotFoundException());
+        when(appuserService.delete()).thenThrow(new AppuserNotFoundException());
 
         mockMvc
-                .perform(delete("/app/appusers").with(httpBasic("username", "password")))
+                .perform(delete("/api/appusers").with(csrf()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Not Found"))
                 .andExpect(jsonPath("$.status").value(404));
-    }
-
-    @Test
-    void delete_should_return_unauthorized_when_credentials_are_wrong() throws Exception {
-        mockMvc
-                .perform(delete("/app/appusers").with(httpBasic("username", "wrong password")))
-                .andExpect(status().isUnauthorized());
     }
 
 }

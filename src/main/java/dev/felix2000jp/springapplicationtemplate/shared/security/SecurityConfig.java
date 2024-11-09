@@ -3,7 +3,6 @@ package dev.felix2000jp.springapplicationtemplate.shared.security;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import dev.felix2000jp.springapplicationtemplate.shared.AuthorityValue;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,8 +10,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -26,7 +23,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+class SecurityConfig {
 
     @Value("${jwt.rsa.public-key}")
     private RSAPublicKey publicKey;
@@ -35,30 +32,18 @@ public class SecurityConfig {
     private RSAPrivateKey privateKey;
 
     @Bean
-    SecurityFilterChain appFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .securityMatcher("/app/**")
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/app/appusers").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/appusers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/appusers/csrf").permitAll()
+                        .anyRequest().hasAnyAuthority(
+                                "SCOPE_APPLICATION"
+                        )
                 )
+                .csrf(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
-                .build();
-    }
-
-    @Bean
-    SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .securityMatcher("/api/**")
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest().hasAnyAuthority(AuthorityValue.ALL.name(), AuthorityValue.APPLICATION.name())
-                )
-                .oauth2ResourceServer(c -> c.jwt(jwt -> jwt.jwtAuthenticationConverter(new AuthenticationConverter())))
-                .exceptionHandling(Customizer.withDefaults())
+                .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
                 .build();
     }
 

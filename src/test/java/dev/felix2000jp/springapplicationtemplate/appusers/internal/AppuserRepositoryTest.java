@@ -1,6 +1,5 @@
 package dev.felix2000jp.springapplicationtemplate.appusers.internal;
 
-import dev.felix2000jp.springapplicationtemplate.shared.AuthorityValue;
 import dev.felix2000jp.springapplicationtemplate.TestcontainersConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,7 +25,8 @@ class AppuserRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        appuser = new Appuser("username", "password", AuthorityValue.APPLICATION);
+        appuser = new Appuser("username", "password");
+        appuser.getAuthoritiesScopeValues();
         appuserRepository.save(appuser);
     }
 
