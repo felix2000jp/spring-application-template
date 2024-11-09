@@ -35,8 +35,8 @@ class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/api/appusers/csrf").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/appusers").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/appusers/csrf").permitAll()
                         .anyRequest().hasAnyAuthority(
                                 "SCOPE_APPLICATION"
                         )
