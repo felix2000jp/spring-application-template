@@ -89,7 +89,22 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_3_notes_and_find_all_of_them_when_request_is_authenticated() {
+    void should_not_create_notes_when_request_is_not_authenticated() {
+        var createEntity = testRestTemplate.exchange(
+                "/api/notes",
+                HttpMethod.POST,
+                new HttpEntity<>(new CreateNoteDTO("title", "content")),
+                NoteDTO.class
+        );
+        var createEntityStatusCode = createEntity.getStatusCode().value();
+        var createEntityBody = createEntity.getBody();
+
+        assertThat(createEntityStatusCode).isEqualTo(401);
+        assertThat(createEntityBody).isNull();
+    }
+
+    @Test
+    void should_create_notes_and_find_all_of_them_when_request_is_authenticated() {
         createAndAssertNotes(3);
 
         var findAllEntity = testRestTemplate.exchange(
@@ -112,7 +127,24 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_note_and_update_its_contents_when_request_is_authenticated() {
+    void should_create_notes_and_fail_to_find_them_when_request_is_not_authenticated() {
+        createAndAssertNotes(3);
+
+        var findAllEntity = testRestTemplate.exchange(
+                "/api/notes",
+                HttpMethod.GET,
+                null,
+                NoteListDTO.class
+        );
+        var findAllEntityStatusCode = findAllEntity.getStatusCode().value();
+        var findAllEntityBody = findAllEntity.getBody();
+
+        assertThat(findAllEntityStatusCode).isEqualTo(401);
+        assertThat(findAllEntityBody).isNull();
+    }
+
+    @Test
+    void should_create_note_and_update_it_when_request_is_authenticated() {
         var createdNoteDTO = createAndAssertNotes(1).getFirst();
 
         var updateEntity = testRestTemplate.exchange(
@@ -127,6 +159,22 @@ class NoteControllerIntegrationTest {
         assertThat(updateEntityStatusCode).isEqualTo(204);
 
         findAndAssertNoteById(true, createdNoteDTO.id(), "new title", "new content");
+    }
+
+    @Test
+    void should_create_note_and_fail_to_update_it_when_request_is_not_authenticated() {
+        var createdNoteDTO = createAndAssertNotes(1).getFirst();
+
+        var updateEntity = testRestTemplate.exchange(
+                "/api/notes/{id}",
+                HttpMethod.PUT,
+                new HttpEntity<>(new UpdateNoteDTO("new title", "new content")),
+                Void.class,
+                createdNoteDTO.id()
+        );
+        var updateEntityStatusCode = updateEntity.getStatusCode().value();
+
+        assertThat(updateEntityStatusCode).isEqualTo(401);
     }
 
     @Test
@@ -145,6 +193,22 @@ class NoteControllerIntegrationTest {
         assertThat(deleteEntityStatusCode).isEqualTo(204);
 
         findAndAssertNoteById(false, createdNoteDTO.id(), null, null);
+    }
+
+    @Test
+    void should_create_note_and_fail_to_delete_it_when_request_is_not_authenticated() {
+        var createdNoteDTO = createAndAssertNotes(1).getFirst();
+
+        var deleteEntity = testRestTemplate.exchange(
+                "/api/notes/{id}",
+                HttpMethod.DELETE,
+                null,
+                Void.class,
+                createdNoteDTO.id()
+        );
+        var deleteEntityStatusCode = deleteEntity.getStatusCode().value();
+
+        assertThat(deleteEntityStatusCode).isEqualTo(401);
     }
 
     private List<NoteDTO> createAndAssertNotes(int numberOfNotesToCreate) {
