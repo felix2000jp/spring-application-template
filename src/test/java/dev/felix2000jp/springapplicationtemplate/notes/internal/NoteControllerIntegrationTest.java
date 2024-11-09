@@ -126,7 +126,7 @@ class NoteControllerIntegrationTest {
 
         assertThat(updateEntityStatusCode).isEqualTo(204);
 
-        findAndAssertNoteById(true, createdNoteDTO.id(), "new title", "new username");
+        findAndAssertNoteById(true, createdNoteDTO.id(), "new title", "new content");
     }
 
     @Test
