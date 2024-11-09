@@ -41,7 +41,6 @@ class SecurityConfig {
                                 "SCOPE_APPLICATION"
                         )
                 )
-                .csrf(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
                 .build();
