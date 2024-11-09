@@ -1,8 +1,8 @@
 package dev.felix2000jp.springapplicationtemplate.appusers.internal;
 
 import dev.felix2000jp.springapplicationtemplate.appusers.AppuserDeletedEvent;
+import dev.felix2000jp.springapplicationtemplate.appusers.AuthenticatedAppuser;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AuthenticatedAppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.CreateAppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.UpdateAppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.exceptions.AppuserBadRequestException;
@@ -57,7 +57,7 @@ public class AppuserService implements UserDetailsService {
                 .orElseThrow(AppuserNotFoundException::new);
     }
 
-    public AuthenticatedAppuserDTO getAuthenticatedAppuserDTO() {
+    public AuthenticatedAppuser getAuthenticatedAppuser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var principal = authentication.getPrincipal();
 
@@ -66,7 +66,7 @@ public class AppuserService implements UserDetailsService {
         }
 
         if (principal instanceof Jwt jwt) {
-            return new AuthenticatedAppuserDTO(
+            return new AuthenticatedAppuser(
                     UUID.fromString(jwt.getClaimAsString(ID_CLAIM_NAME)),
                     jwt.getSubject(),
                     Arrays.stream(jwt.getClaimAsString(SCOPE_CLAIM_NAME).split(" ")).collect(Collectors.toSet())
@@ -76,7 +76,7 @@ public class AppuserService implements UserDetailsService {
         throw new AppuserBadRequestException("Invalid authentication format");
     }
 
-    public AuthenticatedAppuserDTO verifyAuthenticatedAppuserDTO() {
+    public AuthenticatedAppuser verifyAuthenticatedAppuser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var principal = authentication.getPrincipal();
 
@@ -98,17 +98,17 @@ public class AppuserService implements UserDetailsService {
                 throw new AppuserBadRequestException("Token is not valid");
             }
 
-            return new AuthenticatedAppuserDTO(id, username, scope);
+            return new AuthenticatedAppuser(id, username, scope);
         }
 
         throw new AppuserBadRequestException("Invalid authentication format");
     }
 
     AppuserDTO find() {
-        var appuserDTO = getAuthenticatedAppuserDTO();
+        var authenticatedAppuser = getAuthenticatedAppuser();
 
         var appuser = appuserRepository
-                .findById(appuserDTO.id())
+                .findById(authenticatedAppuser.id())
                 .orElseThrow(AppuserNotFoundException::new);
 
         return appuserMapper.toDTO(appuser);
@@ -132,10 +132,10 @@ public class AppuserService implements UserDetailsService {
     }
 
     AppuserDTO update(UpdateAppuserDTO updateAppuserDTO) {
-        var appuserDTO = verifyAuthenticatedAppuserDTO();
+        var authenticatedAppuser = verifyAuthenticatedAppuser();
 
         var appuserToUpdate = appuserRepository
-                .findById(appuserDTO.id())
+                .findById(authenticatedAppuser.id())
                 .orElseThrow(AppuserNotFoundException::new);
 
         var newUsername = updateAppuserDTO.username();
@@ -157,10 +157,10 @@ public class AppuserService implements UserDetailsService {
     }
 
     AppuserDTO delete() {
-        var appuserDTO = verifyAuthenticatedAppuserDTO();
+        var authenticatedAppuser = verifyAuthenticatedAppuser();
 
         var userToDelete = appuserRepository
-                .findById(appuserDTO.id())
+                .findById(authenticatedAppuser.id())
                 .orElseThrow(AppuserNotFoundException::new);
 
         appuserRepository.delete(userToDelete);
@@ -172,16 +172,16 @@ public class AppuserService implements UserDetailsService {
     }
 
     String generateToken() {
-        var appuserDTO = getAuthenticatedAppuserDTO();
+        var authenticatedAppuser = getAuthenticatedAppuser();
 
         var now = Instant.now();
         var expiration = now.plus(12, ChronoUnit.HOURS);
 
         var claims = JwtClaimsSet.builder()
                 .issuer("self")
-                .subject(appuserDTO.username())
-                .claim(ID_CLAIM_NAME, appuserDTO.id().toString())
-                .claim(SCOPE_CLAIM_NAME, String.join(" ", appuserDTO.authorities()))
+                .subject(authenticatedAppuser.username())
+                .claim(ID_CLAIM_NAME, authenticatedAppuser.id().toString())
+                .claim(SCOPE_CLAIM_NAME, String.join(" ", authenticatedAppuser.authorities()))
                 .issuedAt(now)
                 .expiresAt(expiration)
                 .build();

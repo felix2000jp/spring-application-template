@@ -1,7 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.appusers;
 
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.AppuserService;
-import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AuthenticatedAppuserDTO;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,12 +12,12 @@ public class AppuserManagement {
         this.appuserService = appuserService;
     }
 
-    public AuthenticatedAppuserDTO getAuthenticatedAppuserDTO() {
-        return appuserService.getAuthenticatedAppuserDTO();
+    public AuthenticatedAppuser getAuthenticatedAppuser() {
+        return appuserService.getAuthenticatedAppuser();
     }
 
-    public AuthenticatedAppuserDTO verifyAuthenticatedAppuserDTO() {
-        return appuserService.verifyAuthenticatedAppuserDTO();
+    public AuthenticatedAppuser verifyAuthenticatedAppuser() {
+        return appuserService.verifyAuthenticatedAppuser();
     }
 
 }

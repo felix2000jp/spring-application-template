@@ -23,37 +23,41 @@ public class NoteService {
         this.appuserManagement = appuserManagement;
     }
 
-    NoteListDTO findAll() {
-        var appuserDTO = appuserManagement.getAuthenticatedAppuserDTO();
+    public void deleteAllByAppuserId(UUID id) {
+        noteRepository.deleteAllByAppuserId(id);
+    }
 
-        var notes = noteRepository.findByAppuserId(appuserDTO.id());
+    NoteListDTO findAll() {
+        var authenticatedAppuser = appuserManagement.getAuthenticatedAppuser();
+
+        var notes = noteRepository.findByAppuserId(authenticatedAppuser.id());
 
         return noteMapper.toDTO(notes);
     }
 
     NoteDTO find(UUID id) {
-        var appuserDTO = appuserManagement.getAuthenticatedAppuserDTO();
+        var authenticatedAppuser = appuserManagement.getAuthenticatedAppuser();
 
         var note = noteRepository
-                .findByIdAndAppuserId(id, appuserDTO.id())
+                .findByIdAndAppuserId(id, authenticatedAppuser.id())
                 .orElseThrow(NoteNotFoundException::new);
 
         return noteMapper.toDTO(note);
     }
 
     NoteDTO create(CreateNoteDTO createNoteDTO) {
-        var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
+        var authenticatedAppuser = appuserManagement.verifyAuthenticatedAppuser();
 
-        var newNote = new Note(createNoteDTO.title(), createNoteDTO.content(), appuserDTO.id());
+        var newNote = new Note(createNoteDTO.title(), createNoteDTO.content(), authenticatedAppuser.id());
         var noteSaved = noteRepository.save(newNote);
         return noteMapper.toDTO(noteSaved);
     }
 
     NoteDTO update(UUID noteId, UpdateNoteDTO updateNoteDTO) {
-        var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
+        var authenticatedAppuser = appuserManagement.verifyAuthenticatedAppuser();
 
         var noteToUpdate = noteRepository
-                .findByIdAndAppuserId(noteId, appuserDTO.id())
+                .findByIdAndAppuserId(noteId, authenticatedAppuser.id())
                 .orElseThrow(NoteNotFoundException::new);
 
         noteToUpdate.updateTitleAndContent(updateNoteDTO.title(), updateNoteDTO.content());
@@ -62,18 +66,14 @@ public class NoteService {
     }
 
     NoteDTO delete(UUID id) {
-        var appuserDTO = appuserManagement.verifyAuthenticatedAppuserDTO();
+        var authenticatedAppuser = appuserManagement.verifyAuthenticatedAppuser();
 
         var noteToDelete = noteRepository
-                .findByIdAndAppuserId(id, appuserDTO.id())
+                .findByIdAndAppuserId(id, authenticatedAppuser.id())
                 .orElseThrow(NoteNotFoundException::new);
 
         noteRepository.delete(noteToDelete);
         return noteMapper.toDTO(noteToDelete);
-    }
-
-    public void deleteAllByAppuserId(UUID id) {
-        noteRepository.deleteAllByAppuserId(id);
     }
 
 }

@@ -1,7 +1,7 @@
 package dev.felix2000jp.springapplicationtemplate.appusers.internal;
 
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AuthenticatedAppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.appusers.AuthenticatedAppuser;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.CreateAppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.UpdateAppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.exceptions.AppuserConflictException;
@@ -47,19 +47,19 @@ class AppuserServiceTest {
 
     private Appuser appuser;
     private AppuserDTO appuserDTO;
-    private AuthenticatedAppuserDTO authenticatedAppuserDTO;
+    private AuthenticatedAppuser authenticatedAppuser;
 
     @BeforeEach
     void setUp() {
         appuser = new Appuser(UUID.randomUUID(), "Username", "Password");
         appuser.addApplicationAuthority();
         appuserDTO = new AppuserDTO(appuser.getId(), appuser.getUsername(), appuser.getAuthoritiesScopeValues());
-        authenticatedAppuserDTO = new AuthenticatedAppuserDTO(appuserDTO.id(), appuserDTO.username(), appuserDTO.authorities());
+        authenticatedAppuser = new AuthenticatedAppuser(appuserDTO.id(), appuserDTO.username(), appuserDTO.authorities());
     }
 
     @Test
     void find_should_return_appuser_when_appuser_is_found() {
-        doReturn(authenticatedAppuserDTO).when(appuserService).getAuthenticatedAppuserDTO();
+        doReturn(authenticatedAppuser).when(appuserService).getAuthenticatedAppuser();
         when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.of(appuser));
 
         var actual = appuserService.find();
@@ -69,7 +69,7 @@ class AppuserServiceTest {
 
     @Test
     void find_should_throw_not_found_when_appuser_is_not_found() {
-        doReturn(authenticatedAppuserDTO).when(appuserService).getAuthenticatedAppuserDTO();
+        doReturn(authenticatedAppuser).when(appuserService).getAuthenticatedAppuser();
         when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.empty());
 
         var actual = catchThrowable(() -> appuserService.find());
@@ -104,7 +104,7 @@ class AppuserServiceTest {
     void update_should_return_appuser_when_username_and_password_are_updated() {
         var updateAppuserDTO = new UpdateAppuserDTO("new username", "new password");
 
-        doReturn(authenticatedAppuserDTO).when(appuserService).verifyAuthenticatedAppuserDTO();
+        doReturn(authenticatedAppuser).when(appuserService).verifyAuthenticatedAppuser();
         when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.of(appuser));
         when(appuserRepository.existsByUsername(updateAppuserDTO.username())).thenReturn(false);
         when(appuserRepository.save(any(Appuser.class))).thenReturn(appuser);
@@ -119,7 +119,7 @@ class AppuserServiceTest {
     void update_should_return_appuser_when_only_password_is_updated() {
         var updateAppuserDTO = new UpdateAppuserDTO(appuser.getUsername(), "new password");
 
-        doReturn(authenticatedAppuserDTO).when(appuserService).verifyAuthenticatedAppuserDTO();
+        doReturn(authenticatedAppuser).when(appuserService).verifyAuthenticatedAppuser();
         when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.of(appuser));
         when(appuserRepository.existsByUsername(updateAppuserDTO.username())).thenReturn(true);
         when(appuserRepository.save(any(Appuser.class))).thenReturn(appuser);
@@ -134,7 +134,7 @@ class AppuserServiceTest {
     void update_should_throw_not_found_when_appuser_is_not_found() {
         var updateAppuserDTO = new UpdateAppuserDTO(appuser.getUsername(), "new password");
 
-        doReturn(authenticatedAppuserDTO).when(appuserService).verifyAuthenticatedAppuserDTO();
+        doReturn(authenticatedAppuser).when(appuserService).verifyAuthenticatedAppuser();
         when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.empty());
 
         var actual = catchThrowable(() -> appuserService.update(updateAppuserDTO));
@@ -146,7 +146,7 @@ class AppuserServiceTest {
     void update_should_throw_conflict_when_new_username_already_exists() {
         var updateAppuserDTO = new UpdateAppuserDTO("new username", "new password");
 
-        doReturn(authenticatedAppuserDTO).when(appuserService).verifyAuthenticatedAppuserDTO();
+        doReturn(authenticatedAppuser).when(appuserService).verifyAuthenticatedAppuser();
         when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.of(appuser));
         when(appuserRepository.existsByUsername(updateAppuserDTO.username())).thenReturn(true);
 
@@ -157,7 +157,7 @@ class AppuserServiceTest {
 
     @Test
     void delete_should_return_appuser_when_appuser_is_deleted() {
-        doReturn(authenticatedAppuserDTO).when(appuserService).verifyAuthenticatedAppuserDTO();
+        doReturn(authenticatedAppuser).when(appuserService).verifyAuthenticatedAppuser();
         when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.of(appuser));
 
         var actual = appuserService.delete();
@@ -167,7 +167,7 @@ class AppuserServiceTest {
 
     @Test
     void delete_should_throw_not_found_when_appuser_is_not_found() {
-        doReturn(authenticatedAppuserDTO).when(appuserService).verifyAuthenticatedAppuserDTO();
+        doReturn(authenticatedAppuser).when(appuserService).verifyAuthenticatedAppuser();
         when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.empty());
 
         var actual = catchThrowable(() -> appuserService.delete());

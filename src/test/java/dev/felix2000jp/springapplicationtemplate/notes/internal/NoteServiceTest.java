@@ -1,7 +1,7 @@
 package dev.felix2000jp.springapplicationtemplate.notes.internal;
 
 import dev.felix2000jp.springapplicationtemplate.appusers.AppuserManagement;
-import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.AuthenticatedAppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.appusers.AuthenticatedAppuser;
 import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.CreateNoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.internal.dtos.NoteListDTO;
@@ -39,19 +39,19 @@ class NoteServiceTest {
 
     private Note note;
     private NoteDTO noteDTO;
-    private AuthenticatedAppuserDTO authenticatedAppuserDTO;
+    private AuthenticatedAppuser authenticatedAppuser;
 
     @BeforeEach
     void setUp() {
         note = new Note(UUID.randomUUID(), "title", "content", UUID.randomUUID());
         noteDTO = new NoteDTO(note.getId(), note.getTitle(), note.getContent());
-        authenticatedAppuserDTO = new AuthenticatedAppuserDTO(note.getAppuserId(), "username", Set.of("APPLICATION"));
+        authenticatedAppuser = new AuthenticatedAppuser(note.getAppuserId(), "username", Set.of("APPLICATION"));
     }
 
     @Test
     void findAll_should_return_notes_when_notes_are_found() {
-        when(appuserManagement.getAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        when(noteRepository.findByAppuserId(authenticatedAppuserDTO.id())).thenReturn(List.of(note));
+        when(appuserManagement.getAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
+        when(noteRepository.findByAppuserId(authenticatedAppuser.id())).thenReturn(List.of(note));
 
         var actual = noteService.findAll();
 
@@ -61,8 +61,8 @@ class NoteServiceTest {
 
     @Test
     void findAll_should_return_empty_when_notes_are_not_found() {
-        when(appuserManagement.getAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        when(noteRepository.findByAppuserId(authenticatedAppuserDTO.id())).thenReturn(List.of());
+        when(appuserManagement.getAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
+        when(noteRepository.findByAppuserId(authenticatedAppuser.id())).thenReturn(List.of());
 
         var actual = noteService.findAll();
 
@@ -72,8 +72,8 @@ class NoteServiceTest {
 
     @Test
     void findById_should_return_note_when_note_is_found() {
-        when(appuserManagement.getAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuserDTO.id())).thenReturn(Optional.of(note));
+        when(appuserManagement.getAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuser.id())).thenReturn(Optional.of(note));
 
         var actual = noteService.find(note.getId());
 
@@ -82,8 +82,8 @@ class NoteServiceTest {
 
     @Test
     void findById_should_throw_not_found_when_note_is_not_found() {
-        when(appuserManagement.getAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuserDTO.id())).thenReturn(Optional.empty());
+        when(appuserManagement.getAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuser.id())).thenReturn(Optional.empty());
 
         var actual = catchThrowable(() -> noteService.find(note.getId()));
 
@@ -92,7 +92,7 @@ class NoteServiceTest {
 
     @Test
     void create_should_return_note_when_note_is_created() {
-        when(appuserManagement.verifyAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
+        when(appuserManagement.verifyAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
         var createNoteDTO = new CreateNoteDTO(note.getTitle(), note.getContent());
 
         when(noteRepository.save(any(Note.class))).thenReturn(note);
@@ -104,10 +104,10 @@ class NoteServiceTest {
 
     @Test
     void update_should_return_note_when_note_is_updated() {
-        when(appuserManagement.verifyAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
+        when(appuserManagement.verifyAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
         var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
 
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuserDTO.id())).thenReturn(Optional.of(note));
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuser.id())).thenReturn(Optional.of(note));
         when(noteRepository.save(any(Note.class))).thenReturn(note);
 
         var actual = noteService.update(note.getId(), updateNoteDTO);
@@ -118,10 +118,10 @@ class NoteServiceTest {
 
     @Test
     void update_should_throw_not_found_when_note_is_not_found() {
-        when(appuserManagement.verifyAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
+        when(appuserManagement.verifyAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
         var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
 
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuserDTO.id())).thenReturn(Optional.empty());
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuser.id())).thenReturn(Optional.empty());
 
         var actual = catchThrowable(() -> noteService.update(note.getId(), updateNoteDTO));
 
@@ -130,8 +130,8 @@ class NoteServiceTest {
 
     @Test
     void delete_should_return_note_when_note_is_deleted() {
-        when(appuserManagement.verifyAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuserDTO.id())).thenReturn(Optional.of(note));
+        when(appuserManagement.verifyAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuser.id())).thenReturn(Optional.of(note));
 
         var actual = noteService.delete(note.getId());
 
@@ -140,8 +140,8 @@ class NoteServiceTest {
 
     @Test
     void delete_should_throw_not_found_when_note_is_not_found() {
-        when(appuserManagement.verifyAuthenticatedAppuserDTO()).thenReturn(authenticatedAppuserDTO);
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuserDTO.id())).thenReturn(Optional.empty());
+        when(appuserManagement.verifyAuthenticatedAppuser()).thenReturn(authenticatedAppuser);
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedAppuser.id())).thenReturn(Optional.empty());
 
         var actual = catchThrowable(() -> noteService.delete(note.getId()));
 
