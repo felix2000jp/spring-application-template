@@ -5,6 +5,7 @@ import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.CreateAp
 import dev.felix2000jp.springapplicationtemplate.appusers.internal.dtos.UpdateAppuserDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -42,6 +43,11 @@ class AppuserController {
     ResponseEntity<Void> delete() {
         appuserService.delete();
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/csrf")
+    ResponseEntity<CsrfToken> csrf(CsrfToken csrfToken) {
+        return ResponseEntity.ok(csrfToken);
     }
 
     @PostMapping("/token")

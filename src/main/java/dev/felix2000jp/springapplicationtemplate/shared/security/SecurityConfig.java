@@ -35,11 +35,13 @@ class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/api/appusers/csrf").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/appusers").permitAll()
                         .anyRequest().hasAnyAuthority(
                                 "SCOPE_APPLICATION"
                         )
                 )
+                .csrf(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
                 .build();
