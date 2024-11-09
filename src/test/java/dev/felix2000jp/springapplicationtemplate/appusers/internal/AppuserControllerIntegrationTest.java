@@ -28,12 +28,17 @@ class AppuserControllerIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
-    private static final HttpHeaders authenticatedHttpHeaders = new HttpHeaders();
+    private static final HttpHeaders authenticatedHeaders = new HttpHeaders();
 
     @Order(1)
     @Test
     void should_get_csrf_token() {
-        var csrfEntity = testRestTemplate.getForEntity("/api/appusers/csrf", DefaultCsrfToken.class);
+        var csrfEntity = testRestTemplate.exchange(
+                "/api/appusers/csrf",
+                HttpMethod.GET,
+                null,
+                DefaultCsrfToken.class
+        );
         var csrfEntityStatusCode = csrfEntity.getStatusCode().value();
         var csrfEntityBody = csrfEntity.getBody();
         var csrfEntityHeaders = csrfEntity.getHeaders();
@@ -42,16 +47,17 @@ class AppuserControllerIntegrationTest {
         assertThat(csrfEntityBody).isNotNull();
         assertThat(csrfEntityHeaders).isNotNull();
 
-        authenticatedHttpHeaders.addAll("Cookie", csrfEntityHeaders.getOrEmpty("SET-COOKIE"));
-        authenticatedHttpHeaders.add("X-Csrf-Token", csrfEntityBody.getToken());
+        authenticatedHeaders.addAll("Cookie", csrfEntityHeaders.getOrEmpty("SET-COOKIE"));
+        authenticatedHeaders.add("X-Csrf-Token", csrfEntityBody.getToken());
     }
 
     @Order(2)
     @Test
     void should_create_appuser_when_csrf_token_is_present() {
-        var createEntity = testRestTemplate.postForEntity(
+        var createEntity = testRestTemplate.exchange(
                 "/api/appusers",
-                new HttpEntity<>(new CreateAppuserDTO("username", "password"), authenticatedHttpHeaders),
+                HttpMethod.POST,
+                new HttpEntity<>(new CreateAppuserDTO("username", "password"), authenticatedHeaders),
                 AppuserDTO.class
         );
         var createEntityStatusCode = createEntity.getStatusCode().value();
@@ -66,14 +72,14 @@ class AppuserControllerIntegrationTest {
     void should_generate_bearer_token_when_csrf_token_is_present_and_credentials_are_correct() {
         var tokenEntity = testRestTemplate
                 .withBasicAuth("username", "password")
-                .postForEntity("/api/appusers/token", new HttpEntity<>(authenticatedHttpHeaders), String.class);
+                .exchange("/api/appusers/token", HttpMethod.POST, new HttpEntity<>(authenticatedHeaders), String.class);
         var tokenEntityStatusCode = tokenEntity.getStatusCode().value();
         var tokenEntityBody = tokenEntity.getBody();
 
         assertThat(tokenEntityStatusCode).isEqualTo(200);
         assertThat(tokenEntityBody).isNotNull();
 
-        authenticatedHttpHeaders.add("Authorization", "Bearer " + tokenEntityBody);
+        authenticatedHeaders.add("Authorization", "Bearer " + tokenEntityBody);
     }
 
     @Order(4)
@@ -82,7 +88,7 @@ class AppuserControllerIntegrationTest {
         var findEntity = testRestTemplate.exchange(
                 "/api/appusers",
                 HttpMethod.GET,
-                new HttpEntity<>(authenticatedHttpHeaders),
+                new HttpEntity<>(authenticatedHeaders),
                 AppuserDTO.class
         );
         var findEntityStatusCode = findEntity.getStatusCode().value();
@@ -109,7 +115,7 @@ class AppuserControllerIntegrationTest {
         var updateEntity = testRestTemplate.exchange(
                 "/api/appusers",
                 HttpMethod.PUT,
-                new HttpEntity<>(new UpdateAppuserDTO("username", "new password"), authenticatedHttpHeaders),
+                new HttpEntity<>(new UpdateAppuserDTO("username", "new password"), authenticatedHeaders),
                 Void.class
         );
         var updateEntityStatusCode = updateEntity.getStatusCode().value();
@@ -139,7 +145,7 @@ class AppuserControllerIntegrationTest {
         var deleteEntity = testRestTemplate.exchange(
                 "/api/appusers",
                 HttpMethod.DELETE,
-                new HttpEntity<>(authenticatedHttpHeaders),
+                new HttpEntity<>(authenticatedHeaders),
                 Void.class
         );
         var deleteEntityStatusCode = deleteEntity.getStatusCode().value();
