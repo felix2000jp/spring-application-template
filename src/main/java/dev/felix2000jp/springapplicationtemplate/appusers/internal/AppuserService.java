@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -164,6 +165,7 @@ public class AppuserService implements UserDetailsService {
         return appuserMapper.toDTO(appuserSaved);
     }
 
+    @Transactional
     AppuserDTO delete() {
         var authenticatedAppuser = verifyAuthenticatedAppuser();
 
