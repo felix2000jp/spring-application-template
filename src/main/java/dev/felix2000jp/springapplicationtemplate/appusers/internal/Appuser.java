@@ -35,6 +35,12 @@ public class Appuser implements UserDetails {
     public Appuser() {
     }
 
+    Appuser(UUID id, String username, String password) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+    }
+
     Appuser(String username, String password) {
         this.username = username;
         this.password = password;
