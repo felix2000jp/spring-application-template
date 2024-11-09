@@ -32,6 +32,13 @@ public class Note {
     public Note() {
     }
 
+    Note(UUID id, String title, String content, UUID appuserId) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.appuserId = appuserId;
+    }
+
     Note(String title, String content, UUID appuserId) {
         this.title = title;
         this.content = content;

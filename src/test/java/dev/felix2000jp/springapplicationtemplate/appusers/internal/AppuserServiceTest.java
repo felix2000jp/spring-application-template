@@ -53,7 +53,6 @@ class AppuserServiceTest {
     void setUp() {
         appuser = new Appuser(UUID.randomUUID(), "Username", "Password");
         appuser.addApplicationAuthority();
-
         appuserDTO = new AppuserDTO(appuser.getId(), appuser.getUsername(), appuser.getAuthoritiesScopeValues());
         authenticatedAppuserDTO = new AuthenticatedAppuserDTO(appuserDTO.id(), appuserDTO.username(), appuserDTO.authorities());
     }
