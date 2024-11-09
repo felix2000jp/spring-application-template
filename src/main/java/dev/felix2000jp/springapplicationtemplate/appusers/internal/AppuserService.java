@@ -62,7 +62,11 @@ public class AppuserService implements UserDetailsService {
         var principal = authentication.getPrincipal();
 
         if (principal instanceof Appuser appuser) {
-            return appuserMapper.toAuthenticatedDTO(appuser);
+            return new AuthenticatedAppuser(
+                    appuser.getId(),
+                    appuser.getUsername(),
+                    appuser.getAuthoritiesScopeValues()
+            );
         }
 
         if (principal instanceof Jwt jwt) {
@@ -81,7 +85,11 @@ public class AppuserService implements UserDetailsService {
         var principal = authentication.getPrincipal();
 
         if (principal instanceof Appuser appuser) {
-            return appuserMapper.toAuthenticatedDTO(appuser);
+            return new AuthenticatedAppuser(
+                    appuser.getId(),
+                    appuser.getUsername(),
+                    appuser.getAuthoritiesScopeValues()
+            );
         }
 
         if (principal instanceof Jwt jwt) {
