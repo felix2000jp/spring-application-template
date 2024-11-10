@@ -10,16 +10,19 @@ architecture click on this [link](https://spring.io/projects/spring-modulith).
 
 ## Authentication
 
-This template has 2 different type of authentication: endpoints starting with `/app` use basic authentication (username
-and password) while endpoints starting with `/api` use bearer token authentication (JWT).
+This template has 2 different type of authentication: basic authentication (username and password) and bearer token
+authentication (JWT).
 
-For the basic authentication I have implemented custom UserDetails, UserDetailsService and GrantedAuthority classes.
-This classes can be updated to accommodate different needs. For password encoding this template uses BCrypt.
+The module `appusers` is where everything related to authentication and authorization is (except for the actual security
+configuration). I have implemented custom UserDetails, UserDetailsService and GrantedAuthority classes. This classes can
+be updated to accommodate different needs. For password encoding this template uses BCrypt.
 
-For the bearer token authentication I have created a custom token converter in order to convert the principal (which by
-default is an object of type `JWT`) to an object of type `AppuserPrincipal`. This authentication type requires a public
-and private secrets/keys in order to decode and encode the tokens. I have already generated the keys which are located
-in **resources/certificates**. To generate new keys follow these steps:
+I have also created methods to convert the principals (either `Appuser` from basic auth and `Jwt` from bearer token
+auth) into the more readable type of `AuthenticatedAppuser`.
+
+Also, Jwt authentication type requires a public and private secrets/keys in order to decode and encode the tokens. I
+have already generated the keys which are located in **resources/certificates**. To generate new keys follow these
+steps:
 
 ```
 # create rsa key pair
