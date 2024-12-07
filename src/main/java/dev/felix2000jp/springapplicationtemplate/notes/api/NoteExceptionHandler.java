@@ -1,6 +1,6 @@
-package dev.felix2000jp.springapplicationtemplate.notes.internal.web;
+package dev.felix2000jp.springapplicationtemplate.notes.api;
 
-import dev.felix2000jp.springapplicationtemplate.notes.internal.exceptions.NoteNotFoundException;
+import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @RestControllerAdvice
-class NoteExceptionHandler extends ResponseEntityExceptionHandler {
+public class NoteExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(NoteExceptionHandler.class);
 
