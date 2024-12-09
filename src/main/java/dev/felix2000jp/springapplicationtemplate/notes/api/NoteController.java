@@ -26,13 +26,13 @@ class NoteController {
     }
 
     @GetMapping
-    ResponseEntity<NoteListDTO> getNotes(@RequestParam @Min(0) int page) {
+    ResponseEntity<NoteListDTO> getByPage(@RequestParam @Min(0) int page) {
         var body = noteService.getByAppuser(page);
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<NoteDTO> getNoteById(@PathVariable UUID id) {
+    ResponseEntity<NoteDTO> getById(@PathVariable UUID id) {
         var body = noteService.getByIdAndAppuser(id);
         return ResponseEntity.ok(body);
     }
