@@ -39,7 +39,7 @@ public class NoteService {
         return noteMapper.toDTO(note);
     }
 
-    public NoteDTO create(CreateNoteDTO createNoteDTO) {
+    public NoteDTO createByAppuser(CreateNoteDTO createNoteDTO) {
         var appuserId = UUID.randomUUID();
 
         var noteToCreate = new Note(appuserId, createNoteDTO.title(), createNoteDTO.content());
@@ -48,7 +48,7 @@ public class NoteService {
         return noteMapper.toDTO(noteToCreate);
     }
 
-    public NoteDTO update(UUID noteId, UpdateNoteDTO updateNoteDTO) {
+    public NoteDTO updateByAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO) {
         var appuserId = UUID.randomUUID();
 
         var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);

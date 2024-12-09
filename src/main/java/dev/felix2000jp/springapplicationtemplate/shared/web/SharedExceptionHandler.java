@@ -1,5 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.shared.web;
 
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 class SharedExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(SharedExceptionHandler.class);
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ProblemDetail> handleConstraintViolationException(ConstraintViolationException ex) {
+        var problemDetails = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+
+        log.warn(ex.getMessage(), ex);
+        return ResponseEntity.of(problemDetails).build();
+    }
 
     @ExceptionHandler(Throwable.class)
     ResponseEntity<ProblemDetail> handleThrowable(Throwable ex) {

@@ -82,7 +82,7 @@ class NoteServiceTest {
     void should_create_note_with_title_and_content_from_dto() {
         var createNoteDTO = new CreateNoteDTO("title", "content");
 
-        var actual = noteService.create(createNoteDTO);
+        var actual = noteService.createByAppuser(createNoteDTO);
 
         assertEquals("title", actual.title());
         assertEquals("content", actual.content());
@@ -95,7 +95,7 @@ class NoteServiceTest {
 
         when(noteRepository.getByIdAndAppuserId(eq(note.getId()), any())).thenReturn(note);
 
-        var actual = noteService.update(note.getId(), updateNoteDTO);
+        var actual = noteService.updateByAppuser(note.getId(), updateNoteDTO);
 
         assertEquals("new title", actual.title());
         assertEquals("new content", actual.content());
@@ -109,7 +109,7 @@ class NoteServiceTest {
         when(noteRepository.getByIdAndAppuserId(eq(note.getId()), any())).thenReturn(null);
 
         var noteId = note.getId();
-        assertThrows(NoteNotFoundException.class, () -> noteService.update(noteId, updateNoteDTO));
+        assertThrows(NoteNotFoundException.class, () -> noteService.updateByAppuser(noteId, updateNoteDTO));
     }
 
     @Test
