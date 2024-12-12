@@ -2,6 +2,9 @@ package dev.felix2000jp.springapplicationtemplate.notes.infrastructure;
 
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -13,8 +16,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @DataJpaTest
 @Testcontainers
@@ -85,6 +90,7 @@ class NoteRepositoryImplTest {
         entityManager.persistAndFlush(note);
 
         noteRepository.deleteById(note.getId());
+        entityManager.flush();
 
         var actual = entityManager.find(Note.class, note.getId());
         assertNull(actual);
@@ -93,7 +99,10 @@ class NoteRepositoryImplTest {
     @Test
     @Transactional
     void should_not_throw_when_trying_to_delete_note_with_id_when_note_does_not_exist() {
-        assertDoesNotThrow(() -> noteRepository.deleteById(UUID.randomUUID()));
+        assertDoesNotThrow(() -> {
+            noteRepository.deleteById(UUID.randomUUID());
+            entityManager.flush();
+        });
     }
 
     @Test
@@ -107,6 +116,7 @@ class NoteRepositoryImplTest {
         entityManager.persistAndFlush(note2);
 
         noteRepository.deleteByAppuserId(appuserId);
+        entityManager.flush();
 
         var actual1 = entityManager.find(Note.class, note1.getId());
         var actual2 = entityManager.find(Note.class, note2.getId());
@@ -117,7 +127,10 @@ class NoteRepositoryImplTest {
     @Test
     @Transactional
     void should_not_throw_when_trying_to_delete_notes_from_appuser_with_id_and_notes_do_not_exist() {
-        assertDoesNotThrow(() -> noteRepository.deleteByAppuserId(UUID.randomUUID()));
+        assertDoesNotThrow(() -> {
+            noteRepository.deleteByAppuserId(UUID.randomUUID());
+            entityManager.flush();
+        });
     }
 
     @Test
@@ -126,9 +139,33 @@ class NoteRepositoryImplTest {
         var note = new Note(UUID.randomUUID(), "title 1", "content 1");
 
         noteRepository.save(note);
+        entityManager.flush();
 
         var noteFound = entityManager.find(Note.class, note.getId());
         assertNotNull(noteFound);
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    @Transactional
+    void should_fail_to_save_note_when_note_data_is_invalid(Note note) {
+        assertThrows(Exception.class, () -> {
+            noteRepository.save(note);
+            entityManager.flush();
+        });
+    }
+
+    private static Stream<Arguments> should_fail_to_save_note_when_note_data_is_invalid() {
+        return Stream.of(
+                arguments(new Note()),
+                arguments(new Note(null, "title", "content")),
+                arguments(new Note(UUID.randomUUID(), null, "content")),
+                arguments(new Note(UUID.randomUUID(), "", "content")),
+                arguments(new Note(UUID.randomUUID(), " ", "content")),
+                arguments(new Note(UUID.randomUUID(), "title", null)),
+                arguments(new Note(UUID.randomUUID(), "title", "")),
+                arguments(new Note(UUID.randomUUID(), "title", " "))
+        );
     }
 
 }
