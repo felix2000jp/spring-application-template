@@ -33,4 +33,5 @@ class AppuserDeletedEventHandlerTest {
         verify(noteService).deleteByAppuserId(uuidCaptor.capture());
         assertEquals(appuserId, uuidCaptor.getValue());
     }
+
 }

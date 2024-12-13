@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class NoteMapperTest {
 
     @InjectMocks
-    private NoteMapper noteMapper = new NoteMapper();
+    private NoteMapper noteMapper;
 
     @Test
     void should_map_note_to_noteDTO_successfully() {
