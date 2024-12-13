@@ -2,7 +2,6 @@ package dev.felix2000jp.springapplicationtemplate.notes.infrastructure;
 
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import jakarta.persistence.EntityManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -34,13 +33,6 @@ class NoteRepositoryImplTest {
     private EntityManager entityManager;
     @Autowired
     private NoteRepositoryImpl noteRepository;
-
-    @BeforeEach
-    void setUp() {
-        entityManager
-                .createNativeQuery("TRUNCATE TABLE note")
-                .executeUpdate();
-    }
 
     @Test
     void should_find_notes_from_appuser_with_appuserId_when_page_is_not_empty() {
