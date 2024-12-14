@@ -1,6 +1,8 @@
 package dev.felix2000jp.springapplicationtemplate.notes.infrastructure;
 
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -34,36 +36,42 @@ class NoteRepositoryImplTest {
     @Autowired
     private NoteRepositoryImpl noteRepository;
 
+    private Note note;
+
+    @BeforeEach
+    void setUp() {
+        note = new Note(UUID.randomUUID(), "title", "content");
+        testEntityManager.persistAndFlush(note);
+
+        testEntityManager.clear();
+    }
+
+    @AfterEach
+    void tearDown() {
+        testEntityManager.clear();
+
+        testEntityManager
+                .getEntityManager()
+                .createNativeQuery("TRUNCATE TABLE note")
+                .executeUpdate();
+    }
+
     @Test
     void should_find_notes_from_appuser_with_appuserId_when_page_is_not_empty() {
-        var appuserId = UUID.randomUUID();
-
-        testEntityManager.persistAndFlush(new Note(appuserId, "title 1", "content 1"));
-        testEntityManager.persistAndFlush(new Note(appuserId, "title 2", "content 2"));
-
-        var actual = noteRepository.getByAppuserId(appuserId, 0);
+        var actual = noteRepository.getByAppuserId(note.getAppuserId(), 0);
 
         assertFalse(actual.isEmpty());
     }
 
     @Test
     void should_not_find_notes_from_appuser_with_appuserId_when_page_is_empty() {
-        var appuserId = UUID.randomUUID();
-
-        testEntityManager.persistAndFlush(new Note(appuserId, "title 1", "content 1"));
-        testEntityManager.persistAndFlush(new Note(appuserId, "title 2", "content 2"));
-
-        var actual = noteRepository.getByAppuserId(appuserId, 1);
+        var actual = noteRepository.getByAppuserId(note.getAppuserId(), 1);
 
         assertTrue(actual.isEmpty());
     }
 
     @Test
     void should_find_note_with_id_from_appuser_with_appuserId_when_note_exists() {
-        var note = new Note(UUID.randomUUID(), "title", "content");
-
-        testEntityManager.persistAndFlush(note);
-
         var actual = noteRepository.getByIdAndAppuserId(note.getId(), note.getAppuserId());
 
         assertNotNull(actual);
@@ -71,22 +79,20 @@ class NoteRepositoryImplTest {
 
     @Test
     void should_not_find_note_with_id_from_appuser_with_appuserId_when_note_does_not_exist() {
-        var note = new Note(UUID.randomUUID(), "title", "content");
+        var notPersistedNote = new Note(UUID.randomUUID(), "title", "content");
 
-        var actual = noteRepository.getByIdAndAppuserId(note.getId(), note.getAppuserId());
+        var actual = noteRepository.getByIdAndAppuserId(notPersistedNote.getId(), note.getAppuserId());
 
         assertNull(actual);
     }
 
     @Test
     void should_delete_note_with_id_when_note_exists() {
-        var note = new Note(UUID.randomUUID(), "title", "content");
-
-        testEntityManager.persistAndFlush(note);
-
         noteRepository.deleteById(note.getId());
+
         testEntityManager.flush();
-        
+        testEntityManager.clear();
+
         assertNull(testEntityManager.find(Note.class, note.getId()));
     }
 
@@ -100,18 +106,12 @@ class NoteRepositoryImplTest {
 
     @Test
     void should_delete_notes_from_appuser_with_id_when_notes_exist() {
-        var appuserId = UUID.randomUUID();
-        var note1 = new Note(appuserId, "title", "content");
-        var note2 = new Note(appuserId, "title", "content");
+        noteRepository.deleteByAppuserId(note.getAppuserId());
 
-        testEntityManager.persistAndFlush(note1);
-        testEntityManager.persistAndFlush(note2);
-
-        noteRepository.deleteByAppuserId(appuserId);
         testEntityManager.flush();
+        testEntityManager.clear();
 
-        assertNull(testEntityManager.find(Note.class, note1.getId()));
-        assertNull(testEntityManager.find(Note.class, note2.getId()));
+        assertNull(testEntityManager.find(Note.class, note.getId()));
     }
 
     @Test
@@ -124,19 +124,21 @@ class NoteRepositoryImplTest {
 
     @Test
     void should_save_note_successfully() {
-        var note = new Note(UUID.randomUUID(), "title 1", "content 1");
+        var noteToCreate = new Note(UUID.randomUUID(), "title 1", "content 1");
 
-        noteRepository.save(note);
+        noteRepository.save(noteToCreate);
+
         testEntityManager.flush();
+        testEntityManager.clear();
 
-        assertNotNull(testEntityManager.find(Note.class, note.getId()));
+        assertNotNull(testEntityManager.find(Note.class, noteToCreate.getId()));
     }
 
     @ParameterizedTest
     @MethodSource
-    void should_fail_to_save_note_when_note_data_is_invalid(Note note) {
+    void should_fail_to_save_note_when_note_data_is_invalid(Note noteToCreate) {
         assertThrows(Exception.class, () -> {
-            noteRepository.save(note);
+            noteRepository.save(noteToCreate);
             testEntityManager.flush();
         });
     }
