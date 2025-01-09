@@ -3,6 +3,7 @@ package dev.felix2000jp.springapplicationtemplate.shared.security;
 import dev.felix2000jp.springapplicationtemplate.shared.AuthenticatedUser;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -22,9 +23,11 @@ class SecurityServiceImpl implements SecurityService {
     private static final String SCOPE_CLAIM_NAME = "scope";
 
     private final JwtEncoder jwtEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    SecurityServiceImpl(final JwtEncoder jwtEncoder) {
+    SecurityServiceImpl(final JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder) {
         this.jwtEncoder = jwtEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -42,6 +45,11 @@ class SecurityServiceImpl implements SecurityService {
                 .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+    }
+
+    @Override
+    public String generateEncodedPassword(String password) {
+        return passwordEncoder.encode(password);
     }
 
     @Override

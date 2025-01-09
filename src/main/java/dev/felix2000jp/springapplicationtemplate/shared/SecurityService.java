@@ -4,6 +4,8 @@ public interface SecurityService {
 
     String generateToken(String subject, String idClaimValue, String scopeClaimValue);
 
+    String generateEncodedPassword(String password);
+
     AuthenticatedUser getAuthenticatedUser();
 
 }
