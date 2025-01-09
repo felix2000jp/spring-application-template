@@ -7,6 +7,7 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNo
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -16,20 +17,22 @@ public class NoteService {
 
     private final NoteRepository noteRepository;
     private final NoteMapper noteMapper;
+    private final SecurityService securityService;
 
-    NoteService(NoteRepository noteRepository, NoteMapper noteMapper) {
+    NoteService(NoteRepository noteRepository, NoteMapper noteMapper, SecurityService securityService) {
         this.noteRepository = noteRepository;
         this.noteMapper = noteMapper;
+        this.securityService = securityService;
     }
 
     public NoteListDTO getByAppuser(int pageNumber) {
-        var appuserId = UUID.randomUUID();
+        var appuserId = securityService.getAuthenticatedUser().id();
         var notes = noteRepository.getByAppuserId(appuserId, pageNumber);
         return noteMapper.toDTO(notes);
     }
 
     public NoteDTO getByIdAndAppuser(UUID id) {
-        var appuserId = UUID.randomUUID();
+        var appuserId = securityService.getAuthenticatedUser().id();
         var note = noteRepository.getByIdAndAppuserId(id, appuserId);
 
         if (note == null) {
@@ -40,7 +43,7 @@ public class NoteService {
     }
 
     public NoteDTO createByAppuser(CreateNoteDTO createNoteDTO) {
-        var appuserId = UUID.randomUUID();
+        var appuserId = securityService.getAuthenticatedUser().id();
 
         var noteToCreate = new Note(appuserId, createNoteDTO.title(), createNoteDTO.content());
         noteRepository.save(noteToCreate);
@@ -49,7 +52,7 @@ public class NoteService {
     }
 
     public NoteDTO updateByAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO) {
-        var appuserId = UUID.randomUUID();
+        var appuserId = securityService.getAuthenticatedUser().id();
 
         var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);
 
@@ -65,7 +68,7 @@ public class NoteService {
     }
 
     public NoteDTO deleteByIdAndAppuser(UUID id) {
-        var appuserId = UUID.randomUUID();
+        var appuserId = securityService.getAuthenticatedUser().id();
         var noteToDelete = noteRepository.getByIdAndAppuserId(id, appuserId);
 
         if (noteToDelete == null) {
