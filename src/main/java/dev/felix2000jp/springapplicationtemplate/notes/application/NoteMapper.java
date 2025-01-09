@@ -3,11 +3,11 @@ package dev.felix2000jp.springapplicationtemplate.notes.application;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component
 class NoteMapper {
 
     NoteDTO toDTO(Note note) {

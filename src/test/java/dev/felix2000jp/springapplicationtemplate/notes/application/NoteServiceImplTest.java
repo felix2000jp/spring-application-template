@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class NoteServiceTest {
+class NoteServiceImplTest {
 
     @Mock
     private NoteRepository noteRepository;
@@ -32,7 +32,7 @@ class NoteServiceTest {
     @Mock
     private SecurityService securityService;
     @InjectMocks
-    private NoteService noteService;
+    private NoteServiceImpl noteService;
 
     @Test
     void should_get_notes_from_logged_in_appuser_when_notes_exist() {
