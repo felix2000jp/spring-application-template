@@ -41,13 +41,13 @@ public class Appuser implements UserDetails {
         this.authorities = new HashSet<>();
     }
 
+    public UUID getId() {
+        return id;
+    }
+
     @Override
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     @Override
@@ -55,13 +55,17 @@ public class Appuser implements UserDetails {
         return password;
     }
 
+    @Override
+    public Set<AppuserAuthority> getAuthorities() {
+        return authorities;
+    }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    @Override
-    public Set<AppuserAuthority> getAuthorities() {
-        return authorities;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void addApplicationScope() {
