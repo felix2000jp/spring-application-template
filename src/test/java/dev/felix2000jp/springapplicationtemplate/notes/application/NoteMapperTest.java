@@ -24,7 +24,7 @@ class NoteMapperTest {
     }
 
     @Test
-    void should_map_note_to_noteListDTO_successfully() {
+    void should_map_notes_to_noteListDTO_successfully() {
         var notes = List.of(new Note(UUID.randomUUID(), "title", "content"));
 
         var actual = noteMapper.toDTO(notes);
