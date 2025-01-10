@@ -12,6 +12,7 @@ import java.util.UUID;
 class NoteRepositoryImpl implements NoteRepository {
 
     private static final int PAGE_SIZE = 50;
+
     private final NoteJPARepository noteJPARepository;
 
     NoteRepositoryImpl(NoteJPARepository noteJPARepository) {
