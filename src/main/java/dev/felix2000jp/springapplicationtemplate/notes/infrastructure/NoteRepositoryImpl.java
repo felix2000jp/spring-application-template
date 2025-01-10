@@ -12,38 +12,38 @@ import java.util.UUID;
 class NoteRepositoryImpl implements NoteRepository {
 
     private static final int PAGE_SIZE = 50;
-    private final NoteJpaRepository noteJpaRepository;
+    private final NoteJPARepository noteJPARepository;
 
-    NoteRepositoryImpl(NoteJpaRepository noteJpaRepository) {
-        this.noteJpaRepository = noteJpaRepository;
+    NoteRepositoryImpl(NoteJPARepository noteJPARepository) {
+        this.noteJPARepository = noteJPARepository;
     }
 
     @Override
     public List<Note> getByAppuserId(UUID appuserId, int pageNumber) {
         var pageable = PageRequest.of(pageNumber, PAGE_SIZE);
-        var page = noteJpaRepository.findByAppuserId(appuserId, pageable);
+        var page = noteJPARepository.findByAppuserId(appuserId, pageable);
         return page.getContent();
     }
 
     @Override
     public Note getByIdAndAppuserId(UUID id, UUID appuserId) {
-        var optionalNote = noteJpaRepository.findByIdAndAppuserId(id, appuserId);
+        var optionalNote = noteJPARepository.findByIdAndAppuserId(id, appuserId);
         return optionalNote.orElse(null);
     }
 
     @Override
     public void deleteById(UUID id) {
-        noteJpaRepository.deleteById(id);
+        noteJPARepository.deleteById(id);
     }
 
     @Override
     public void deleteByAppuserId(UUID appuserId) {
-        noteJpaRepository.deleteAllByAppuserId(appuserId);
+        noteJPARepository.deleteAllByAppuserId(appuserId);
     }
 
     @Override
     public void save(Note note) {
-        noteJpaRepository.save(note);
+        noteJPARepository.save(note);
     }
 
 }
