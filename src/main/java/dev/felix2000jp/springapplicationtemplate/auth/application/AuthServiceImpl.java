@@ -34,7 +34,7 @@ class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String login() {
+    public String generateToken() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var userDetails = (Appuser) authentication.getPrincipal();
 

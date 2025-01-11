@@ -16,11 +16,7 @@ class AppuserServiceImpl implements AppuserService {
     private final AppuserMapper appuserMapper;
     private final SecurityClient securityClient;
 
-    AppuserServiceImpl(
-            AppuserRepository appuserRepository,
-            AppuserMapper appuserMapper,
-            SecurityClient securityClient
-    ) {
+    AppuserServiceImpl(AppuserRepository appuserRepository, AppuserMapper appuserMapper, SecurityClient securityClient) {
         this.appuserRepository = appuserRepository;
         this.appuserMapper = appuserMapper;
         this.securityClient = securityClient;

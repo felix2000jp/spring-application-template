@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AuthService extends UserDetailsService {
 
-    String login();
+    String generateToken();
 
     void createAppuser(CreateAppuserDTO createAppuserDTO);
 
