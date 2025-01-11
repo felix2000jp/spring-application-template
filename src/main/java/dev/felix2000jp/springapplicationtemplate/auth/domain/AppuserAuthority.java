@@ -12,10 +12,6 @@ import java.util.UUID;
 @Entity
 public class AppuserAuthority implements GrantedAuthority {
 
-    public enum Values {
-        APPLICATION
-    }
-
     @Id
     @NotNull
     private UUID id;
