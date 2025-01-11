@@ -37,7 +37,9 @@ class NoteServiceImpl implements NoteService {
         var appuserId = securityClient.getUser().id();
 
         var note = noteRepository.getByIdAndAppuserId(id, appuserId);
-        if (note == null) throw new NoteNotFoundException();
+        if (note == null) {
+            throw new NoteNotFoundException();
+        }
 
         return noteMapper.toDTO(note);
     }
@@ -57,7 +59,9 @@ class NoteServiceImpl implements NoteService {
         var appuserId = securityClient.getUser().id();
 
         var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);
-        if (noteToUpdate == null) throw new NoteNotFoundException();
+        if (noteToUpdate == null) {
+            throw new NoteNotFoundException();
+        }
 
         noteToUpdate.setTitle(updateNoteDTO.title());
         noteToUpdate.setContent(updateNoteDTO.content());
@@ -71,7 +75,9 @@ class NoteServiceImpl implements NoteService {
         var appuserId = securityClient.getUser().id();
 
         var noteToDelete = noteRepository.getByIdAndAppuserId(id, appuserId);
-        if (noteToDelete == null) throw new NoteNotFoundException();
+        if (noteToDelete == null) {
+            throw new NoteNotFoundException();
+        }
 
         noteRepository.deleteById(noteToDelete.getId());
         return noteMapper.toDTO(noteToDelete);

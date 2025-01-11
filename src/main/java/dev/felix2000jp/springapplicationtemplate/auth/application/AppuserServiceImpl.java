@@ -4,6 +4,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDT
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDTO;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springapplicationtemplate.core.SecurityClient;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,9 @@ class AppuserServiceImpl implements AppuserService {
         var user = securityClient.getUser();
 
         var appuser = appuserRepository.getById(user.id());
-        if (appuser == null) throw new AppuserNotFoundException();
+        if (appuser == null) {
+            throw new AppuserNotFoundException();
+        }
 
         return appuserMapper.toDTO(appuser);
     }
@@ -46,7 +49,15 @@ class AppuserServiceImpl implements AppuserService {
         var user = securityClient.getUser();
 
         var appuserToUpdate = appuserRepository.getById(user.id());
-        if (appuserToUpdate == null) throw new AppuserNotFoundException();
+        if (appuserToUpdate == null) {
+            throw new AppuserNotFoundException();
+        }
+
+        var isUsernameNew = updateAppuserDTO.username().equals(appuserToUpdate.getUsername());
+        var doesUsernameExist = appuserRepository.existsByUsername(updateAppuserDTO.username());
+        if (isUsernameNew && doesUsernameExist) {
+            throw new AppuserAlreadyExistsException();
+        }
 
         appuserToUpdate.setUsername(updateAppuserDTO.username());
         appuserRepository.save(appuserToUpdate);
@@ -59,7 +70,9 @@ class AppuserServiceImpl implements AppuserService {
         var user = securityClient.getUser();
 
         var appuserToDelete = appuserRepository.getById(user.id());
-        if (appuserToDelete == null) throw new AppuserNotFoundException();
+        if (appuserToDelete == null) {
+            throw new AppuserNotFoundException();
+        }
 
         appuserRepository.deleteById(appuserToDelete.getId());
         return appuserMapper.toDTO(appuserToDelete);
