@@ -25,7 +25,6 @@ class AuthClientImpl implements AuthClient {
     private final PasswordEncoder passwordEncoder;
 
     AuthClientImpl(JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder) {
-
         this.jwtEncoder = jwtEncoder;
         this.passwordEncoder = passwordEncoder;
     }
