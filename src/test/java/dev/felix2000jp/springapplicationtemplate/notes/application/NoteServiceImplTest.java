@@ -1,12 +1,11 @@
 package dev.felix2000jp.springapplicationtemplate.notes.application;
 
+import dev.felix2000jp.springapplicationtemplate.auth.AuthClient;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.AuthenticatedUser;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,16 +29,16 @@ class NoteServiceImplTest {
     @Spy
     private NoteMapper noteMapper;
     @Mock
-    private SecurityService securityService;
+    private AuthClient authClient;
     @InjectMocks
     private NoteServiceImpl noteService;
 
     @Test
     void should_get_notes_from_logged_in_appuser_when_notes_exist() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of(note));
 
         var actual = noteService.getByAppuser(0);
@@ -53,9 +52,9 @@ class NoteServiceImplTest {
 
     @Test
     void should_not_get_notes_from_logged_in_appuser_when_notes_do_not_exist() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of());
 
         var actual = noteService.getByAppuser(0);
@@ -65,10 +64,10 @@ class NoteServiceImplTest {
 
     @Test
     void should_get_note_with_id_from_logged_in_appuser_when_note_exists() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(note);
 
         var actual = noteService.getByIdAndAppuser(note.getId());
@@ -80,10 +79,10 @@ class NoteServiceImplTest {
 
     @Test
     void should_not_get_note_with_id_from_logged_in_appuser_when_note_does_not_exist() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(null);
 
         var noteId = note.getId();
@@ -92,10 +91,10 @@ class NoteServiceImplTest {
 
     @Test
     void should_create_note_with_title_and_content_from_dto() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var createNoteDTO = new CreateNoteDTO("title", "content");
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
 
         var actual = noteService.createByAppuser(createNoteDTO);
 
@@ -105,11 +104,11 @@ class NoteServiceImplTest {
 
     @Test
     void should_update_note_with_title_and_content_from_dto() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(note);
 
         var actual = noteService.updateByAppuser(note.getId(), updateNoteDTO);
@@ -120,11 +119,11 @@ class NoteServiceImplTest {
 
     @Test
     void should_throw_when_note_to_update_with_title_and_content_from_dto_is_not_found() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(null);
 
         var noteId = note.getId();
@@ -133,10 +132,10 @@ class NoteServiceImplTest {
 
     @Test
     void should_delete_note_with_id_when_note_exists() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(note);
 
         var actual = noteService.deleteByIdAndAppuser(note.getId());
@@ -148,10 +147,10 @@ class NoteServiceImplTest {
 
     @Test
     void should_throw_when_deleting_note_with_id_is_not_found() {
-        var authenticatedUser = new AuthenticatedUser(UUID.randomUUID(), "username", Set.of("Application"));
+        var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(securityService.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(null);
 
         var noteId = note.getId();
