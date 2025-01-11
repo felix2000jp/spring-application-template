@@ -38,7 +38,7 @@ class NoteServiceImplTest {
         var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of(note));
 
         var actual = noteService.getByAppuser(0);
@@ -54,7 +54,7 @@ class NoteServiceImplTest {
     void should_not_get_notes_from_logged_in_appuser_when_notes_do_not_exist() {
         var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of());
 
         var actual = noteService.getByAppuser(0);
@@ -67,7 +67,7 @@ class NoteServiceImplTest {
         var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(note);
 
         var actual = noteService.getByIdAndAppuser(note.getId());
@@ -82,7 +82,7 @@ class NoteServiceImplTest {
         var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(null);
 
         var noteId = note.getId();
@@ -94,7 +94,7 @@ class NoteServiceImplTest {
         var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var createNoteDTO = new CreateNoteDTO("title", "content");
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
 
         var actual = noteService.createByAppuser(createNoteDTO);
 
@@ -108,7 +108,7 @@ class NoteServiceImplTest {
         var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(note);
 
         var actual = noteService.updateByAppuser(note.getId(), updateNoteDTO);
@@ -123,7 +123,7 @@ class NoteServiceImplTest {
         var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(null);
 
         var noteId = note.getId();
@@ -135,7 +135,7 @@ class NoteServiceImplTest {
         var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(note);
 
         var actual = noteService.deleteByIdAndAppuser(note.getId());
@@ -150,7 +150,7 @@ class NoteServiceImplTest {
         var authenticatedUser = new AuthClient.AuthUser(UUID.randomUUID(), "username", Set.of("Application"));
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(authClient.getAuthenticatedUser()).thenReturn(authenticatedUser);
+        when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(null);
 
         var noteId = note.getId();

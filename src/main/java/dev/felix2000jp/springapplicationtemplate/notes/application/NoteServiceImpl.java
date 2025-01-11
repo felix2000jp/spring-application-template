@@ -27,14 +27,14 @@ class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteListDTO getByAppuser(int pageNumber) {
-        var appuserId = authClient.getAuthenticatedUser().id();
+        var appuserId = authClient.getAuthUser().id();
         var notes = noteRepository.getByAppuserId(appuserId, pageNumber);
         return noteMapper.toDTO(notes);
     }
 
     @Override
     public NoteDTO getByIdAndAppuser(UUID id) {
-        var appuserId = authClient.getAuthenticatedUser().id();
+        var appuserId = authClient.getAuthUser().id();
         var note = noteRepository.getByIdAndAppuserId(id, appuserId);
 
         if (note == null) {
@@ -46,7 +46,7 @@ class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteDTO createByAppuser(CreateNoteDTO createNoteDTO) {
-        var appuserId = authClient.getAuthenticatedUser().id();
+        var appuserId = authClient.getAuthUser().id();
 
         var noteToCreate = new Note(appuserId, createNoteDTO.title(), createNoteDTO.content());
         noteRepository.save(noteToCreate);
@@ -56,7 +56,7 @@ class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteDTO updateByAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO) {
-        var appuserId = authClient.getAuthenticatedUser().id();
+        var appuserId = authClient.getAuthUser().id();
 
         var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);
 
@@ -73,7 +73,7 @@ class NoteServiceImpl implements NoteService {
 
     @Override
     public NoteDTO deleteByIdAndAppuser(UUID id) {
-        var appuserId = authClient.getAuthenticatedUser().id();
+        var appuserId = authClient.getAuthUser().id();
         var noteToDelete = noteRepository.getByIdAndAppuserId(id, appuserId);
 
         if (noteToDelete == null) {

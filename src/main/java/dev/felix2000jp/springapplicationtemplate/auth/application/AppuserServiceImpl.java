@@ -1,13 +1,10 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.AuthClient;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserIsNotAuthenticatedException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,19 +12,16 @@ class AppuserServiceImpl implements UserDetailsService, AppuserService {
 
     private final AppuserRepository appuserRepository;
     private final AppuserMapper appuserMapper;
-    private final BasicAuthService basicAuthService;
-    private final JwtAuthService jwtAuthService;
+    private final AuthClient authClient;
 
     AppuserServiceImpl(
             AppuserRepository appuserRepository,
             AppuserMapper appuserMapper,
-            BasicAuthService basicAuthService,
-            JwtAuthService jwtAuthService
+            AuthClient authClient
     ) {
         this.appuserRepository = appuserRepository;
         this.appuserMapper = appuserMapper;
-        this.basicAuthService = basicAuthService;
-        this.jwtAuthService = jwtAuthService;
+        this.authClient = authClient;
     }
 
     @Override
@@ -42,29 +36,10 @@ class AppuserServiceImpl implements UserDetailsService, AppuserService {
     }
 
     @Override
-    public AppuserDTO getAuthenticatedAppuser() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null) {
-            throw new AppuserIsNotAuthenticatedException();
-        }
-
-        if (authentication.getPrincipal() instanceof Appuser appuser) {
-            return basicAuthService.getAppuserFromUserDetails(appuser);
-        }
-
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return jwtAuthService.getAppuserFromJwt(jwt);
-        }
-
-        throw new AppuserIsNotAuthenticatedException();
-    }
-
-    @Override
     public String createToken() {
-        var authenticatedUser = getAuthenticatedAppuser();
+        var authenticatedUser = authClient.getAuthUser();
 
-        return jwtAuthService.generateToken(
+        return authClient.generateToken(
                 authenticatedUser.username(),
                 authenticatedUser.id().toString(),
                 String.join("", authenticatedUser.authorities())
