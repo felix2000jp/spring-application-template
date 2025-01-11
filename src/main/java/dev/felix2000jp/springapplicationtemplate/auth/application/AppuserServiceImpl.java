@@ -6,7 +6,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateApp
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.core.SecurityClient;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityClient;
 import org.springframework.stereotype.Service;
 
 @Service

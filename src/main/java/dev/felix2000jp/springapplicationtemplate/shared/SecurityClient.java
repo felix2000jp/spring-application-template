@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.core;
+package dev.felix2000jp.springapplicationtemplate.shared;
 
 import java.util.Set;
 import java.util.UUID;

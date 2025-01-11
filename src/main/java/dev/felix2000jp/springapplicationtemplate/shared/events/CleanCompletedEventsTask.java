@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.core.events;
+package dev.felix2000jp.springapplicationtemplate.shared.events;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.modulith.events.CompletedEventPublications;

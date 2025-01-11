@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.notes.application;
 
-import dev.felix2000jp.springapplicationtemplate.core.SecurityClient;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityClient;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;

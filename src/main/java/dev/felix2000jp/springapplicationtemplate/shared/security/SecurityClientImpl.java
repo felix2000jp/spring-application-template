@@ -1,6 +1,6 @@
-package dev.felix2000jp.springapplicationtemplate.core.security;
+package dev.felix2000jp.springapplicationtemplate.shared.security;
 
-import dev.felix2000jp.springapplicationtemplate.core.SecurityClient;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityClient;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;

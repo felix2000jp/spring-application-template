@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.core.web;
+package dev.felix2000jp.springapplicationtemplate.shared.web;
 
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
