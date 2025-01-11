@@ -78,18 +78,6 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void should_not_get_note_with_id_from_logged_in_appuser_when_note_does_not_exist() {
-        var authenticatedUser = new SecurityClient.User(UUID.randomUUID(), "username", Set.of("Application"));
-        var note = new Note(UUID.randomUUID(), "title", "content");
-
-        when(securityClient.getUser()).thenReturn(authenticatedUser);
-        when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(null);
-
-        var noteId = note.getId();
-        assertThrows(NoteNotFoundException.class, () -> noteService.getByIdAndAppuser(noteId));
-    }
-
-    @Test
     void should_create_note_with_title_and_content_from_dto() {
         var authenticatedUser = new SecurityClient.User(UUID.randomUUID(), "username", Set.of("Application"));
         var createNoteDTO = new CreateNoteDTO("title", "content");

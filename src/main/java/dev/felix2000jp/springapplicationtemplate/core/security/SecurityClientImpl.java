@@ -34,7 +34,7 @@ class SecurityClientImpl implements SecurityClient {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
-            return null;
+            throw new IllegalStateException("Authentication object is null");
         }
 
         if (authentication.getPrincipal() instanceof Jwt jwt) {
@@ -45,7 +45,7 @@ class SecurityClientImpl implements SecurityClient {
             );
         }
 
-        return null;
+        throw new IllegalStateException("Principal object is not of type Jwt");
     }
 
     @Override

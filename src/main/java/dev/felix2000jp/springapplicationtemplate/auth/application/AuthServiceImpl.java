@@ -34,6 +34,18 @@ class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public String login() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userDetails = (Appuser) authentication.getPrincipal();
+
+        return securityClient.generateToken(
+                userDetails.getUsername(),
+                userDetails.getId().toString(),
+                String.join("", userDetails.getAuthoritiesScopeValues())
+        );
+    }
+
+    @Override
     public void createAppuser(CreateAppuserDTO createAppuserDTO) {
         var doesUsernameExist = appuserRepository.existsByUsername(createAppuserDTO.username());
         if (doesUsernameExist) {
@@ -60,18 +72,6 @@ class AuthServiceImpl implements AuthService {
 
         appuserToUpdate.setPassword(securityClient.generateEncodedPassword(updatePasswordDTO.password()));
         appuserRepository.save(appuserToUpdate);
-    }
-
-    @Override
-    public String login() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var userDetails = (Appuser) authentication.getPrincipal();
-
-        return securityClient.generateToken(
-                userDetails.getUsername(),
-                userDetails.getId().toString(),
-                String.join("", userDetails.getAuthoritiesScopeValues())
-        );
     }
 
 }

@@ -53,7 +53,7 @@ class AppuserServiceImpl implements AppuserService {
             throw new AppuserNotFoundException();
         }
 
-        var isUsernameNew = updateAppuserDTO.username().equals(appuserToUpdate.getUsername());
+        var isUsernameNew = !updateAppuserDTO.username().equals(appuserToUpdate.getUsername());
         var doesUsernameExist = appuserRepository.existsByUsername(updateAppuserDTO.username());
         if (isUsernameNew && doesUsernameExist) {
             throw new AppuserAlreadyExistsException();
