@@ -10,7 +10,7 @@ class AppuserAuthorityTest {
     void should_create_new_appuserAuthority_successfully() {
         var authority = new AppuserAuthority("APPLICATION");
 
-        assertEquals("APPLICATION", authority.getScopeValue());
+        assertEquals("APPLICATION", authority.getScope());
         assertEquals("SCOPE_APPLICATION", authority.getAuthority());
     }
 

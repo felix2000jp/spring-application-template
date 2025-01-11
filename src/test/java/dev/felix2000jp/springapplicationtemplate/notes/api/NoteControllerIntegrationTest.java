@@ -41,7 +41,11 @@ class NoteControllerIntegrationTest {
     @Test
     void should_create_and_get_note_by_page_successfully() {
         var authenticatedUserId = UUID.randomUUID();
-        var token = securityClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
+        var token = securityClient.generateToken(
+                "username",
+                authenticatedUserId.toString(),
+                SecurityClient.Scope.APPLICATION.name()
+        );
 
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
@@ -77,7 +81,11 @@ class NoteControllerIntegrationTest {
     @Test
     void should_create_and_get_note_by_id_successfully() {
         var authenticatedUserId = UUID.randomUUID();
-        var token = securityClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
+        var token = securityClient.generateToken(
+                "username",
+                authenticatedUserId.toString(),
+                SecurityClient.Scope.APPLICATION.name()
+        );
 
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
@@ -112,7 +120,11 @@ class NoteControllerIntegrationTest {
     @Test
     void should_create_and_update_note_successfully() {
         var authenticatedUserId = UUID.randomUUID();
-        var token = securityClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
+        var token = securityClient.generateToken(
+                "username",
+                authenticatedUserId.toString(),
+                SecurityClient.Scope.APPLICATION.name()
+        );
 
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
@@ -152,7 +164,11 @@ class NoteControllerIntegrationTest {
     @Test
     void should_create_and_delete_note_successfully() {
         var authenticatedUserId = UUID.randomUUID();
-        var token = securityClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
+        var token = securityClient.generateToken(
+                "username",
+                authenticatedUserId.toString(),
+                SecurityClient.Scope.APPLICATION.name()
+        );
 
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);

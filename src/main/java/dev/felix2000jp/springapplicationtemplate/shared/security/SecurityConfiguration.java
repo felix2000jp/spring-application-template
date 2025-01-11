@@ -36,10 +36,10 @@ class SecurityConfiguration {
         return http
                 .securityMatcher("/auth/**")
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/csrf", "/user").permitAll()
+                        .requestMatchers("/csrf", "/register").permitAll()
                         .anyRequest().hasAnyAuthority(
-                                SecurityClient.ScopeValues.ADMIN.name(),
-                                SecurityClient.ScopeValues.APPLICATION.name()
+                                SecurityClient.Scope.ADMIN.toAuthority(),
+                                SecurityClient.Scope.APPLICATION.toAuthority()
                         )
                 )
                 .httpBasic(Customizer.withDefaults())
@@ -51,12 +51,12 @@ class SecurityConfiguration {
         return http
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("**/admin/**").hasAuthority(
-                                SecurityClient.ScopeValues.ADMIN.name()
+                        .requestMatchers("/api/appusers/admin/**").hasAuthority(
+                                SecurityClient.Scope.ADMIN.toAuthority()
                         )
                         .anyRequest().hasAnyAuthority(
-                                SecurityClient.ScopeValues.ADMIN.name(),
-                                SecurityClient.ScopeValues.APPLICATION.name()
+                                SecurityClient.Scope.ADMIN.toAuthority(),
+                                SecurityClient.Scope.APPLICATION.toAuthority()
                         )
                 )
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))

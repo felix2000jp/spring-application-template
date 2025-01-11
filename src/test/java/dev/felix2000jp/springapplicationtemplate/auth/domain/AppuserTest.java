@@ -39,7 +39,7 @@ class AppuserTest {
         appuser.addApplicationScope();
 
         assertEquals(1, appuser.getAuthorities().size());
-        assertEquals("APPLICATION", appuser.getAuthoritiesScopeValues().iterator().next());
+        assertEquals("APPLICATION", appuser.getAuthoritiesScopes().iterator().next());
         assertEquals("SCOPE_APPLICATION", appuser.getAuthorities().iterator().next().getAuthority());
     }
 

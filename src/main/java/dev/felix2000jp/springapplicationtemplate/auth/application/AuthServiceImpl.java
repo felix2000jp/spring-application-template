@@ -41,7 +41,7 @@ class AuthServiceImpl implements AuthService {
         return securityClient.generateToken(
                 userDetails.getUsername(),
                 userDetails.getId().toString(),
-                String.join("", userDetails.getAuthoritiesScopeValues())
+                String.join(" ", userDetails.getAuthoritiesScopes())
         );
     }
 

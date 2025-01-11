@@ -16,25 +16,25 @@ public class AppuserAuthority implements GrantedAuthority {
     @NotNull
     private UUID id;
 
-    @Column(name = "scope_value")
+    @Column(name = "scope")
     @NotBlank
-    private String scopeValue;
+    private String scope;
 
     public AppuserAuthority() {
     }
 
-    public AppuserAuthority(String scopeValue) {
+    public AppuserAuthority(String scope) {
         this.id = UUID.randomUUID();
-        this.scopeValue = scopeValue;
+        this.scope = scope;
     }
 
-    public String getScopeValue() {
-        return scopeValue;
+    public String getScope() {
+        return scope;
     }
 
     @Override
     public String getAuthority() {
-        return "SCOPE_" + scopeValue;
+        return "SCOPE_" + scope;
     }
 
 }

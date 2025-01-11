@@ -1,5 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
+import dev.felix2000jp.springapplicationtemplate.auth.AppuserDeletedEvent;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDTO;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDTO;
@@ -7,7 +8,9 @@ import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityClient;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 class AppuserServiceImpl implements AppuserService {
@@ -15,11 +18,18 @@ class AppuserServiceImpl implements AppuserService {
     private final AppuserRepository appuserRepository;
     private final AppuserMapper appuserMapper;
     private final SecurityClient securityClient;
+    private final ApplicationEventPublisher events;
 
-    AppuserServiceImpl(AppuserRepository appuserRepository, AppuserMapper appuserMapper, SecurityClient securityClient) {
+    AppuserServiceImpl(
+            AppuserRepository appuserRepository,
+            AppuserMapper appuserMapper,
+            SecurityClient securityClient,
+            ApplicationEventPublisher events
+    ) {
         this.appuserRepository = appuserRepository;
         this.appuserMapper = appuserMapper;
         this.securityClient = securityClient;
+        this.events = events;
     }
 
     @Override
@@ -62,6 +72,7 @@ class AppuserServiceImpl implements AppuserService {
     }
 
     @Override
+    @Transactional
     public AppuserDTO deleteAuthenticated() {
         var user = securityClient.getUser();
 
@@ -71,6 +82,10 @@ class AppuserServiceImpl implements AppuserService {
         }
 
         appuserRepository.deleteById(appuserToDelete.getId());
+
+        var appuserDeletedEvent = new AppuserDeletedEvent(appuserToDelete.getId());
+        events.publishEvent(appuserDeletedEvent);
+
         return appuserMapper.toDTO(appuserToDelete);
     }
 

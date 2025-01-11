@@ -5,9 +5,13 @@ import java.util.UUID;
 
 public interface SecurityClient {
 
-    enum ScopeValues {
+    enum Scope {
         ADMIN,
-        APPLICATION
+        APPLICATION;
+
+        public String toAuthority() {
+            return "SCOPE_" + name();
+        }
     }
 
     record User(UUID id, String username, Set<String> authorities) {

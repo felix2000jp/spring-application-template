@@ -13,7 +13,7 @@ import java.net.URI;
 
 @Validated
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 class AuthController {
 
     private final AuthService authService;

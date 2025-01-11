@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
 import java.util.Set;
@@ -30,6 +31,8 @@ class AppuserServiceImplTest {
     private AppuserMapper appuserMapper;
     @Mock
     private SecurityClient securityClient;
+    @Mock
+    private ApplicationEventPublisher events;
     @InjectMocks
     private AppuserServiceImpl appuserService;
 
@@ -45,7 +48,7 @@ class AppuserServiceImplTest {
         assertEquals(1, actual.appusers().size());
         assertEquals(appuser.getId(), actualAppuser.id());
         assertEquals(appuser.getUsername(), actualAppuser.username());
-        assertEquals(appuser.getAuthoritiesScopeValues(), actualAppuser.authorities());
+        assertEquals(appuser.getAuthoritiesScopes(), actualAppuser.authorities());
     }
 
     @Test
@@ -63,7 +66,7 @@ class AppuserServiceImplTest {
         var authenticatedUser = new SecurityClient.User(
                 appuser.getId(),
                 appuser.getUsername(),
-                appuser.getAuthoritiesScopeValues()
+                appuser.getAuthoritiesScopes()
         );
 
         when(securityClient.getUser()).thenReturn(authenticatedUser);
@@ -73,7 +76,7 @@ class AppuserServiceImplTest {
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(appuser.getUsername(), actual.username());
-        assertEquals(appuser.getAuthoritiesScopeValues(), actual.authorities());
+        assertEquals(appuser.getAuthoritiesScopes(), actual.authorities());
     }
 
     @Test
@@ -93,7 +96,7 @@ class AppuserServiceImplTest {
         var authenticatedUser = new SecurityClient.User(
                 appuser.getId(),
                 appuser.getUsername(),
-                appuser.getAuthoritiesScopeValues()
+                appuser.getAuthoritiesScopes()
         );
 
         when(securityClient.getUser()).thenReturn(authenticatedUser);
@@ -104,7 +107,7 @@ class AppuserServiceImplTest {
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(updateAppuserDTO.username(), actual.username());
-        assertEquals(appuser.getAuthoritiesScopeValues(), actual.authorities());
+        assertEquals(appuser.getAuthoritiesScopes(), actual.authorities());
     }
 
     @Test
@@ -114,7 +117,7 @@ class AppuserServiceImplTest {
         var authenticatedUser = new SecurityClient.User(
                 appuser.getId(),
                 appuser.getUsername(),
-                appuser.getAuthoritiesScopeValues()
+                appuser.getAuthoritiesScopes()
         );
 
         when(securityClient.getUser()).thenReturn(authenticatedUser);
@@ -125,7 +128,7 @@ class AppuserServiceImplTest {
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(updateAppuserDTO.username(), actual.username());
-        assertEquals(appuser.getAuthoritiesScopeValues(), actual.authorities());
+        assertEquals(appuser.getAuthoritiesScopes(), actual.authorities());
     }
 
     @Test
@@ -146,7 +149,7 @@ class AppuserServiceImplTest {
         var authenticatedUser = new SecurityClient.User(
                 appuser.getId(),
                 appuser.getUsername(),
-                appuser.getAuthoritiesScopeValues()
+                appuser.getAuthoritiesScopes()
         );
 
         when(securityClient.getUser()).thenReturn(authenticatedUser);
@@ -162,7 +165,7 @@ class AppuserServiceImplTest {
         var authenticatedUser = new SecurityClient.User(
                 appuser.getId(),
                 appuser.getUsername(),
-                appuser.getAuthoritiesScopeValues()
+                appuser.getAuthoritiesScopes()
         );
 
         when(securityClient.getUser()).thenReturn(authenticatedUser);
@@ -172,7 +175,7 @@ class AppuserServiceImplTest {
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(appuser.getUsername(), actual.username());
-        assertEquals(appuser.getAuthoritiesScopeValues(), actual.authorities());
+        assertEquals(appuser.getAuthoritiesScopes(), actual.authorities());
     }
 
     @Test
@@ -181,7 +184,7 @@ class AppuserServiceImplTest {
         var authenticatedUser = new SecurityClient.User(
                 appuser.getId(),
                 appuser.getUsername(),
-                appuser.getAuthoritiesScopeValues()
+                appuser.getAuthoritiesScopes()
         );
 
         when(securityClient.getUser()).thenReturn(authenticatedUser);

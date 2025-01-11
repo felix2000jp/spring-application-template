@@ -62,8 +62,8 @@ public class Appuser implements UserDetails {
         return authorities;
     }
 
-    public Set<String> getAuthoritiesScopeValues() {
-        return authorities.stream().map(AppuserAuthority::getScopeValue).collect(Collectors.toSet());
+    public Set<String> getAuthoritiesScopes() {
+        return authorities.stream().map(AppuserAuthority::getScope).collect(Collectors.toSet());
     }
 
     public void setPassword(String password) {
@@ -75,7 +75,7 @@ public class Appuser implements UserDetails {
     }
 
     public void addApplicationScope() {
-        var applicationAuthorityValue = SecurityClient.ScopeValues.APPLICATION.name();
+        var applicationAuthorityValue = SecurityClient.Scope.APPLICATION.name();
         authorities.add(new AppuserAuthority(applicationAuthorityValue));
     }
 
