@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 public class Appuser implements UserDetails {
@@ -58,6 +59,10 @@ public class Appuser implements UserDetails {
     @Override
     public Set<AppuserAuthority> getAuthorities() {
         return authorities;
+    }
+
+    public Set<String> getAuthoritiesScopeValues() {
+        return authorities.stream().map(AppuserAuthority::getScopeValue).collect(Collectors.toSet());
     }
 
     public void setPassword(String password) {
