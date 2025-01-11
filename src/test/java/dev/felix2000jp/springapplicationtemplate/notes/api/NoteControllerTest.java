@@ -152,7 +152,7 @@ class NoteControllerTest {
                 { "title": "%s", "content": "%s" }
                 """, updateNoteDTO.title(), updateNoteDTO.content());
 
-        when(noteService.updateByAppuser(noteDTO.id(), updateNoteDTO)).thenReturn(noteDTO);
+        when(noteService.updateByIdAndAppuser(noteDTO.id(), updateNoteDTO)).thenReturn(noteDTO);
 
         mockMvc
                 .perform(put("/api/notes/" + noteDTO.id()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))

@@ -55,7 +55,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDTO updateByAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO) {
+    public NoteDTO updateByIdAndAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO) {
         var appuserId = authClient.getAuthUser().id();
 
         var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);

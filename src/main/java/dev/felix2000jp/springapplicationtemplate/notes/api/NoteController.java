@@ -46,7 +46,7 @@ class NoteController {
 
     @PutMapping("/{id}")
     ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody @Valid UpdateNoteDTO updateNoteDTO) {
-        noteService.updateByAppuser(id, updateNoteDTO);
+        noteService.updateByIdAndAppuser(id, updateNoteDTO);
         return ResponseEntity.noContent().build();
     }
 

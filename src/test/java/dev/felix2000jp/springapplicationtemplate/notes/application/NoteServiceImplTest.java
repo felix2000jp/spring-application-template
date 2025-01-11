@@ -111,7 +111,7 @@ class NoteServiceImplTest {
         when(authClient.getAuthUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(note);
 
-        var actual = noteService.updateByAppuser(note.getId(), updateNoteDTO);
+        var actual = noteService.updateByIdAndAppuser(note.getId(), updateNoteDTO);
 
         assertEquals("new title", actual.title());
         assertEquals("new content", actual.content());
@@ -127,7 +127,7 @@ class NoteServiceImplTest {
         when(noteRepository.getByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(null);
 
         var noteId = note.getId();
-        assertThrows(NoteNotFoundException.class, () -> noteService.updateByAppuser(noteId, updateNoteDTO));
+        assertThrows(NoteNotFoundException.class, () -> noteService.updateByIdAndAppuser(noteId, updateNoteDTO));
     }
 
     @Test

@@ -15,7 +15,7 @@ public interface NoteService {
 
     NoteDTO createByAppuser(CreateNoteDTO createNoteDTO);
 
-    NoteDTO updateByAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO);
+    NoteDTO updateByIdAndAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO);
 
     NoteDTO deleteByIdAndAppuser(UUID id);
 
