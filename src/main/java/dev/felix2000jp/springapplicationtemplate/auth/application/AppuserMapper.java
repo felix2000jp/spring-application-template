@@ -11,11 +11,7 @@ import java.util.List;
 class AppuserMapper {
 
     AppuserDTO toDTO(Appuser appuser) {
-        return new AppuserDTO(
-                appuser.getId(),
-                appuser.getUsername(),
-                appuser.getAuthoritiesScopeValues()
-        );
+        return new AppuserDTO(appuser.getId(), appuser.getUsername(), appuser.getAuthoritiesScopeValues());
     }
 
     AppuserListDTO toDTO(List<Appuser> appusers) {
