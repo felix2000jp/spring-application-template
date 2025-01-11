@@ -5,10 +5,15 @@ import java.util.UUID;
 
 public interface AuthClient {
 
-    record AuthUser(UUID id, String username, Set<String> authorities) {
+    enum ScopeValues {
+        ADMIN,
+        APPLICATION
     }
 
-    AuthUser getAuthUser();
+    record User(UUID id, String username, Set<String> authorities) {
+    }
+
+    User getUser();
 
     String generateToken(String subject, String idClaimValue, String scopeClaimValue);
 

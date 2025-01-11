@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.domain;
 
-import dev.felix2000jp.springapplicationtemplate.auth.AuthScopeValues;
+import dev.felix2000jp.springapplicationtemplate.auth.AuthClient;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -75,7 +75,7 @@ public class Appuser implements UserDetails {
     }
 
     public void addApplicationScope() {
-        var applicationAuthorityValue = AuthScopeValues.APPLICATION.name();
+        var applicationAuthorityValue = AuthClient.ScopeValues.APPLICATION.name();
         authorities.add(new AppuserAuthority(applicationAuthorityValue));
     }
 

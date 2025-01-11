@@ -31,7 +31,7 @@ class AuthClientImpl implements AuthClient {
     }
 
     @Override
-    public AuthUser getAuthUser() {
+    public User getUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
@@ -39,7 +39,7 @@ class AuthClientImpl implements AuthClient {
         }
 
         if (authentication.getPrincipal() instanceof Appuser appuser) {
-            return new AuthUser(
+            return new User(
                     appuser.getId(),
                     appuser.getUsername(),
                     appuser.getAuthoritiesScopeValues()
@@ -47,7 +47,7 @@ class AuthClientImpl implements AuthClient {
         }
 
         if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return new AuthUser(
+            return new User(
                     UUID.fromString(jwt.getClaimAsString(ID_CLAIM_NAME)),
                     jwt.getSubject(),
                     Arrays.stream(jwt.getClaimAsString(SCOPE_CLAIM_NAME).split(" ")).collect(Collectors.toSet())

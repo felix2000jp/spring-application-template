@@ -79,7 +79,7 @@ class AppuserServiceImpl implements UserDetailsService, AppuserService {
 
     @Override
     public String createToken() {
-        var authenticatedUser = authClient.getAuthUser();
+        var authenticatedUser = authClient.getUser();
 
         return authClient.generateToken(
                 authenticatedUser.username(),

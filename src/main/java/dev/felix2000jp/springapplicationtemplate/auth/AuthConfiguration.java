@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.core.web;
+package dev.felix2000jp.springapplicationtemplate.auth;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -23,7 +23,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfiguration {
+class AuthConfiguration {
 
     @Value("${jwt.rsa.public-key}")
     private RSAPublicKey publicKey;
@@ -37,7 +37,10 @@ class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.GET, "/api/appusers/csrf").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/appusers").permitAll()
-                        .anyRequest().hasAnyAuthority("SCOPE_APPLICATION")
+                        .anyRequest().hasAnyAuthority(
+                                AuthClient.ScopeValues.ADMIN.name(),
+                                AuthClient.ScopeValues.APPLICATION.name()
+                        )
                 )
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
