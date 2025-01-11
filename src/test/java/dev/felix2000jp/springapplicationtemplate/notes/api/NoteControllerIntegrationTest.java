@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.notes.api;
 
-import dev.felix2000jp.springapplicationtemplate.auth.AuthClient;
+import dev.felix2000jp.springapplicationtemplate.core.SecurityClient;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDTO;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDTO;
@@ -34,14 +34,14 @@ class NoteControllerIntegrationTest {
     @Autowired
     private TestRestTemplate testRestTemplate;
     @Autowired
-    private AuthClient authClient;
+    private SecurityClient securityClient;
     @Autowired
     private NoteRepository noteRepository;
 
     @Test
     void should_create_and_get_note_by_page_successfully() {
         var authenticatedUserId = UUID.randomUUID();
-        var token = authClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
+        var token = securityClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
 
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
@@ -77,7 +77,7 @@ class NoteControllerIntegrationTest {
     @Test
     void should_create_and_get_note_by_id_successfully() {
         var authenticatedUserId = UUID.randomUUID();
-        var token = authClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
+        var token = securityClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
 
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
@@ -112,7 +112,7 @@ class NoteControllerIntegrationTest {
     @Test
     void should_create_and_update_note_successfully() {
         var authenticatedUserId = UUID.randomUUID();
-        var token = authClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
+        var token = securityClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
 
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
@@ -152,7 +152,7 @@ class NoteControllerIntegrationTest {
     @Test
     void should_create_and_delete_note_successfully() {
         var authenticatedUserId = UUID.randomUUID();
-        var token = authClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
+        var token = securityClient.generateToken("username", authenticatedUserId.toString(), "APPLICATION");
 
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);

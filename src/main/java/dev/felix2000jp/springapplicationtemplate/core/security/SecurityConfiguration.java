@@ -1,12 +1,12 @@
-package dev.felix2000jp.springapplicationtemplate.auth;
+package dev.felix2000jp.springapplicationtemplate.core.security;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import dev.felix2000jp.springapplicationtemplate.core.SecurityClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,7 +23,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
-class AuthConfiguration {
+class SecurityConfiguration {
 
     @Value("${jwt.rsa.public-key}")
     private RSAPublicKey publicKey;
@@ -32,17 +32,26 @@ class AuthConfiguration {
     private RSAPrivateKey privateKey;
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
         return http
+                .securityMatcher("/auth/**")
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/api/appusers/csrf").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/appusers").permitAll()
-                        .anyRequest().hasAnyAuthority(
-                                AuthClient.ScopeValues.ADMIN.name(),
-                                AuthClient.ScopeValues.APPLICATION.name()
-                        )
+                        .requestMatchers("/user", "token", "/csrf").permitAll()
                 )
                 .httpBasic(Customizer.withDefaults())
+                .build();
+    }
+
+    @Bean
+    SecurityFilterChain tokenAuthFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/api/**")
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().hasAnyAuthority(
+                                SecurityClient.ScopeValues.ADMIN.name(),
+                                SecurityClient.ScopeValues.APPLICATION.name()
+                        )
+                )
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
                 .build();
     }

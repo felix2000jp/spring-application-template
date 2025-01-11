@@ -1,9 +1,9 @@
-package dev.felix2000jp.springapplicationtemplate.auth;
+package dev.felix2000jp.springapplicationtemplate.core;
 
 import java.util.Set;
 import java.util.UUID;
 
-public interface AuthClient {
+public interface SecurityClient {
 
     enum ScopeValues {
         ADMIN,

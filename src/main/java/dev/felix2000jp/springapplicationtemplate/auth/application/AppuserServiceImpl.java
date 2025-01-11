@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
-import dev.felix2000jp.springapplicationtemplate.auth.AuthClient;
+import dev.felix2000jp.springapplicationtemplate.core.SecurityClient;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDTO;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDTO;
@@ -8,6 +8,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateApp
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -19,12 +20,12 @@ class AppuserServiceImpl implements UserDetailsService, AppuserService {
 
     private final AppuserRepository appuserRepository;
     private final AppuserMapper appuserMapper;
-    private final AuthClient authClient;
+    private final SecurityClient securityClient;
 
-    AppuserServiceImpl(AppuserRepository appuserRepository, AppuserMapper appuserMapper, AuthClient authClient) {
+    AppuserServiceImpl(AppuserRepository appuserRepository, AppuserMapper appuserMapper, SecurityClient securityClient) {
         this.appuserRepository = appuserRepository;
         this.appuserMapper = appuserMapper;
-        this.authClient = authClient;
+        this.securityClient = securityClient;
     }
 
     @Override
@@ -79,9 +80,19 @@ class AppuserServiceImpl implements UserDetailsService, AppuserService {
 
     @Override
     public String createToken() {
-        var authenticatedUser = authClient.getUser();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        return authClient.generateToken(
+        if (authentication.getPrincipal() instanceof Appuser appuser) {
+            return securityClient.generateToken(
+                    appuser.getUsername(),
+                    appuser.getId().toString(),
+                    String.join("", appuser.getAuthoritiesScopeValues())
+            );
+        }
+
+        var authenticatedUser = securityClient.getUser();
+
+        return securityClient.generateToken(
                 authenticatedUser.username(),
                 authenticatedUser.id().toString(),
                 String.join("", authenticatedUser.authorities())

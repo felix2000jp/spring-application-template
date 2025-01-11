@@ -1,6 +1,6 @@
-package dev.felix2000jp.springapplicationtemplate.auth;
+package dev.felix2000jp.springapplicationtemplate.core.security;
 
-import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
+import dev.felix2000jp.springapplicationtemplate.core.SecurityClient;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-class AuthClientImpl implements AuthClient {
+class SecurityClientImpl implements SecurityClient {
 
     private static final String ID_CLAIM_NAME = "id";
     private static final String SCOPE_CLAIM_NAME = "scope";
@@ -24,7 +24,7 @@ class AuthClientImpl implements AuthClient {
     private final JwtEncoder jwtEncoder;
     private final PasswordEncoder passwordEncoder;
 
-    AuthClientImpl(JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder) {
+    SecurityClientImpl(JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder) {
         this.jwtEncoder = jwtEncoder;
         this.passwordEncoder = passwordEncoder;
     }
@@ -35,14 +35,6 @@ class AuthClientImpl implements AuthClient {
 
         if (authentication == null) {
             return null;
-        }
-
-        if (authentication.getPrincipal() instanceof Appuser appuser) {
-            return new User(
-                    appuser.getId(),
-                    appuser.getUsername(),
-                    appuser.getAuthoritiesScopeValues()
-            );
         }
 
         if (authentication.getPrincipal() instanceof Jwt jwt) {
