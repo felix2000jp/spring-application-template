@@ -13,38 +13,38 @@ class NoteRepositoryImpl implements NoteRepository {
 
     private static final int PAGE_SIZE = 50;
 
-    private final NoteJPARepository noteJPARepository;
+    private final NoteJpaRepository noteJpaRepository;
 
-    NoteRepositoryImpl(NoteJPARepository noteJPARepository) {
-        this.noteJPARepository = noteJPARepository;
+    NoteRepositoryImpl(NoteJpaRepository noteJpaRepository) {
+        this.noteJpaRepository = noteJpaRepository;
     }
 
     @Override
     public List<Note> getByAppuserId(UUID appuserId, int pageNumber) {
         var pageable = PageRequest.of(pageNumber, PAGE_SIZE);
-        var page = noteJPARepository.findByAppuserId(appuserId, pageable);
+        var page = noteJpaRepository.findByAppuserId(appuserId, pageable);
         return page.getContent();
     }
 
     @Override
     public Note getByIdAndAppuserId(UUID id, UUID appuserId) {
-        var optionalNote = noteJPARepository.findByIdAndAppuserId(id, appuserId);
+        var optionalNote = noteJpaRepository.findByIdAndAppuserId(id, appuserId);
         return optionalNote.orElse(null);
     }
 
     @Override
     public void deleteById(UUID id) {
-        noteJPARepository.deleteById(id);
+        noteJpaRepository.deleteById(id);
     }
 
     @Override
     public void deleteByAppuserId(UUID appuserId) {
-        noteJPARepository.deleteAllByAppuserId(appuserId);
+        noteJpaRepository.deleteAllByAppuserId(appuserId);
     }
 
     @Override
     public void save(Note note) {
-        noteJPARepository.save(note);
+        noteJpaRepository.save(note);
     }
 
 }

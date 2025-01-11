@@ -78,7 +78,7 @@ public class AppuserService implements UserDetailsService {
             );
         }
 
-        throw new AppuserBadRequestException("Invalid authentication format");
+        throw new AppuserBadRequestException("Invalid auth format");
     }
 
     public AuthenticatedAppuser verifyAuthenticatedAppuser() {
@@ -110,7 +110,7 @@ public class AppuserService implements UserDetailsService {
             return new AuthenticatedAppuser(id, username, scope);
         }
 
-        throw new AppuserBadRequestException("Invalid authentication format");
+        throw new AppuserBadRequestException("Invalid auth format");
     }
 
     AppuserDTO find() {
