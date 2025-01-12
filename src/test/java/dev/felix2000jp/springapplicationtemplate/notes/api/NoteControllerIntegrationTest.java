@@ -39,7 +39,8 @@ class NoteControllerIntegrationTest {
     private NoteRepository noteRepository;
 
     @Test
-    void should_create_and_get_note_by_page_successfully() {
+    void givenValidAuthenticationToken_whenNoteIsCreated_thenFetchPage() {
+        // given
         var authenticatedUserId = UUID.randomUUID();
         var token = securityService.generateToken(
                 "username",
@@ -50,6 +51,7 @@ class NoteControllerIntegrationTest {
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
 
+        // when
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -64,6 +66,7 @@ class NoteControllerIntegrationTest {
         var noteInDatabase = noteRepository.getByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
+        // then
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes?page={page}",
                 HttpMethod.GET,
@@ -79,7 +82,8 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_and_get_note_by_id_successfully() {
+    void givenValidAuthenticationToken_whenNoteIsCreated_thenFetchNote() {
+        // given
         var authenticatedUserId = UUID.randomUUID();
         var token = securityService.generateToken(
                 "username",
@@ -90,6 +94,7 @@ class NoteControllerIntegrationTest {
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
 
+        // when
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -104,6 +109,7 @@ class NoteControllerIntegrationTest {
         var noteInDatabase = noteRepository.getByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
+        // then
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.GET,
@@ -118,7 +124,8 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_and_update_note_successfully() {
+    void givenValidAuthenticationToken_whenNoteIsCreated_thenUpdateNote() {
+        // given
         var authenticatedUserId = UUID.randomUUID();
         var token = securityService.generateToken(
                 "username",
@@ -129,6 +136,7 @@ class NoteControllerIntegrationTest {
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
 
+        // when and then
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -162,7 +170,8 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_and_delete_note_successfully() {
+    void givenValidAuthenticationToken_whenNoteIsCreated_thenDeleteNote() {
+        // given
         var authenticatedUserId = UUID.randomUUID();
         var token = securityService.generateToken(
                 "username",
@@ -173,6 +182,7 @@ class NoteControllerIntegrationTest {
         var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
 
+        // when and then
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
