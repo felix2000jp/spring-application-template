@@ -20,14 +20,14 @@ class NoteRepositoryImpl implements NoteRepository {
     }
 
     @Override
-    public List<Note> getByAppuserId(UUID appuserId, int pageNumber) {
+    public List<Note> findAllByAppuserId(UUID appuserId, int pageNumber) {
         var pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         var page = noteJpaRepository.findByAppuserId(appuserId, pageable);
         return page.getContent();
     }
 
     @Override
-    public Note getByIdAndAppuserId(UUID id, UUID appuserId) {
+    public Note findByIdAndAppuserId(UUID id, UUID appuserId) {
         var optionalNote = noteJpaRepository.findByIdAndAppuserId(id, appuserId);
         return optionalNote.orElse(null);
     }
@@ -38,7 +38,7 @@ class NoteRepositoryImpl implements NoteRepository {
     }
 
     @Override
-    public void deleteByAppuserId(UUID appuserId) {
+    public void deleteAllByAppuserId(UUID appuserId) {
         noteJpaRepository.deleteAllByAppuserId(appuserId);
     }
 

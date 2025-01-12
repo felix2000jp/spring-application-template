@@ -28,7 +28,7 @@ class NoteServiceImpl implements NoteService {
     @Override
     public NoteListDto getNotesForCurrentUser(int pageNumber) {
         var appuserId = securityService.getUser().id();
-        var notes = noteRepository.getByAppuserId(appuserId, pageNumber);
+        var notes = noteRepository.findAllByAppuserId(appuserId, pageNumber);
         return noteMapper.toDto(notes);
     }
 
@@ -36,7 +36,7 @@ class NoteServiceImpl implements NoteService {
     public NoteDto getNoteByIdForCurrentUser(UUID id) {
         var appuserId = securityService.getUser().id();
 
-        var note = noteRepository.getByIdAndAppuserId(id, appuserId);
+        var note = noteRepository.findByIdAndAppuserId(id, appuserId);
         if (note == null) {
             throw new NoteNotFoundException();
         }
@@ -58,7 +58,7 @@ class NoteServiceImpl implements NoteService {
     public NoteDto updateNoteByIdForCurrentUser(UUID noteId, UpdateNoteDto updateNoteDTO) {
         var appuserId = securityService.getUser().id();
 
-        var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);
+        var noteToUpdate = noteRepository.findByIdAndAppuserId(noteId, appuserId);
         if (noteToUpdate == null) {
             throw new NoteNotFoundException();
         }
@@ -74,7 +74,7 @@ class NoteServiceImpl implements NoteService {
     public NoteDto deleteNoteByIdForCurrentUser(UUID id) {
         var appuserId = securityService.getUser().id();
 
-        var noteToDelete = noteRepository.getByIdAndAppuserId(id, appuserId);
+        var noteToDelete = noteRepository.findByIdAndAppuserId(id, appuserId);
         if (noteToDelete == null) {
             throw new NoteNotFoundException();
         }
@@ -85,7 +85,7 @@ class NoteServiceImpl implements NoteService {
 
     @Override
     public void deleteNotesByAppuserId(UUID appuserId) {
-        noteRepository.deleteByAppuserId(appuserId);
+        noteRepository.deleteAllByAppuserId(appuserId);
     }
 
 }

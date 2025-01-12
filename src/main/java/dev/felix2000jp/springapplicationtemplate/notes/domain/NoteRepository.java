@@ -5,13 +5,13 @@ import java.util.UUID;
 
 public interface NoteRepository {
 
-    List<Note> getByAppuserId(UUID appuserId, int pageNumber);
+    List<Note> findAllByAppuserId(UUID appuserId, int pageNumber);
 
-    Note getByIdAndAppuserId(UUID id, UUID appuserId);
+    Note findByIdAndAppuserId(UUID id, UUID appuserId);
 
     void deleteById(UUID id);
 
-    void deleteByAppuserId(UUID appuserId);
+    void deleteAllByAppuserId(UUID appuserId);
 
     void save(Note note);
 

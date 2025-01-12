@@ -57,26 +57,26 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserIdAndPage_whenGetByAppuserId_thenReturnNotes() {
+    void givenAppuserIdAndPage_whenFindAllByAppuserId_thenReturnNotes() {
         // given
         var appuserId = note.getAppuserId();
         var page = 0;
 
         // when
-        var actual = noteRepository.getByAppuserId(appuserId, page);
+        var actual = noteRepository.findAllByAppuserId(appuserId, page);
 
         // then
         assertFalse(actual.isEmpty());
     }
 
     @Test
-    void givenAppuserIdAndEmptyPage_whenGetByAppuserId_thenReturnEmptyList() {
+    void givenAppuserIdAndEmptyPage_whenFindAllByAppuserId_thenReturnEmptyList() {
         // given
         var appuserId = note.getAppuserId();
         var page = 1;
 
         // when
-        var actual = noteRepository.getByAppuserId(appuserId, page);
+        var actual = noteRepository.findAllByAppuserId(appuserId, page);
 
         // then
         assertTrue(actual.isEmpty());
@@ -84,26 +84,26 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    void givenIdAndAppuserId_whenGetByIdAndAppuserId_thenReturnNote() {
+    void givenIdAndAppuserId_whenFindByIdAndAppuserId_thenReturnNote() {
         // given
         var id = note.getId();
         var appuserId = note.getAppuserId();
 
         // when
-        var actual = noteRepository.getByIdAndAppuserId(id, appuserId);
+        var actual = noteRepository.findByIdAndAppuserId(id, appuserId);
 
         // then
         assertNotNull(actual);
     }
 
     @Test
-    void givenNonExistentIdAndAppuserId_whenGetByIdAndAppuserId_thenReturnNull() {
+    void givenNonExistentIdAndAppuserId_whenFindByIdAndAppuserId_thenReturnNull() {
         // given
         var id = UUID.randomUUID();
         var appuserId = UUID.randomUUID();
 
         // when
-        var actual = noteRepository.getByIdAndAppuserId(id, appuserId);
+        var actual = noteRepository.findByIdAndAppuserId(id, appuserId);
 
         // then
         assertNull(actual);
@@ -136,12 +136,12 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserId_wheDeleteByAppuserId_thenDeleteNotes() {
+    void givenAppuserId_wheDeleteAllByAppuserId_thenDeleteAllNotes() {
         // given
         var appuserId = note.getAppuserId();
 
         // when
-        noteRepository.deleteByAppuserId(appuserId);
+        noteRepository.deleteAllByAppuserId(appuserId);
         testEntityManager.flush();
         testEntityManager.clear();
 
@@ -150,13 +150,13 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    void givenNonExistentAppuserId_whenDeleteByAppuserId_thenDoesNotThrow() {
+    void givenNonExistentAppuserId_whenDeleteAllByAppuserId_thenDoesNotThrow() {
         // given
         var nonExistentAppuserId = UUID.randomUUID();
 
         // when and then
         assertDoesNotThrow(() -> {
-            noteRepository.deleteByAppuserId(nonExistentAppuserId);
+            noteRepository.deleteAllByAppuserId(nonExistentAppuserId);
             testEntityManager.flush();
         });
     }

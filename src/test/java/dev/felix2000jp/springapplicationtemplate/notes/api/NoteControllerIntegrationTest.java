@@ -63,7 +63,7 @@ class NoteControllerIntegrationTest {
         assertEquals("title", createNoteEntity.getBody().title());
         assertEquals("content", createNoteEntity.getBody().content());
 
-        var noteInDatabase = noteRepository.getByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
+        var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
         // then
@@ -106,7 +106,7 @@ class NoteControllerIntegrationTest {
         assertEquals("title", createNoteEntity.getBody().title());
         assertEquals("content", createNoteEntity.getBody().content());
 
-        var noteInDatabase = noteRepository.getByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
+        var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
         // then
@@ -148,7 +148,7 @@ class NoteControllerIntegrationTest {
         assertEquals("title", createNoteEntity.getBody().title());
         assertEquals("content", createNoteEntity.getBody().content());
 
-        var noteInDatabase = noteRepository.getByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
+        var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
         var updateNoteEntity = testRestTemplate.exchange(
@@ -160,7 +160,7 @@ class NoteControllerIntegrationTest {
         );
         assertEquals(204, updateNoteEntity.getStatusCode().value());
 
-        var updatedNoteInDatabase = noteRepository.getByIdAndAppuserId(
+        var updatedNoteInDatabase = noteRepository.findByIdAndAppuserId(
                 createNoteEntity.getBody().id(),
                 authenticatedUserId
         );
@@ -194,7 +194,7 @@ class NoteControllerIntegrationTest {
         assertEquals("title", createNoteEntity.getBody().title());
         assertEquals("content", createNoteEntity.getBody().content());
 
-        var noteInDatabase = noteRepository.getByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
+        var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
         var deleteNoteEntity = testRestTemplate.exchange(
@@ -206,7 +206,7 @@ class NoteControllerIntegrationTest {
         );
         assertEquals(204, deleteNoteEntity.getStatusCode().value());
 
-        var deletedNoteInDatabase = noteRepository.getByIdAndAppuserId(
+        var deletedNoteInDatabase = noteRepository.findByIdAndAppuserId(
                 createNoteEntity.getBody().id(),
                 authenticatedUserId
         );

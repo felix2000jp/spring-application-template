@@ -49,9 +49,9 @@ class AppuserDeletedEventHandlerIntegrationTest {
                 .publish(appuserDeletedEvent)
                 .andWaitForStateChange(() -> eventHandler)
                 .andVerify(unusedEventHandler -> {
-                    assertNull(noteRepository.getByIdAndAppuserId(note1.getId(), note1.getAppuserId()));
-                    assertNull(noteRepository.getByIdAndAppuserId(note2.getId(), note2.getAppuserId()));
-                    assertNotNull(noteRepository.getByIdAndAppuserId(note3.getId(), note3.getAppuserId()));
+                    assertNull(noteRepository.findByIdAndAppuserId(note1.getId(), note1.getAppuserId()));
+                    assertNull(noteRepository.findByIdAndAppuserId(note2.getId(), note2.getAppuserId()));
+                    assertNotNull(noteRepository.findByIdAndAppuserId(note3.getId(), note3.getAppuserId()));
                 });
     }
 
