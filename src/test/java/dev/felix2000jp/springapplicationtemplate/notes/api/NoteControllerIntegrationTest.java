@@ -6,6 +6,7 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,20 +39,24 @@ class NoteControllerIntegrationTest {
     @Autowired
     private NoteRepository noteRepository;
 
-    @Test
-    void givenValidAuthenticationToken_whenNoteIsCreated_thenFetchPage() {
-        // given
-        var authenticatedUserId = UUID.randomUUID();
+    private UUID authenticatedUserId;
+    private HttpHeaders headersWithJwtToken;
+
+    @BeforeEach
+    void setUp() {
+        authenticatedUserId = UUID.randomUUID();
+        headersWithJwtToken = new HttpHeaders();
+
         var token = securityService.generateToken(
                 "username",
                 authenticatedUserId.toString(),
                 SecurityService.Scope.APPLICATION.name()
         );
-
-        var headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
+    }
 
-        // when
+    @Test
+    void should_create_and_fetch_page_of_notes_for_authenticated_user() {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -66,7 +71,6 @@ class NoteControllerIntegrationTest {
         var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
-        // then
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes?page={page}",
                 HttpMethod.GET,
@@ -82,19 +86,7 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void givenValidAuthenticationToken_whenNoteIsCreated_thenFetchNote() {
-        // given
-        var authenticatedUserId = UUID.randomUUID();
-        var token = securityService.generateToken(
-                "username",
-                authenticatedUserId.toString(),
-                SecurityService.Scope.APPLICATION.name()
-        );
-
-        var headersWithJwtToken = new HttpHeaders();
-        headersWithJwtToken.add("Authorization", "Bearer " + token);
-
-        // when
+    void should_create_and_fetch_note_for_authenticated_user() {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -109,7 +101,6 @@ class NoteControllerIntegrationTest {
         var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
-        // then
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.GET,
@@ -124,19 +115,7 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void givenValidAuthenticationToken_whenNoteIsCreated_thenUpdateNoteByIdForCurrentUserNote() {
-        // given
-        var authenticatedUserId = UUID.randomUUID();
-        var token = securityService.generateToken(
-                "username",
-                authenticatedUserId.toString(),
-                SecurityService.Scope.APPLICATION.name()
-        );
-
-        var headersWithJwtToken = new HttpHeaders();
-        headersWithJwtToken.add("Authorization", "Bearer " + token);
-
-        // when and then
+    void should_create_and_update_note_for_authenticated_user() {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -170,19 +149,7 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void givenValidAuthenticationToken_whenNoteIsCreated_thenDeleteNoteByIdForCurrentUserNote() {
-        // given
-        var authenticatedUserId = UUID.randomUUID();
-        var token = securityService.generateToken(
-                "username",
-                authenticatedUserId.toString(),
-                SecurityService.Scope.APPLICATION.name()
-        );
-
-        var headersWithJwtToken = new HttpHeaders();
-        headersWithJwtToken.add("Authorization", "Bearer " + token);
-
-        // when and then
+    void should_create_and_delete_note_for_authenticated_user() {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,

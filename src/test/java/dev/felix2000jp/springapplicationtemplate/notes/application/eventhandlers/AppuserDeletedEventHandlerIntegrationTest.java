@@ -31,7 +31,7 @@ class AppuserDeletedEventHandlerIntegrationTest {
     private AppuserDeletedEventHandler eventHandler;
 
     @Test
-    void givenAppuserDeletedEvent_whenOn_thenDeleteAllNotesFromDeletedAppuser(Scenario scenario) {
+    void should_delete_notes_with_appuserId_when_AppuserDeletedEvent_is_consumed(Scenario scenario) {
         // given
         var appuserId = UUID.randomUUID();
         var appuserDeletedEvent = new AppuserDeletedEvent(appuserId);
