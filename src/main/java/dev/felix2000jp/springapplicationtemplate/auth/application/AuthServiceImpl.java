@@ -6,7 +6,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityClient;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 class AuthServiceImpl implements AuthService {
 
     private final AppuserRepository appuserRepository;
-    private final SecurityClient securityClient;
+    private final SecurityService securityService;
 
-    AuthServiceImpl(AppuserRepository appuserRepository, SecurityClient securityClient) {
+    AuthServiceImpl(AppuserRepository appuserRepository, SecurityService securityService) {
         this.appuserRepository = appuserRepository;
-        this.securityClient = securityClient;
+        this.securityService = securityService;
     }
 
     @Override
@@ -38,7 +38,7 @@ class AuthServiceImpl implements AuthService {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var userDetails = (Appuser) authentication.getPrincipal();
 
-        return securityClient.generateToken(
+        return securityService.generateToken(
                 userDetails.getUsername(),
                 userDetails.getId().toString(),
                 String.join(" ", userDetails.getAuthoritiesScopes())
@@ -54,7 +54,7 @@ class AuthServiceImpl implements AuthService {
 
         var appuserToCreate = new Appuser(
                 createAppuserDTO.username(),
-                securityClient.generateEncodedPassword(createAppuserDTO.password())
+                securityService.generateEncodedPassword(createAppuserDTO.password())
         );
         appuserToCreate.addApplicationScope();
 
@@ -63,14 +63,14 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     public void updatePassword(UpdatePasswordDTO updatePasswordDTO) {
-        var user = securityClient.getUser();
+        var user = securityService.getUser();
 
         var appuserToUpdate = appuserRepository.getById(user.id());
         if (appuserToUpdate == null) {
             throw new AppuserNotFoundException();
         }
 
-        appuserToUpdate.setPassword(securityClient.generateEncodedPassword(updatePasswordDTO.password()));
+        appuserToUpdate.setPassword(securityService.generateEncodedPassword(updatePasswordDTO.password()));
         appuserRepository.save(appuserToUpdate);
     }
 

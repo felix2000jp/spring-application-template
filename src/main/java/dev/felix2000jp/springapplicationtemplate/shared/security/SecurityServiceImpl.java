@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.shared.security;
 
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityClient;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -16,7 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-class SecurityClientImpl implements SecurityClient {
+class SecurityServiceImpl implements SecurityService {
 
     private static final String ID_CLAIM_NAME = "id";
     private static final String SCOPE_CLAIM_NAME = "scope";
@@ -24,7 +24,7 @@ class SecurityClientImpl implements SecurityClient {
     private final JwtEncoder jwtEncoder;
     private final PasswordEncoder passwordEncoder;
 
-    SecurityClientImpl(JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder) {
+    SecurityServiceImpl(JwtEncoder jwtEncoder, PasswordEncoder passwordEncoder) {
         this.jwtEncoder = jwtEncoder;
         this.passwordEncoder = passwordEncoder;
     }

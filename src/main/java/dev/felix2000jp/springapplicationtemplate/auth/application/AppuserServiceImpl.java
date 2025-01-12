@@ -7,7 +7,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateApp
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityClient;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,18 +17,18 @@ class AppuserServiceImpl implements AppuserService {
 
     private final AppuserRepository appuserRepository;
     private final AppuserMapper appuserMapper;
-    private final SecurityClient securityClient;
+    private final SecurityService securityService;
     private final ApplicationEventPublisher events;
 
     AppuserServiceImpl(
             AppuserRepository appuserRepository,
             AppuserMapper appuserMapper,
-            SecurityClient securityClient,
+            SecurityService securityService,
             ApplicationEventPublisher events
     ) {
         this.appuserRepository = appuserRepository;
         this.appuserMapper = appuserMapper;
-        this.securityClient = securityClient;
+        this.securityService = securityService;
         this.events = events;
     }
 
@@ -40,7 +40,7 @@ class AppuserServiceImpl implements AppuserService {
 
     @Override
     public AppuserDTO getAuthenticated() {
-        var user = securityClient.getUser();
+        var user = securityService.getUser();
 
         var appuser = appuserRepository.getById(user.id());
         if (appuser == null) {
@@ -52,7 +52,7 @@ class AppuserServiceImpl implements AppuserService {
 
     @Override
     public AppuserDTO updateAuthenticated(UpdateAppuserDTO updateAppuserDTO) {
-        var user = securityClient.getUser();
+        var user = securityService.getUser();
 
         var appuserToUpdate = appuserRepository.getById(user.id());
         if (appuserToUpdate == null) {
@@ -74,7 +74,7 @@ class AppuserServiceImpl implements AppuserService {
     @Override
     @Transactional
     public AppuserDTO deleteAuthenticated() {
-        var user = securityClient.getUser();
+        var user = securityService.getUser();
 
         var appuserToDelete = appuserRepository.getById(user.id());
         if (appuserToDelete == null) {

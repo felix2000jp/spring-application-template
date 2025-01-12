@@ -8,11 +8,11 @@ import java.util.Set;
 import java.util.UUID;
 
 public record AppuserDTO(
-        @NotNull
-        UUID id,
+        @NotNull UUID id,
         @NotBlank
         @Size(min = 5, max = 500)
         String username,
         @NotNull
-        Set<String> authorities) {
+        Set<String> scopes
+) {
 }

@@ -20,7 +20,7 @@ class AppuserMapperTest {
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(appuser.getUsername(), actual.username());
-        assertEquals("APPLICATION", actual.authorities().iterator().next());
+        assertEquals("APPLICATION", actual.scopes().iterator().next());
     }
 
     @Test

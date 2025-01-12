@@ -3,7 +3,7 @@ package dev.felix2000jp.springapplicationtemplate.shared;
 import java.util.Set;
 import java.util.UUID;
 
-public interface SecurityClient {
+public interface SecurityService {
 
     enum Scope {
         ADMIN,
@@ -14,7 +14,16 @@ public interface SecurityClient {
         }
     }
 
-    record User(UUID id, String username, Set<String> authorities) {
+    record User(UUID id, String username, Set<String> scopes) {
+
+        public boolean hasScopeAdmin() {
+            return scopes.contains(Scope.ADMIN.name());
+        }
+
+        public boolean hasScopeApplication() {
+            return scopes.contains(Scope.APPLICATION.name());
+        }
+
     }
 
     User getUser();

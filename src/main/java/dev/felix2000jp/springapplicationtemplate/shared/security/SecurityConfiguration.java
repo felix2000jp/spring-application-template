@@ -3,7 +3,7 @@ package dev.felix2000jp.springapplicationtemplate.shared.security;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityClient;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +38,8 @@ class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/csrf", "/register").permitAll()
                         .anyRequest().hasAnyAuthority(
-                                SecurityClient.Scope.ADMIN.toAuthority(),
-                                SecurityClient.Scope.APPLICATION.toAuthority()
+                                SecurityService.Scope.ADMIN.toAuthority(),
+                                SecurityService.Scope.APPLICATION.toAuthority()
                         )
                 )
                 .httpBasic(Customizer.withDefaults())
@@ -52,11 +52,11 @@ class SecurityConfiguration {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/appusers/admin/**").hasAuthority(
-                                SecurityClient.Scope.ADMIN.toAuthority()
+                                SecurityService.Scope.ADMIN.toAuthority()
                         )
                         .anyRequest().hasAnyAuthority(
-                                SecurityClient.Scope.ADMIN.toAuthority(),
-                                SecurityClient.Scope.APPLICATION.toAuthority()
+                                SecurityService.Scope.ADMIN.toAuthority(),
+                                SecurityService.Scope.APPLICATION.toAuthority()
                         )
                 )
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
