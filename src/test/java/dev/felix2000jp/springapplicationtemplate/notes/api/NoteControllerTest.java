@@ -197,7 +197,7 @@ class NoteControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void should_fail_with_400_when_update_request_body_is_invalid(String requestBody) throws Exception {
+    void givenInvalidUpdateNoteDto_whenUpdate_thenReturnBadRequest(String requestBody) throws Exception {
         // when and then
         mockMvc
                 .perform(put("/api/notes/" + UUID.randomUUID()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -267,7 +267,7 @@ class NoteControllerTest {
         );
     }
 
-    private static Stream<Arguments> should_fail_with_400_when_update_request_body_is_invalid() {
+    private static Stream<Arguments> givenInvalidUpdateNoteDto_whenUpdate_thenReturnBadRequest() {
         return Stream.of(
                 arguments(""),
                 arguments("{}"),
