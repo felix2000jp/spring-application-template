@@ -26,32 +26,32 @@ class NoteController {
     }
 
     @GetMapping
-    ResponseEntity<NoteListDto> getByPage(@RequestParam(defaultValue = "0") @Min(0) int page) {
+    ResponseEntity<NoteListDto> getNotesForCurrentUser(@RequestParam(defaultValue = "0") @Min(0) int page) {
         var body = noteService.getNotesForCurrentUser(page);
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<NoteDto> getById(@PathVariable UUID id) {
+    ResponseEntity<NoteDto> getNoteByIdForCurrentUser(@PathVariable UUID id) {
         var body = noteService.getNoteByIdForCurrentUser(id);
         return ResponseEntity.ok(body);
     }
 
     @PostMapping
-    ResponseEntity<NoteDto> create(@RequestBody @Valid CreateNoteDto createNoteDTO) {
+    ResponseEntity<NoteDto> createNoteForCurrentUser(@RequestBody @Valid CreateNoteDto createNoteDTO) {
         var body = noteService.createNoteForCurrentUser(createNoteDTO);
         var location = URI.create("/api/notes/" + body.id());
         return ResponseEntity.created(location).body(body);
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody @Valid UpdateNoteDto updateNoteDTO) {
+    ResponseEntity<Void> updateNoteByIdForCurrentUser(@PathVariable UUID id, @RequestBody @Valid UpdateNoteDto updateNoteDTO) {
         noteService.updateNoteByIdForCurrentUser(id, updateNoteDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> delete(@PathVariable UUID id) {
+    ResponseEntity<Void> deleteNoteByIdForCurrentUser(@PathVariable UUID id) {
         noteService.deleteNoteByIdForCurrentUser(id);
         return ResponseEntity.noContent().build();
     }

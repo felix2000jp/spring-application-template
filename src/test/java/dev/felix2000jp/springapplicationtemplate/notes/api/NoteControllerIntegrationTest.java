@@ -124,7 +124,7 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void givenValidAuthenticationToken_whenNoteIsCreated_thenUpdateNote() {
+    void givenValidAuthenticationToken_whenNoteIsCreated_thenUpdateNoteByIdForCurrentUserNote() {
         // given
         var authenticatedUserId = UUID.randomUUID();
         var token = securityService.generateToken(
@@ -170,7 +170,7 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void givenValidAuthenticationToken_whenNoteIsCreated_thenDeleteNote() {
+    void givenValidAuthenticationToken_whenNoteIsCreated_thenDeleteNoteByIdForCurrentUserNote() {
         // given
         var authenticatedUserId = UUID.randomUUID();
         var token = securityService.generateToken(

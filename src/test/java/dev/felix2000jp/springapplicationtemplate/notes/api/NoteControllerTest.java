@@ -39,7 +39,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenPage_whenGetByPage_thenReturnOkAndNoteListDto() throws Exception {
+    void givenPage_whenGetNotesForCurrentUser_thenReturnOkAndNoteListDto() throws Exception {
         // given
         var page = 0;
         var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
@@ -68,7 +68,7 @@ class NoteControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"-1", "not a number"})
     @WithMockUser
-    void givenInvalidPage_whenGetByPage_thenReturnBadRequest(String page) throws Exception {
+    void givenInvalidPage_whenGetNotesForCurrentUser_thenReturnBadRequest(String page) throws Exception {
         // when and then
         mockMvc
                 .perform(get("/api/notes?page=" + page))
@@ -79,7 +79,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenId_whenGetById_thenReturnOkAndNoteDto() throws Exception {
+    void givenId_whenGetNoteByIdForCurrentUser_thenReturnOkAndNoteDto() throws Exception {
         // given
         var id = UUID.randomUUID();
         var noteDto = new NoteDto(id, "title", "content");
@@ -102,7 +102,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenNonExistentId_whenGetById_thenReturnNotFound() throws Exception {
+    void givenNonExistentId_whenGetNoteByIdForCurrentUser_thenReturnNotFound() throws Exception {
         // given
         var exception = new NoteNotFoundException();
         when(noteService.getNoteByIdForCurrentUser(any())).thenThrow(exception);
@@ -118,7 +118,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenCreateNoteDto_whenCreate_thenReturnCreatedAndNoteDto() throws Exception {
+    void givenCreateNoteDto_whenCreateNoteForCurrentUser_thenReturnCreatedAndNoteDto() throws Exception {
         // given
         var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
         var createNoteDTO = new CreateNoteDto(noteDto.title(), noteDto.content());
@@ -142,7 +142,7 @@ class NoteControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void givenInvalidCreateNoteDto_whenCreate_thenReturnBadRequest(String requestBody) throws Exception {
+    void givenInvalidCreateNoteDto_whenCreateNoteForCurrentUser_thenReturnBadRequest(String requestBody) throws Exception {
         // when and then
         mockMvc
                 .perform(post("/api/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -153,7 +153,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenIdAndUpdateNoteDto_whenUpdate_thenReturnNoContent() throws Exception {
+    void givenIdAndUpdateNoteDto_whenUpdateNoteByIdForCurrentUser_thenReturnNoContent() throws Exception {
         // given
         var id = UUID.randomUUID();
         var noteDto = new NoteDto(id, "title", "content");
@@ -173,7 +173,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenNonExistentIdAndUpdateNoteDto_whenUpdate_thenReturnNotFound() throws Exception {
+    void givenNonExistentIdAndUpdateNoteDto_whenUpdateNoteByIdForCurrentUser_thenReturnNotFound() throws Exception {
         // given
         var id = UUID.randomUUID();
         var updateNoteDto = new UpdateNoteDto("title", "content");
@@ -197,7 +197,7 @@ class NoteControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void givenInvalidUpdateNoteDto_whenUpdate_thenReturnBadRequest(String requestBody) throws Exception {
+    void givenInvalidUpdateNoteDto_whenUpdateNoteByIdForCurrentUser_thenReturnBadRequest(String requestBody) throws Exception {
         // when and then
         mockMvc
                 .perform(put("/api/notes/" + UUID.randomUUID()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -208,7 +208,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenId_whenDelete_thenReturnNoContent() throws Exception {
+    void givenId_whenDelete_NoteByIdForCurrentUser_thenReturnNoContent() throws Exception {
         // given
         var id = UUID.randomUUID();
         var noteDto = new NoteDto(id, "title", "content");
@@ -224,7 +224,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenNonExistentId_whenDelete_thenReturnNotFound() throws Exception {
+    void givenNonExistentId_whenDeleteNoteByIdForCurrentUser_thenReturnNotFound() throws Exception {
         // given
         var id = UUID.randomUUID();
 
@@ -243,7 +243,7 @@ class NoteControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"1", "not a uuid"})
     @WithMockUser
-    void givenInvalidId_whenDelete_thenReturnBadRequest(String id) throws Exception {
+    void givenInvalidId_whenDeleteNoteByIdForCurrentUser_thenReturnBadRequest(String id) throws Exception {
         // when and then
         mockMvc
                 .perform(delete("/api/notes/" + id).with(csrf()))
@@ -252,7 +252,7 @@ class NoteControllerTest {
                 .andExpect(jsonPath("$.status").value(400));
     }
 
-    private static Stream<Arguments> givenInvalidCreateNoteDto_whenCreate_thenReturnBadRequest() {
+    private static Stream<Arguments> givenInvalidCreateNoteDto_whenCreateNoteForCurrentUser_thenReturnBadRequest() {
         return Stream.of(
                 arguments(""),
                 arguments("{}"),
@@ -267,7 +267,7 @@ class NoteControllerTest {
         );
     }
 
-    private static Stream<Arguments> givenInvalidUpdateNoteDto_whenUpdate_thenReturnBadRequest() {
+    private static Stream<Arguments> givenInvalidUpdateNoteDto_whenUpdateNoteByIdForCurrentUser_thenReturnBadRequest() {
         return Stream.of(
                 arguments(""),
                 arguments("{}"),

@@ -13,7 +13,7 @@ class NoteMapperTest {
     private final NoteMapper noteMapper = new NoteMapper();
 
     @Test
-    void givenNote_whenToDto_thenMapToNoteDto() {
+    void givenNote_whenToDto_thenReturnNoteDto() {
         // given
         var note = new Note(UUID.randomUUID(), "title", "content");
 
@@ -27,7 +27,7 @@ class NoteMapperTest {
     }
 
     @Test
-    void givenNotes_whenToDto_thenMapToNoteListDto() {
+    void givenNotes_whenToDto_thenReturnNoteListDto() {
         // given
         var notes = List.of(new Note(UUID.randomUUID(), "title", "content"));
 
