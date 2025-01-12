@@ -56,7 +56,7 @@ class AuthServiceImpl implements AuthService {
                 createAppuserDTO.username(),
                 securityService.generateEncodedPassword(createAppuserDTO.password())
         );
-        appuserToCreate.addApplicationScope();
+        appuserToCreate.addScopeApplication();
 
         appuserRepository.save(appuserToCreate);
     }

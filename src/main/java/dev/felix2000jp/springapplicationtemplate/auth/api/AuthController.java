@@ -1,8 +1,8 @@
 package dev.felix2000jp.springapplicationtemplate.auth.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.AuthService;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDTO;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;

@@ -74,9 +74,14 @@ public class Appuser implements UserDetails {
         this.username = username;
     }
 
-    public void addApplicationScope() {
-        var applicationAuthorityValue = SecurityService.Scope.APPLICATION.name();
-        authorities.add(new AppuserAuthority(applicationAuthorityValue));
+    public void addScopeAdmin() {
+        var adminScopeValue = SecurityService.Scope.ADMIN.name();
+        authorities.add(new AppuserAuthority(adminScopeValue));
+    }
+
+    public void addScopeApplication() {
+        var applicationScopeValue = SecurityService.Scope.APPLICATION.name();
+        authorities.add(new AppuserAuthority(applicationScopeValue));
     }
 
 }

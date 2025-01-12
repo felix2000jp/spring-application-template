@@ -14,7 +14,7 @@ class AppuserMapperTest {
     @Test
     void should_map_appuser_to_appuserDTO_successfully() {
         var appuser = new Appuser("username", "password");
-        appuser.addApplicationScope();
+        appuser.addScopeApplication();
 
         var actual = appuserMapper.toDTO(appuser);
 

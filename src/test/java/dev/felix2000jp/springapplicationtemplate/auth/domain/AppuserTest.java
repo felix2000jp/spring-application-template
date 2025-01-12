@@ -1,5 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.domain;
 
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -34,13 +35,23 @@ class AppuserTest {
     }
 
     @Test
-    void should_add_application_scope_successfully() {
+    void should_add_scope_admin_successfully() {
         var appuser = new Appuser("username", "password");
-        appuser.addApplicationScope();
+        appuser.addScopeAdmin();
 
         assertEquals(1, appuser.getAuthorities().size());
-        assertEquals("APPLICATION", appuser.getAuthoritiesScopes().iterator().next());
-        assertEquals("SCOPE_APPLICATION", appuser.getAuthorities().iterator().next().getAuthority());
+        assertEquals(SecurityService.Scope.ADMIN.name(), appuser.getAuthoritiesScopes().iterator().next());
+        assertEquals(SecurityService.Scope.ADMIN.toAuthority(), appuser.getAuthorities().iterator().next().getAuthority());
+    }
+
+    @Test
+    void should_add_scope_application_successfully() {
+        var appuser = new Appuser("username", "password");
+        appuser.addScopeApplication();
+
+        assertEquals(1, appuser.getAuthorities().size());
+        assertEquals(SecurityService.Scope.APPLICATION.name(), appuser.getAuthoritiesScopes().iterator().next());
+        assertEquals(SecurityService.Scope.APPLICATION.toAuthority(), appuser.getAuthorities().iterator().next().getAuthority());
     }
 
 }
