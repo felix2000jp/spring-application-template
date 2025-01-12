@@ -1,9 +1,9 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
 import dev.felix2000jp.springapplicationtemplate.auth.AppuserDeletedEvent;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
@@ -33,13 +33,13 @@ class AppuserServiceImpl implements AppuserService {
     }
 
     @Override
-    public AppuserListDTO getAll(int pageNumber) {
+    public AppuserListDto getAll(int pageNumber) {
         var appusers = appuserRepository.getAll(pageNumber);
         return appuserMapper.toDTO(appusers);
     }
 
     @Override
-    public AppuserDTO getCurrent() {
+    public AppuserDto getCurrent() {
         var user = securityService.getUser();
 
         var appuser = appuserRepository.getById(user.id());
@@ -51,7 +51,7 @@ class AppuserServiceImpl implements AppuserService {
     }
 
     @Override
-    public AppuserDTO updateCurrent(UpdateAppuserDTO updateAppuserDTO) {
+    public AppuserDto updateCurrent(UpdateAppuserDto updateAppuserDTO) {
         var user = securityService.getUser();
 
         var appuserToUpdate = appuserRepository.getById(user.id());
@@ -73,7 +73,7 @@ class AppuserServiceImpl implements AppuserService {
 
     @Override
     @Transactional
-    public AppuserDTO deleteCurrent() {
+    public AppuserDto deleteCurrent() {
         var user = securityService.getUser();
 
         var appuserToDelete = appuserRepository.getById(user.id());

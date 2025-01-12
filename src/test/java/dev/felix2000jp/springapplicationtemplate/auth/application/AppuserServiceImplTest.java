@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
@@ -92,7 +92,7 @@ class AppuserServiceImplTest {
     @Test
     void should_update_authenticated_appuser_when_username_is_unique() {
         var appuser = new Appuser("username", "password");
-        var updateAppuserDTO = new UpdateAppuserDTO("new username");
+        var updateAppuserDTO = new UpdateAppuserDto("new username");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
                 appuser.getUsername(),
@@ -113,7 +113,7 @@ class AppuserServiceImplTest {
     @Test
     void should_update_authenticated_appuser_when_username_is_not_changed() {
         var appuser = new Appuser("username", "password");
-        var updateAppuserDTO = new UpdateAppuserDTO("username");
+        var updateAppuserDTO = new UpdateAppuserDto("username");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
                 appuser.getUsername(),
@@ -133,7 +133,7 @@ class AppuserServiceImplTest {
 
     @Test
     void should_fail_to_update_authenticated_appuser_when_appuser_does_not_exists() {
-        var updateAppuserDTO = new UpdateAppuserDTO("username");
+        var updateAppuserDTO = new UpdateAppuserDto("username");
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of());
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
@@ -145,7 +145,7 @@ class AppuserServiceImplTest {
     @Test
     void should_fail_to_update_authenticated_appuser_when_username_already_exists() {
         var appuser = new Appuser("username", "password");
-        var updateAppuserDTO = new UpdateAppuserDTO("new username");
+        var updateAppuserDTO = new UpdateAppuserDto("new username");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
                 appuser.getUsername(),

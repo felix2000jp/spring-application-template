@@ -1,15 +1,15 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AuthService extends UserDetailsService {
 
     String generateToken();
 
-    void createAppuser(CreateAppuserDTO createAppuserDTO);
+    void createAppuser(CreateAppuserDto createAppuserDTO);
 
-    void updatePassword(UpdatePasswordDTO updatePasswordDTO);
+    void updatePassword(UpdatePasswordDto updatePasswordDTO);
 
 }

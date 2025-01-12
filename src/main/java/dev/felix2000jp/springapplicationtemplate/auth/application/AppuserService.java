@@ -1,17 +1,17 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 
 public interface AppuserService {
 
-    AppuserListDTO getAll(int pageNumber);
+    AppuserListDto getAll(int pageNumber);
 
-    AppuserDTO getCurrent();
+    AppuserDto getCurrent();
 
-    AppuserDTO updateCurrent(UpdateAppuserDTO updateAppuserDTO);
+    AppuserDto updateCurrent(UpdateAppuserDto updateAppuserDTO);
 
-    AppuserDTO deleteCurrent();
+    AppuserDto deleteCurrent();
 
 }

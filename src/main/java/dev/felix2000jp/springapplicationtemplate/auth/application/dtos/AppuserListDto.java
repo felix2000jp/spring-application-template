@@ -4,5 +4,5 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record AppuserListDTO(@NotNull List<AppuserDTO> appusers) {
+public record AppuserListDto(@NotNull List<AppuserDto> appusers) {
 }

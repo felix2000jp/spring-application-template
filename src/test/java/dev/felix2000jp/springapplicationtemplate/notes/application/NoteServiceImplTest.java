@@ -6,6 +6,7 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNo
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,17 +34,31 @@ class NoteServiceImplTest {
     @InjectMocks
     private NoteServiceImpl noteService;
 
+    private SecurityService.User authenticatedUser;
+
+    @BeforeEach
+    void setUp() {
+        authenticatedUser = new SecurityService.User(
+                UUID.randomUUID(),
+                "username",
+                Set.of(SecurityService.Scope.APPLICATION.name())
+        );
+    }
+
     @Test
-    void should_get_notes_from_logged_in_appuser_when_notes_exist() {
-        var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of("Application"));
+    void givenPage_whenGetByAppuser_thenReturnNotes() {
+        // given
+        var page = 0;
         var note = new Note(UUID.randomUUID(), "title", "content");
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of(note));
 
-        var actual = noteService.getByAppuser(0);
+        // when
+        var actual = noteService.getByAppuser(page);
         var actualNote = actual.notes().getFirst();
 
+        // then
         assertEquals(1, actual.notes().size());
         assertEquals(note.getId(), actualNote.id());
         assertEquals(note.getTitle(), actualNote.title());
@@ -51,14 +66,17 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void should_not_get_notes_from_logged_in_appuser_when_notes_do_not_exist() {
-        var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of("Application"));
+    void givenEmptyPage_whenGetByAppuser_thenReturnEmptyList() {
+        // given
+        var page = 0;
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of());
 
-        var actual = noteService.getByAppuser(0);
+        // when
+        var actual = noteService.getByAppuser(page);
 
+        // then
         assertEquals(0, actual.notes().size());
     }
 

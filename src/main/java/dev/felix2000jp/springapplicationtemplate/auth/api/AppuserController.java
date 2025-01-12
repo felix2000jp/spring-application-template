@@ -1,9 +1,9 @@
 package dev.felix2000jp.springapplicationtemplate.auth.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.AppuserService;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
@@ -22,26 +22,26 @@ class AppuserController {
     }
 
     @GetMapping("/admin")
-    ResponseEntity<AppuserListDTO> getAll(@RequestParam @Min(0) int page) {
+    ResponseEntity<AppuserListDto> getAll(@RequestParam(defaultValue = "0") @Min(0) int page) {
         var body = appuserService.getAll(page);
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/me")
-    ResponseEntity<AppuserDTO> getCurrent() {
-        var body = appuserService.getAuthenticated();
+    ResponseEntity<AppuserDto> getCurrent() {
+        var body = appuserService.getCurrent();
         return ResponseEntity.ok(body);
     }
 
     @PutMapping("/me")
-    ResponseEntity<Void> updateCurrent(@RequestBody @Valid UpdateAppuserDTO updateAppuserDTO) {
-        appuserService.updateAuthenticated(updateAppuserDTO);
+    ResponseEntity<Void> updateCurrent(@RequestBody @Valid UpdateAppuserDto updateAppuserDTO) {
+        appuserService.updateCurrent(updateAppuserDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/me")
     ResponseEntity<Void> deleteCurrent() {
-        appuserService.deleteAuthenticated();
+        appuserService.deleteCurrent();
         return ResponseEntity.noContent().build();
     }
 }

@@ -1,7 +1,7 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
@@ -46,7 +46,7 @@ class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void createAppuser(CreateAppuserDTO createAppuserDTO) {
+    public void createAppuser(CreateAppuserDto createAppuserDTO) {
         var doesUsernameExist = appuserRepository.existsByUsername(createAppuserDTO.username());
         if (doesUsernameExist) {
             throw new AppuserAlreadyExistsException();
@@ -62,7 +62,7 @@ class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void updatePassword(UpdatePasswordDTO updatePasswordDTO) {
+    public void updatePassword(UpdatePasswordDto updatePasswordDTO) {
         var user = securityService.getUser();
 
         var appuserToUpdate = appuserRepository.getById(user.id());

@@ -1,8 +1,8 @@
 package dev.felix2000jp.springapplicationtemplate.auth.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.AuthService;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -58,7 +58,7 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void should_return_201_and_location_when_user_is_registered() throws Exception {
-        var createAppuserDTO = new CreateAppuserDTO("username", "password");
+        var createAppuserDTO = new CreateAppuserDto("username", "password");
 
         var requestBody = String.format("""
                 { "username": "%s", "password": "%s" }
@@ -73,7 +73,7 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void should_fail_to_create_appuser_and_return_409_when_username_already_exists() throws Exception {
-        var createAppuserDTO = new CreateAppuserDTO("username", "password");
+        var createAppuserDTO = new CreateAppuserDto("username", "password");
 
         var requestBody = String.format("""
                 { "username": "%s", "password": "%s" }
@@ -104,7 +104,7 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void should_return_204_when_user_password_is_updated() throws Exception {
-        var updatePasswordDTO = new UpdatePasswordDTO("password");
+        var updatePasswordDTO = new UpdatePasswordDto("password");
 
         var requestBody = String.format("""
                 { "password": "%s" }
@@ -118,7 +118,7 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void should_fail_to_update_password_and_return_404_when_appuser_does_not_exist() throws Exception {
-        var updatePasswordDTO = new UpdatePasswordDTO("password");
+        var updatePasswordDTO = new UpdatePasswordDto("password");
 
         var requestBody = String.format("""
                 { "password": "%s" }

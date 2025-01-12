@@ -1,8 +1,8 @@
 package dev.felix2000jp.springapplicationtemplate.auth.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.AuthService;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -34,14 +34,14 @@ class AuthController {
     }
 
     @PostMapping("/register")
-    ResponseEntity<Void> register(@Valid @RequestBody CreateAppuserDTO createAppuserDTO) {
+    ResponseEntity<Void> register(@Valid @RequestBody CreateAppuserDto createAppuserDTO) {
         authService.createAppuser(createAppuserDTO);
         var location = URI.create("/api/appusers/me");
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/password")
-    ResponseEntity<Void> updatePassword(@Valid @RequestBody UpdatePasswordDTO updatePasswordDTO) {
+    ResponseEntity<Void> updatePassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDTO) {
         authService.updatePassword(updatePasswordDTO);
         return ResponseEntity.noContent().build();
     }

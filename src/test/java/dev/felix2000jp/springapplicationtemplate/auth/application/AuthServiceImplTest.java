@@ -1,7 +1,7 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDTO;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
@@ -85,7 +85,7 @@ class AuthServiceImplTest {
 
     @Test
     void should_create_appuser_when_username_is_unique() {
-        var createAppuserDTO = new CreateAppuserDTO("username", "password");
+        var createAppuserDTO = new CreateAppuserDto("username", "password");
 
         when(appuserRepository.existsByUsername(createAppuserDTO.username())).thenReturn(false);
         when(securityService.generateEncodedPassword(createAppuserDTO.password())).thenReturn("encoded-password");
@@ -100,7 +100,7 @@ class AuthServiceImplTest {
 
     @Test
     void should_fail_to_create_appuser_when_username_already_exists() {
-        var createAppuserDTO = new CreateAppuserDTO("username", "password");
+        var createAppuserDTO = new CreateAppuserDto("username", "password");
 
         when(appuserRepository.existsByUsername(createAppuserDTO.username())).thenReturn(true);
 
@@ -109,7 +109,7 @@ class AuthServiceImplTest {
 
     @Test
     void should_update_appuser_password_when_appuser_exists() {
-        var updatePasswordDTO = new UpdatePasswordDTO("new password");
+        var updatePasswordDTO = new UpdatePasswordDto("new password");
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
@@ -129,7 +129,7 @@ class AuthServiceImplTest {
 
     @Test
     void should_fail_to_update_appuser_password_when_appuser_does_not_exist() {
-        var updatePasswordDTO = new UpdatePasswordDTO("new password");
+        var updatePasswordDTO = new UpdatePasswordDto("new password");
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),

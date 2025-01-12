@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 import java.util.Set;
 import java.util.UUID;
 
-public record AppuserDTO(
+public record AppuserDto(
         @NotNull UUID id,
         @NotBlank
         @Size(min = 5, max = 500)
