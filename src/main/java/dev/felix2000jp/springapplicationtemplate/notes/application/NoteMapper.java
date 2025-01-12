@@ -10,12 +10,12 @@ import java.util.List;
 @Component
 class NoteMapper {
 
-    NoteDto toDTO(Note note) {
+    NoteDto toDto(Note note) {
         return new NoteDto(note.getId(), note.getTitle(), note.getContent());
     }
 
-    NoteListDto toDTO(List<Note> notes) {
-        return new NoteListDto(notes.stream().map(this::toDTO).toList());
+    NoteListDto toDto(List<Note> notes) {
+        return new NoteListDto(notes.stream().map(this::toDto).toList());
     }
 
 }

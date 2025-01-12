@@ -13,23 +13,12 @@ class NoteMapperTest {
     private final NoteMapper noteMapper = new NoteMapper();
 
     @Test
-    void should_map_note_to_noteDTO_successfully() {
-        var note = new Note(UUID.randomUUID(), "title", "content");
-
-        var actual = noteMapper.toDTO(note);
-
-        assertEquals(note.getId(), actual.id());
-        assertEquals(note.getTitle(), actual.title());
-        assertEquals(note.getContent(), actual.content());
-    }
-
-    @Test
-    void givenNote_whenToDTO_thenNoteDTO() {
+    void givenNote_whenToDto_thenMapToNoteDto() {
         // given
         var note = new Note(UUID.randomUUID(), "title", "content");
 
         // when
-        var actual = noteMapper.toDTO(note);
+        var actual = noteMapper.toDto(note);
 
         // then
         assertEquals(note.getId(), actual.id());
@@ -38,11 +27,14 @@ class NoteMapperTest {
     }
 
     @Test
-    void should_map_notes_to_noteListDTO_successfully() {
+    void givenNotes_whenToDto_thenMapToNoteListDto() {
+        // given
         var notes = List.of(new Note(UUID.randomUUID(), "title", "content"));
 
-        var actual = noteMapper.toDTO(notes);
+        // when
+        var actual = noteMapper.toDto(notes);
 
+        // then
         assertEquals(notes.size(), actual.notes().size());
     }
 

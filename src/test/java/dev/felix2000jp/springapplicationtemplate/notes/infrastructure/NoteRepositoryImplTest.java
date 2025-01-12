@@ -110,7 +110,7 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    void givenId_whenDeleteById_thenNoteShouldBeDeleted() {
+    void givenId_whenDeleteById_thenDeleteNote() {
         // given
         var id = note.getId();
 
@@ -136,7 +136,7 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserId_wheDeleteByAppuserId_thenNotesShouldBeDeleted() {
+    void givenAppuserId_wheDeleteByAppuserId_thenDeleteNotes() {
         // given
         var appuserId = note.getAppuserId();
 
@@ -162,7 +162,7 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    void givenNoteToCreate_whenSave_thenNoteShouldBeSaved() {
+    void givenNoteToCreate_whenSave_thenSaveNote() {
         // given
         var noteToCreate = new Note(UUID.randomUUID(), "title 1", "content 1");
 

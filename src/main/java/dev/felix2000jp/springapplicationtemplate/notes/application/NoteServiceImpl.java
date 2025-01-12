@@ -29,7 +29,7 @@ class NoteServiceImpl implements NoteService {
     public NoteListDto getByAppuser(int pageNumber) {
         var appuserId = securityService.getUser().id();
         var notes = noteRepository.getByAppuserId(appuserId, pageNumber);
-        return noteMapper.toDTO(notes);
+        return noteMapper.toDto(notes);
     }
 
     @Override
@@ -41,7 +41,7 @@ class NoteServiceImpl implements NoteService {
             throw new NoteNotFoundException();
         }
 
-        return noteMapper.toDTO(note);
+        return noteMapper.toDto(note);
     }
 
     @Override
@@ -51,7 +51,7 @@ class NoteServiceImpl implements NoteService {
         var noteToCreate = new Note(appuserId, createNoteDTO.title(), createNoteDTO.content());
         noteRepository.save(noteToCreate);
 
-        return noteMapper.toDTO(noteToCreate);
+        return noteMapper.toDto(noteToCreate);
     }
 
     @Override
@@ -67,7 +67,7 @@ class NoteServiceImpl implements NoteService {
         noteToUpdate.setContent(updateNoteDTO.content());
         noteRepository.save(noteToUpdate);
 
-        return noteMapper.toDTO(noteToUpdate);
+        return noteMapper.toDto(noteToUpdate);
     }
 
     @Override
@@ -80,7 +80,7 @@ class NoteServiceImpl implements NoteService {
         }
 
         noteRepository.deleteById(noteToDelete.getId());
-        return noteMapper.toDTO(noteToDelete);
+        return noteMapper.toDto(noteToDelete);
     }
 
     @Override
