@@ -3,6 +3,8 @@ package dev.felix2000jp.springapplicationtemplate.auth.api;
 import dev.felix2000jp.springapplicationtemplate.auth.application.AuthService;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDTO;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDTO;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -19,6 +21,7 @@ import java.util.stream.Stream;
 import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -67,6 +70,26 @@ class AuthControllerTest {
                 .andExpect(header().string("LOCATION", "/api/appusers/me"));
     }
 
+    @Test
+    @WithMockUser
+    void should_fail_to_create_appuser_and_return_409_when_username_already_exists() throws Exception {
+        var createAppuserDTO = new CreateAppuserDTO("username", "password");
+
+        var requestBody = String.format("""
+                { "username": "%s", "password": "%s" }
+                """, createAppuserDTO.username(), createAppuserDTO.password());
+
+        var exception = new AppuserAlreadyExistsException();
+        doThrow(exception).when(authService).createAppuser(createAppuserDTO);
+
+        mockMvc
+                .perform(post("/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Conflict"))
+                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
+                .andExpect(jsonPath("$.status").value(409));
+    }
+
     @ParameterizedTest
     @MethodSource
     @WithMockUser
@@ -90,6 +113,26 @@ class AuthControllerTest {
         mockMvc
                 .perform(put("/auth/password").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void should_fail_to_update_password_and_return_404_when_appuser_does_not_exist() throws Exception {
+        var updatePasswordDTO = new UpdatePasswordDTO("password");
+
+        var requestBody = String.format("""
+                { "password": "%s" }
+                """, updatePasswordDTO.password());
+
+        var exception = new AppuserNotFoundException();
+        doThrow(exception).when(authService).updatePassword(updatePasswordDTO);
+
+        mockMvc
+                .perform(put("/auth/password").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Not Found"))
+                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
+                .andExpect(jsonPath("$.status").value(404));
     }
 
     @ParameterizedTest

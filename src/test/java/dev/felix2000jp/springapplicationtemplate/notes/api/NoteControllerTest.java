@@ -39,27 +39,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void should_get_page_of_notes_from_the_logged_in_user() throws Exception {
-        var noteDTO = new NoteDTO(UUID.randomUUID(), "title", "content");
-        var noteListDTO = new NoteListDTO(List.of(noteDTO));
-
-        var expectedResponse = String.format("""
-                {
-                    "notes": [{ "id": "%s", "title": "%s", "content": "%s" }]
-                }
-                """, noteDTO.id(), noteDTO.title(), noteDTO.content());
-
-        when(noteService.getByAppuser(0)).thenReturn(noteListDTO);
-
-        mockMvc
-                .perform(get("/api/notes?page=0"))
-                .andExpect(status().isOk())
-                .andExpect(content().json(expectedResponse));
-    }
-
-    @Test
-    @WithMockUser
-    void should_get_page_0_of_notes_from_the_logged_in_user_when_page_param_is_missing() throws Exception {
+    void should_get_page_of_notes_from_the_logged_in_user_when_page_query_param_is_valid() throws Exception {
         var noteDTO = new NoteDTO(UUID.randomUUID(), "title", "content");
         var noteListDTO = new NoteListDTO(List.of(noteDTO));
 
@@ -73,6 +53,11 @@ class NoteControllerTest {
 
         mockMvc
                 .perform(get("/api/notes"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse));
+
+        mockMvc
+                .perform(get("/api/notes?page=0"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponse));
     }
@@ -111,12 +96,14 @@ class NoteControllerTest {
     @Test
     @WithMockUser
     void should_fail_with_404_when_getting_note_with_id_that_does_not_exist() throws Exception {
-        when(noteService.getByIdAndAppuser(any())).thenThrow(new NoteNotFoundException());
+        var exception = new NoteNotFoundException();
+        when(noteService.getByIdAndAppuser(any())).thenThrow(exception);
 
         mockMvc
                 .perform(get("/api/notes/" + UUID.randomUUID()))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Not Found"))
+                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
                 .andExpect(jsonPath("$.status").value(404));
     }
 
