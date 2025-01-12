@@ -32,20 +32,12 @@ class SecurityServiceImpl implements SecurityService {
     @Override
     public User getUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var jwt = (Jwt) authentication.getPrincipal();
 
-        if (authentication == null) {
-            throw new IllegalStateException("Authentication object is null");
-        }
+        var id = UUID.fromString(jwt.getClaimAsString(ID_CLAIM_NAME));
+        var scopes = Arrays.stream(jwt.getClaimAsString(SCOPE_CLAIM_NAME).split(" ")).collect(Collectors.toSet());
 
-        if (authentication.getPrincipal() instanceof Jwt jwt) {
-            return new User(
-                    UUID.fromString(jwt.getClaimAsString(ID_CLAIM_NAME)),
-                    jwt.getSubject(),
-                    Arrays.stream(jwt.getClaimAsString(SCOPE_CLAIM_NAME).split(" ")).collect(Collectors.toSet())
-            );
-        }
-
-        throw new IllegalStateException("Principal object is not of type Jwt");
+        return new User(id, jwt.getSubject(), scopes);
     }
 
     @Override
