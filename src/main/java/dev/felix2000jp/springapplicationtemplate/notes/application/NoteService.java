@@ -9,16 +9,16 @@ import java.util.UUID;
 
 public interface NoteService {
 
-    NoteListDto getByCurrentUser(int pageNumber);
+    NoteListDto getNotesForCurrentUser(int pageNumber);
 
-    NoteDto getByIdAndCurrentUser(UUID id);
+    NoteDto getNoteByIdForCurrentUser(UUID id);
 
-    NoteDto createByCurrentUser(CreateNoteDto createNoteDTO);
+    NoteDto createNoteForCurrentUser(CreateNoteDto createNoteDTO);
 
-    NoteDto updateByIdAndCurrentUser(UUID noteId, UpdateNoteDto updateNoteDTO);
+    NoteDto updateNoteByIdForCurrentUser(UUID noteId, UpdateNoteDto updateNoteDTO);
 
-    NoteDto deleteByIdAndCurrentUser(UUID id);
+    NoteDto deleteNoteByIdForCurrentUser(UUID id);
 
-    void deleteByAppuserId(UUID appuserId);
+    void deleteNotesByAppuserId(UUID appuserId);
 
 }

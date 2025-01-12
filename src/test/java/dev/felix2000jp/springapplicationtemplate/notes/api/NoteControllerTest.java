@@ -51,7 +51,7 @@ class NoteControllerTest {
                 }
                 """, noteDto.id(), noteDto.title(), noteDto.content());
 
-        when(noteService.getByCurrentUser(page)).thenReturn(noteListDto);
+        when(noteService.getNotesForCurrentUser(page)).thenReturn(noteListDto);
 
         // when and then
         mockMvc
@@ -91,7 +91,7 @@ class NoteControllerTest {
                 }
                 """, noteDto.id(), noteDto.title(), noteDto.content());
 
-        when(noteService.getByIdAndCurrentUser(id)).thenReturn(noteDto);
+        when(noteService.getNoteByIdForCurrentUser(id)).thenReturn(noteDto);
 
         // when and then
         mockMvc
@@ -105,7 +105,7 @@ class NoteControllerTest {
     void givenNonExistentId_whenGetById_thenReturnNotFound() throws Exception {
         // given
         var exception = new NoteNotFoundException();
-        when(noteService.getByIdAndCurrentUser(any())).thenThrow(exception);
+        when(noteService.getNoteByIdForCurrentUser(any())).thenThrow(exception);
 
         // when and then
         mockMvc
@@ -130,7 +130,7 @@ class NoteControllerTest {
                 { "id": "%s", "title": "%s", "content": "%s" }
                 """, noteDto.id(), noteDto.title(), noteDto.content());
 
-        when(noteService.createByCurrentUser(createNoteDTO)).thenReturn(noteDto);
+        when(noteService.createNoteForCurrentUser(createNoteDTO)).thenReturn(noteDto);
 
         // when and then
         mockMvc
@@ -163,7 +163,7 @@ class NoteControllerTest {
                 { "title": "%s", "content": "%s" }
                 """, updateNoteDto.title(), updateNoteDto.content());
 
-        when(noteService.updateByIdAndCurrentUser(id, updateNoteDto)).thenReturn(noteDto);
+        when(noteService.updateNoteByIdForCurrentUser(id, updateNoteDto)).thenReturn(noteDto);
 
         // when and then
         mockMvc
@@ -183,7 +183,7 @@ class NoteControllerTest {
                 """, updateNoteDto.title(), updateNoteDto.content());
 
         var exception = new NoteNotFoundException();
-        when(noteService.updateByIdAndCurrentUser(id, updateNoteDto)).thenThrow(exception);
+        when(noteService.updateNoteByIdForCurrentUser(id, updateNoteDto)).thenThrow(exception);
 
         // when and then
         mockMvc
@@ -213,7 +213,7 @@ class NoteControllerTest {
         var id = UUID.randomUUID();
         var noteDto = new NoteDto(id, "title", "content");
 
-        when(noteService.deleteByIdAndCurrentUser(id)).thenReturn(noteDto);
+        when(noteService.deleteNoteByIdForCurrentUser(id)).thenReturn(noteDto);
 
         // when and then
         mockMvc
@@ -229,7 +229,7 @@ class NoteControllerTest {
         var id = UUID.randomUUID();
 
         var exception = new NoteNotFoundException();
-        when(noteService.deleteByIdAndCurrentUser(id)).thenThrow(exception);
+        when(noteService.deleteNoteByIdForCurrentUser(id)).thenThrow(exception);
 
         // when and then
         mockMvc

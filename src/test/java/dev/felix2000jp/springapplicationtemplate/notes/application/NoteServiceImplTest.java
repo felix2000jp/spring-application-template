@@ -48,7 +48,7 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void givenPage_whenGetByCurrentUser_User_thenReturnNotes() {
+    void givenPage_whenGetNotesForCurrentUser_thenReturnNoteListDto() {
         // given
         var page = 0;
         var note = new Note(UUID.randomUUID(), "title", "content");
@@ -56,7 +56,7 @@ class NoteServiceImplTest {
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of(note));
 
         // when
-        var actual = noteService.getByCurrentUser(page);
+        var actual = noteService.getNotesForCurrentUser(page);
         var actualNote = actual.notes().getFirst();
 
         // then
@@ -67,21 +67,21 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void givenEmptyPage_whenGetByCurrentUser_User_thenReturnEmptyList() {
+    void givenEmptyPage_whenGetNotesForCurrentUser_thenReturnEmptyNoteListDto() {
         // given
         var page = 0;
 
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of());
 
         // when
-        var actual = noteService.getByCurrentUser(page);
+        var actual = noteService.getNotesForCurrentUser(page);
 
         // then
         assertEquals(0, actual.notes().size());
     }
 
     @Test
-    void givenId_getByIdAndCurrentUser_thenReturnNoteDto() {
+    void givenId_whenGetNoteByIdForCurrentUser_thenReturnNoteDto() {
         // given
         var note = new Note(UUID.randomUUID(), "title", "content");
         var id = note.getId();
@@ -89,7 +89,7 @@ class NoteServiceImplTest {
         when(noteRepository.getByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(note);
 
         // when
-        var actual = noteService.getByIdAndCurrentUser(id);
+        var actual = noteService.getNoteByIdForCurrentUser(id);
 
         // then
         assertEquals(note.getId(), actual.id());
@@ -98,7 +98,7 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void givenNonExistentId_getByIdAndCurrentUser_thenThrowNoteNotFoundException() {
+    void givenNonExistentId_whenGetNoteByIdForCurrentUser_thenThrowNoteNotFoundException() {
         // given
         var note = new Note(UUID.randomUUID(), "title", "content");
         var id = note.getId();
@@ -106,16 +106,16 @@ class NoteServiceImplTest {
         when(noteRepository.getByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(null);
 
         // when and then
-        assertThrows(NoteNotFoundException.class, () -> noteService.getByIdAndCurrentUser(id));
+        assertThrows(NoteNotFoundException.class, () -> noteService.getNoteByIdForCurrentUser(id));
     }
 
     @Test
-    void givenCreateNoteDto_createByCurrentUser_thenCreateNote() {
+    void givenCreateNoteDto_whenCreateNoteForCurrentUser_thenCreateNote() {
         // given
         var createNoteDto = new CreateNoteDto("title", "content");
 
         // when
-        var actual = noteService.createByCurrentUser(createNoteDto);
+        var actual = noteService.createNoteForCurrentUser(createNoteDto);
 
         // then
         assertEquals(createNoteDto.title(), actual.title());
@@ -123,7 +123,7 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void givenIdAndUpdateNoteDto_whenUpdateByIdAndCurrentUser_thenUpdateNote() {
+    void givenIdAndUpdateNoteDto_whenUpdateNoteByIdForCurrentUser_thenUpdateNote() {
         // given
         var note = new Note(UUID.randomUUID(), "title", "content");
         var id = note.getId();
@@ -132,7 +132,7 @@ class NoteServiceImplTest {
         when(noteRepository.getByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(note);
 
         // when
-        var actual = noteService.updateByIdAndCurrentUser(id, updateNoteDto);
+        var actual = noteService.updateNoteByIdForCurrentUser(id, updateNoteDto);
 
         // then
         assertEquals(updateNoteDto.title(), actual.title());
@@ -140,7 +140,7 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void givenNonExistentIdAndUpdateNoteDto_whenUpdateByIdAndCurrentUser_thenThrowNoteNotFoundException() {
+    void givenNonExistentIdAndUpdateNoteDto_whenUpdateNoteByIdForCurrentUser_thenThrowNoteNotFoundException() {
         // given
         var id = UUID.randomUUID();
         var updateNoteDTO = new UpdateNoteDto("new title", "new content");
@@ -148,11 +148,11 @@ class NoteServiceImplTest {
         when(noteRepository.getByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(null);
 
         // when and then
-        assertThrows(NoteNotFoundException.class, () -> noteService.updateByIdAndCurrentUser(id, updateNoteDTO));
+        assertThrows(NoteNotFoundException.class, () -> noteService.updateNoteByIdForCurrentUser(id, updateNoteDTO));
     }
 
     @Test
-    void givenId_whenDeleteByIdAndCurrentUser_thenDeleteNote() {
+    void givenId_whenDeleteNoteByIdForCurrentUser_thenDeleteNote() {
         // given
         var note = new Note(UUID.randomUUID(), "title", "content");
         var id = note.getId();
@@ -160,7 +160,7 @@ class NoteServiceImplTest {
         when(noteRepository.getByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(note);
 
         // when
-        var actual = noteService.deleteByIdAndCurrentUser(id);
+        var actual = noteService.deleteNoteByIdForCurrentUser(id);
 
         // then
         assertEquals(note.getId(), actual.id());
@@ -169,14 +169,14 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void givenNonExistentId_whenDeleteByIdAndCurrentUser_thenThrowNoteNotFoundException() {
+    void givenNonExistentId_whenDeleteNoteByIdForCurrentUser_thenThrowNoteNotFoundException() {
         // given
         var id = UUID.randomUUID();
 
         when(noteRepository.getByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(null);
 
         // when and then
-        assertThrows(NoteNotFoundException.class, () -> noteService.deleteByIdAndCurrentUser(id));
+        assertThrows(NoteNotFoundException.class, () -> noteService.deleteNoteByIdForCurrentUser(id));
     }
 
 }

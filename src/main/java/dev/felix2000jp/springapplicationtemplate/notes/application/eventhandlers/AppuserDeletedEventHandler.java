@@ -16,7 +16,7 @@ class AppuserDeletedEventHandler {
 
     @ApplicationModuleListener
     void on(AppuserDeletedEvent event) {
-        noteService.deleteByAppuserId(event.appuserId());
+        noteService.deleteNotesByAppuserId(event.appuserId());
     }
 
 }

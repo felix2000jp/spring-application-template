@@ -33,7 +33,7 @@ class AppuserDeletedEventHandlerTest {
 
         // then
         var uuidCaptor = ArgumentCaptor.forClass(UUID.class);
-        verify(noteService).deleteByAppuserId(uuidCaptor.capture());
+        verify(noteService).deleteNotesByAppuserId(uuidCaptor.capture());
         assertEquals(appuserId, uuidCaptor.getValue());
     }
 

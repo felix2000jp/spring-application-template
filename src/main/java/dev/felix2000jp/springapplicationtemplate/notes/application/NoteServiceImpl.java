@@ -26,14 +26,14 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteListDto getByCurrentUser(int pageNumber) {
+    public NoteListDto getNotesForCurrentUser(int pageNumber) {
         var appuserId = securityService.getUser().id();
         var notes = noteRepository.getByAppuserId(appuserId, pageNumber);
         return noteMapper.toDto(notes);
     }
 
     @Override
-    public NoteDto getByIdAndCurrentUser(UUID id) {
+    public NoteDto getNoteByIdForCurrentUser(UUID id) {
         var appuserId = securityService.getUser().id();
 
         var note = noteRepository.getByIdAndAppuserId(id, appuserId);
@@ -45,7 +45,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto createByCurrentUser(CreateNoteDto createNoteDTO) {
+    public NoteDto createNoteForCurrentUser(CreateNoteDto createNoteDTO) {
         var appuserId = securityService.getUser().id();
 
         var noteToCreate = new Note(appuserId, createNoteDTO.title(), createNoteDTO.content());
@@ -55,7 +55,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto updateByIdAndCurrentUser(UUID noteId, UpdateNoteDto updateNoteDTO) {
+    public NoteDto updateNoteByIdForCurrentUser(UUID noteId, UpdateNoteDto updateNoteDTO) {
         var appuserId = securityService.getUser().id();
 
         var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);
@@ -71,7 +71,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto deleteByIdAndCurrentUser(UUID id) {
+    public NoteDto deleteNoteByIdForCurrentUser(UUID id) {
         var appuserId = securityService.getUser().id();
 
         var noteToDelete = noteRepository.getByIdAndAppuserId(id, appuserId);
@@ -84,7 +84,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public void deleteByAppuserId(UUID appuserId) {
+    public void deleteNotesByAppuserId(UUID appuserId) {
         noteRepository.deleteByAppuserId(appuserId);
     }
 
