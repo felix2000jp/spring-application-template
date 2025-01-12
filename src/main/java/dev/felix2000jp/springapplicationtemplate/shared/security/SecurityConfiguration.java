@@ -36,7 +36,8 @@ class SecurityConfiguration {
         return http
                 .securityMatcher("/auth/**")
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/csrf", "/register").permitAll()
+                        .requestMatchers("/auth/csrf").permitAll()
+                        .requestMatchers("/auth/register").permitAll()
                         .anyRequest().hasAnyAuthority(
                                 SecurityService.Scope.ADMIN.toAuthority(),
                                 SecurityService.Scope.APPLICATION.toAuthority()

@@ -26,7 +26,7 @@ class NoteController {
     }
 
     @GetMapping
-    ResponseEntity<NoteListDTO> getByPage(@RequestParam @Min(0) int page) {
+    ResponseEntity<NoteListDTO> getByPage(@RequestParam(defaultValue = "0") @Min(0) int page) {
         var body = noteService.getByAppuser(page);
         return ResponseEntity.ok(body);
     }

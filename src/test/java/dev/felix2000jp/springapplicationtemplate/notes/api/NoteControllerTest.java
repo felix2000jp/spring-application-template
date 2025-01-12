@@ -59,12 +59,22 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void should_fail_with_400_when_getting_page_of_notes_from_the_logged_in_user_with_page_missing() throws Exception {
+    void should_get_page_0_of_notes_from_the_logged_in_user_when_page_param_is_missing() throws Exception {
+        var noteDTO = new NoteDTO(UUID.randomUUID(), "title", "content");
+        var noteListDTO = new NoteListDTO(List.of(noteDTO));
+
+        var expectedResponse = String.format("""
+                {
+                    "notes": [{ "id": "%s", "title": "%s", "content": "%s" }]
+                }
+                """, noteDTO.id(), noteDTO.title(), noteDTO.content());
+
+        when(noteService.getByAppuser(0)).thenReturn(noteListDTO);
+
         mockMvc
                 .perform(get("/api/notes"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.title").value("Bad Request"))
-                .andExpect(jsonPath("$.status").value(400));
+                .andExpect(status().isOk())
+                .andExpect(content().json(expectedResponse));
     }
 
     @ParameterizedTest
