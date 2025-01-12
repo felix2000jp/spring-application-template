@@ -10,12 +10,12 @@ import java.util.List;
 @Component
 class AppuserMapper {
 
-    AppuserDto toDTO(Appuser appuser) {
+    AppuserDto toDto(Appuser appuser) {
         return new AppuserDto(appuser.getId(), appuser.getUsername(), appuser.getAuthoritiesScopes());
     }
 
-    AppuserListDto toDTO(List<Appuser> appusers) {
-        return new AppuserListDto(appusers.stream().map(this::toDTO).toList());
+    AppuserListDto toDto(List<Appuser> appusers) {
+        return new AppuserListDto(appusers.stream().map(this::toDto).toList());
     }
 
 }

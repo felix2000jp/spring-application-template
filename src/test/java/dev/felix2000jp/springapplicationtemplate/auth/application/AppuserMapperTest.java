@@ -16,7 +16,7 @@ class AppuserMapperTest {
         var appuser = new Appuser("username", "password");
         appuser.addScopeApplication();
 
-        var actual = appuserMapper.toDTO(appuser);
+        var actual = appuserMapper.toDto(appuser);
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(appuser.getUsername(), actual.username());
@@ -27,7 +27,7 @@ class AppuserMapperTest {
     void should_map_appusers_to_appuserListDTO_successfully() {
         var appusers = List.of(new Appuser("username", "password"));
 
-        var actual = appuserMapper.toDTO(appusers);
+        var actual = appuserMapper.toDto(appusers);
 
         assertEquals(appusers.size(), actual.appusers().size());
     }

@@ -35,7 +35,7 @@ class AppuserServiceImpl implements AppuserService {
     @Override
     public AppuserListDto getAll(int pageNumber) {
         var appusers = appuserRepository.getAll(pageNumber);
-        return appuserMapper.toDTO(appusers);
+        return appuserMapper.toDto(appusers);
     }
 
     @Override
@@ -47,7 +47,7 @@ class AppuserServiceImpl implements AppuserService {
             throw new AppuserNotFoundException();
         }
 
-        return appuserMapper.toDTO(appuser);
+        return appuserMapper.toDto(appuser);
     }
 
     @Override
@@ -68,7 +68,7 @@ class AppuserServiceImpl implements AppuserService {
         appuserToUpdate.setUsername(updateAppuserDTO.username());
         appuserRepository.save(appuserToUpdate);
 
-        return appuserMapper.toDTO(appuserToUpdate);
+        return appuserMapper.toDto(appuserToUpdate);
     }
 
     @Override
@@ -86,7 +86,7 @@ class AppuserServiceImpl implements AppuserService {
         var appuserDeletedEvent = new AppuserDeletedEvent(appuserToDelete.getId());
         events.publishEvent(appuserDeletedEvent);
 
-        return appuserMapper.toDTO(appuserToDelete);
+        return appuserMapper.toDto(appuserToDelete);
     }
 
 }
