@@ -39,7 +39,7 @@ class AppuserServiceImpl implements AppuserService {
     }
 
     @Override
-    public AppuserDto getCurrent() {
+    public AppuserDto getByCurrentUser() {
         var user = securityService.getUser();
 
         var appuser = appuserRepository.getById(user.id());
@@ -51,7 +51,7 @@ class AppuserServiceImpl implements AppuserService {
     }
 
     @Override
-    public AppuserDto updateCurrent(UpdateAppuserDto updateAppuserDTO) {
+    public AppuserDto updateByCurrentUser(UpdateAppuserDto updateAppuserDTO) {
         var user = securityService.getUser();
 
         var appuserToUpdate = appuserRepository.getById(user.id());
@@ -73,7 +73,7 @@ class AppuserServiceImpl implements AppuserService {
 
     @Override
     @Transactional
-    public AppuserDto deleteCurrent() {
+    public AppuserDto deleteByCurrentUser() {
         var user = securityService.getUser();
 
         var appuserToDelete = appuserRepository.getById(user.id());

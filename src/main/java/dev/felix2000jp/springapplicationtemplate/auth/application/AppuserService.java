@@ -8,10 +8,10 @@ public interface AppuserService {
 
     AppuserListDto getAll(int pageNumber);
 
-    AppuserDto getCurrent();
+    AppuserDto getByCurrentUser();
 
-    AppuserDto updateCurrent(UpdateAppuserDto updateAppuserDTO);
+    AppuserDto updateByCurrentUser(UpdateAppuserDto updateAppuserDTO);
 
-    AppuserDto deleteCurrent();
+    AppuserDto deleteByCurrentUser();
 
 }

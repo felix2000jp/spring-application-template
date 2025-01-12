@@ -46,7 +46,7 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void givenPage_whenGetByAppuser_thenReturnNotes() {
+    void givenPage_whenGetByCurrent_thenReturnNotes() {
         // given
         var page = 0;
         var note = new Note(UUID.randomUUID(), "title", "content");
@@ -55,7 +55,7 @@ class NoteServiceImplTest {
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of(note));
 
         // when
-        var actual = noteService.getByAppuser(page);
+        var actual = noteService.getByCurrent(page);
         var actualNote = actual.notes().getFirst();
 
         // then
@@ -66,7 +66,7 @@ class NoteServiceImplTest {
     }
 
     @Test
-    void givenEmptyPage_whenGetByAppuser_thenReturnEmptyList() {
+    void givenEmptyPage_whenGetByCurrent_thenReturnEmptyList() {
         // given
         var page = 0;
 
@@ -74,7 +74,7 @@ class NoteServiceImplTest {
         when(noteRepository.getByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of());
 
         // when
-        var actual = noteService.getByAppuser(page);
+        var actual = noteService.getByCurrent(page);
 
         // then
         assertEquals(0, actual.notes().size());

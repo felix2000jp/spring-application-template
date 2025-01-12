@@ -87,7 +87,7 @@ class AppuserControllerTest {
                 { "id": "%s", "username": "%s", "scopes": ["%s"] }
                 """, appuserDTO.id(), appuserDTO.username(), appuserDTO.scopes().iterator().next());
 
-        when(appuserService.getCurrent()).thenReturn(appuserDTO);
+        when(appuserService.getByCurrentUser()).thenReturn(appuserDTO);
 
         mockMvc
                 .perform(get("/api/appusers/me"))
@@ -99,7 +99,7 @@ class AppuserControllerTest {
     @WithMockUser
     void should_fail_to_get_current_appuser_and_return_404_when_appuser_does_not_exist() throws Exception {
         var exception = new AppuserNotFoundException();
-        when(appuserService.getCurrent()).thenThrow(exception);
+        when(appuserService.getByCurrentUser()).thenThrow(exception);
 
         mockMvc
                 .perform(get("/api/appusers/me"))
@@ -123,7 +123,7 @@ class AppuserControllerTest {
                 { "username": "%s" }
                 """, updateAppuserDTO.username());
 
-        when(appuserService.updateCurrent(updateAppuserDTO)).thenReturn(appuserDTO);
+        when(appuserService.updateByCurrentUser(updateAppuserDTO)).thenReturn(appuserDTO);
 
         mockMvc
                 .perform(put("/api/appusers/me").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -140,7 +140,7 @@ class AppuserControllerTest {
                 """, updateAppuserDTO.username());
 
         var exception = new AppuserNotFoundException();
-        when(appuserService.updateCurrent(updateAppuserDTO)).thenThrow(exception);
+        when(appuserService.updateByCurrentUser(updateAppuserDTO)).thenThrow(exception);
 
         mockMvc
                 .perform(put("/api/appusers/me").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))

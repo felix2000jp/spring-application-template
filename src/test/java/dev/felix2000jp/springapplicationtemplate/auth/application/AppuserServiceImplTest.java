@@ -72,7 +72,7 @@ class AppuserServiceImplTest {
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.getById(authenticatedUser.id())).thenReturn(appuser);
 
-        var actual = appuserService.getCurrent();
+        var actual = appuserService.getByCurrentUser();
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(appuser.getUsername(), actual.username());
@@ -86,7 +86,7 @@ class AppuserServiceImplTest {
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.getById(authenticatedUser.id())).thenReturn(null);
 
-        assertThrows(AppuserNotFoundException.class, () -> appuserService.getCurrent());
+        assertThrows(AppuserNotFoundException.class, () -> appuserService.getByCurrentUser());
     }
 
     @Test
@@ -103,7 +103,7 @@ class AppuserServiceImplTest {
         when(appuserRepository.getById(authenticatedUser.id())).thenReturn(appuser);
         when(appuserRepository.existsByUsername(updateAppuserDTO.username())).thenReturn(false);
 
-        var actual = appuserService.updateCurrent(updateAppuserDTO);
+        var actual = appuserService.updateByCurrentUser(updateAppuserDTO);
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(updateAppuserDTO.username(), actual.username());
@@ -124,7 +124,7 @@ class AppuserServiceImplTest {
         when(appuserRepository.getById(authenticatedUser.id())).thenReturn(appuser);
         when(appuserRepository.existsByUsername(updateAppuserDTO.username())).thenReturn(true);
 
-        var actual = appuserService.updateCurrent(updateAppuserDTO);
+        var actual = appuserService.updateByCurrentUser(updateAppuserDTO);
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(updateAppuserDTO.username(), actual.username());
@@ -139,7 +139,7 @@ class AppuserServiceImplTest {
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.getById(authenticatedUser.id())).thenReturn(null);
 
-        assertThrows(AppuserNotFoundException.class, () -> appuserService.updateCurrent(updateAppuserDTO));
+        assertThrows(AppuserNotFoundException.class, () -> appuserService.updateByCurrentUser(updateAppuserDTO));
     }
 
     @Test
@@ -156,7 +156,7 @@ class AppuserServiceImplTest {
         when(appuserRepository.getById(authenticatedUser.id())).thenReturn(appuser);
         when(appuserRepository.existsByUsername(updateAppuserDTO.username())).thenReturn(true);
 
-        assertThrows(AppuserAlreadyExistsException.class, () -> appuserService.updateCurrent(updateAppuserDTO));
+        assertThrows(AppuserAlreadyExistsException.class, () -> appuserService.updateByCurrentUser(updateAppuserDTO));
     }
 
     @Test
@@ -171,7 +171,7 @@ class AppuserServiceImplTest {
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.getById(authenticatedUser.id())).thenReturn(appuser);
 
-        var actual = appuserService.deleteCurrent();
+        var actual = appuserService.deleteByCurrentUser();
 
         assertEquals(appuser.getId(), actual.id());
         assertEquals(appuser.getUsername(), actual.username());
@@ -190,7 +190,7 @@ class AppuserServiceImplTest {
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.getById(authenticatedUser.id())).thenReturn(null);
 
-        assertThrows(AppuserNotFoundException.class, () -> appuserService.deleteCurrent());
+        assertThrows(AppuserNotFoundException.class, () -> appuserService.deleteByCurrentUser());
     }
 
 }

@@ -29,19 +29,19 @@ class AppuserController {
 
     @GetMapping("/me")
     ResponseEntity<AppuserDto> getCurrent() {
-        var body = appuserService.getCurrent();
+        var body = appuserService.getByCurrentUser();
         return ResponseEntity.ok(body);
     }
 
     @PutMapping("/me")
     ResponseEntity<Void> updateCurrent(@RequestBody @Valid UpdateAppuserDto updateAppuserDTO) {
-        appuserService.updateCurrent(updateAppuserDTO);
+        appuserService.updateByCurrentUser(updateAppuserDTO);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/me")
     ResponseEntity<Void> deleteCurrent() {
-        appuserService.deleteCurrent();
+        appuserService.deleteByCurrentUser();
         return ResponseEntity.noContent().build();
     }
 }

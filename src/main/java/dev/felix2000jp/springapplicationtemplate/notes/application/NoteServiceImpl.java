@@ -26,7 +26,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteListDto getByAppuser(int pageNumber) {
+    public NoteListDto getByCurrent(int pageNumber) {
         var appuserId = securityService.getUser().id();
         var notes = noteRepository.getByAppuserId(appuserId, pageNumber);
         return noteMapper.toDto(notes);
