@@ -31,8 +31,11 @@ class AppuserDeletedEventHandlerIntegrationTest {
     private AppuserDeletedEventHandler eventHandler;
 
     @Test
-    void should_delete_all_notes_from_appuser_when_event_with_appuserId_is_published(Scenario scenario) {
+    void givenAppuserDeletedEvent_whenOn_thenDeleteAllNotesFromDeletedAppuser(Scenario scenario) {
+        // given
         var appuserId = UUID.randomUUID();
+        var appuserDeletedEvent = new AppuserDeletedEvent(appuserId);
+
         var note1 = new Note(appuserId, "title 1", "content 1");
         var note2 = new Note(appuserId, "title 2", "content 2");
         var note3 = new Note(UUID.randomUUID(), "title 3", "content 3");
@@ -41,8 +44,9 @@ class AppuserDeletedEventHandlerIntegrationTest {
         noteRepository.save(note2);
         noteRepository.save(note3);
 
+        // when and then
         scenario
-                .publish(new AppuserDeletedEvent(appuserId))
+                .publish(appuserDeletedEvent)
                 .andWaitForStateChange(() -> eventHandler)
                 .andVerify(unusedEventHandler -> {
                     assertNull(noteRepository.getByIdAndAppuserId(note1.getId(), note1.getAppuserId()));

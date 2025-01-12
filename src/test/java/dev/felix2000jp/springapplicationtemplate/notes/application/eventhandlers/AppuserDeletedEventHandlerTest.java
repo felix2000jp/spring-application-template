@@ -23,12 +23,15 @@ class AppuserDeletedEventHandlerTest {
     private AppuserDeletedEventHandler eventHandler;
 
     @Test
-    void should_perform_delete_on_appuser_when_event_is_called_with_appuserId() {
+    void givenAppuserDeletedEvent_whenOn_thenDeleteAllNotesFromDeletedAppuser() {
+        // given
         var appuserId = UUID.randomUUID();
-        var event = new AppuserDeletedEvent(appuserId);
+        var appuserDeletedEvent = new AppuserDeletedEvent(appuserId);
 
-        eventHandler.on(event);
+        // when
+        eventHandler.on(appuserDeletedEvent);
 
+        // then
         var uuidCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(noteService).deleteByAppuserId(uuidCaptor.capture());
         assertEquals(appuserId, uuidCaptor.getValue());

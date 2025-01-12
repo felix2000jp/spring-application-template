@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class NoteTest {
 
     @Test
-    void givenAppuserIdTitleAndContent_whenNewNote_thenNoteShouldBeCreated() {
+    void givenNoteFieldValues_whenNewNote_thenNoteIsCreated() {
         // given
         var appuserId = UUID.randomUUID();
         var title = "title";
@@ -25,7 +25,7 @@ class NoteTest {
     }
 
     @Test
-    void givenNoteAndNewTitle_whenSetTitle_thenTitleShouldBeUpdated() {
+    void givenNoteAndNewTitle_whenSetTitle_thenTitleIsUpdated() {
         // given
         var note = new Note(UUID.randomUUID(), "title", "content");
         var newTitle = "new title";
@@ -38,7 +38,7 @@ class NoteTest {
     }
 
     @Test
-    void givenNoteAndNewContent_whenSetContent_thenContentShouldBeUpdated() {
+    void givenNoteAndNewContent_whenSetContent_thenContentIsUpdated() {
         // given
         var note = new Note(UUID.randomUUID(), "title", "content");
         var newContent = "new content";
