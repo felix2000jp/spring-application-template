@@ -26,14 +26,14 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteListDto getByCurrent(int pageNumber) {
+    public NoteListDto getByCurrentUser(int pageNumber) {
         var appuserId = securityService.getUser().id();
         var notes = noteRepository.getByAppuserId(appuserId, pageNumber);
         return noteMapper.toDto(notes);
     }
 
     @Override
-    public NoteDto getByIdAndAppuser(UUID id) {
+    public NoteDto getByIdAndCurrentUser(UUID id) {
         var appuserId = securityService.getUser().id();
 
         var note = noteRepository.getByIdAndAppuserId(id, appuserId);
@@ -45,7 +45,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto createByAppuser(CreateNoteDto createNoteDTO) {
+    public NoteDto createByCurrentUser(CreateNoteDto createNoteDTO) {
         var appuserId = securityService.getUser().id();
 
         var noteToCreate = new Note(appuserId, createNoteDTO.title(), createNoteDTO.content());
@@ -55,7 +55,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto updateByIdAndAppuser(UUID noteId, UpdateNoteDto updateNoteDTO) {
+    public NoteDto updateByIdAndCurrentUser(UUID noteId, UpdateNoteDto updateNoteDTO) {
         var appuserId = securityService.getUser().id();
 
         var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);
@@ -71,7 +71,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto deleteByIdAndAppuser(UUID id) {
+    public NoteDto deleteByIdAndCurrentUser(UUID id) {
         var appuserId = securityService.getUser().id();
 
         var noteToDelete = noteRepository.getByIdAndAppuserId(id, appuserId);

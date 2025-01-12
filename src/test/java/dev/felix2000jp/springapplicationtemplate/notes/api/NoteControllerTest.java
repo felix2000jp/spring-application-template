@@ -49,7 +49,7 @@ class NoteControllerTest {
                 }
                 """, noteDTO.id(), noteDTO.title(), noteDTO.content());
 
-        when(noteService.getByAppuser(0)).thenReturn(noteListDTO);
+        when(noteService.getByCurrentUser(0)).thenReturn(noteListDTO);
 
         mockMvc
                 .perform(get("/api/notes"))
@@ -85,7 +85,7 @@ class NoteControllerTest {
                 }
                 """, noteDTO.id(), noteDTO.title(), noteDTO.content());
 
-        when(noteService.getByIdAndAppuser(noteDTO.id())).thenReturn(noteDTO);
+        when(noteService.getByIdAndCurrentUser(noteDTO.id())).thenReturn(noteDTO);
 
         mockMvc
                 .perform(get("/api/notes/" + noteDTO.id()))
@@ -97,7 +97,7 @@ class NoteControllerTest {
     @WithMockUser
     void should_fail_with_404_when_getting_note_with_id_that_does_not_exist() throws Exception {
         var exception = new NoteNotFoundException();
-        when(noteService.getByIdAndAppuser(any())).thenThrow(exception);
+        when(noteService.getByIdAndCurrentUser(any())).thenThrow(exception);
 
         mockMvc
                 .perform(get("/api/notes/" + UUID.randomUUID()))
@@ -120,7 +120,7 @@ class NoteControllerTest {
                 { "id": "%s", "title": "%s", "content": "%s" }
                 """, noteDTO.id(), noteDTO.title(), noteDTO.content());
 
-        when(noteService.createByAppuser(createNoteDTO)).thenReturn(noteDTO);
+        when(noteService.createByCurrentUser(createNoteDTO)).thenReturn(noteDTO);
 
         mockMvc
                 .perform(post("/api/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -149,7 +149,7 @@ class NoteControllerTest {
                 { "title": "%s", "content": "%s" }
                 """, updateNoteDTO.title(), updateNoteDTO.content());
 
-        when(noteService.updateByIdAndAppuser(noteDTO.id(), updateNoteDTO)).thenReturn(noteDTO);
+        when(noteService.updateByIdAndCurrentUser(noteDTO.id(), updateNoteDTO)).thenReturn(noteDTO);
 
         mockMvc
                 .perform(put("/api/notes/" + noteDTO.id()).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -172,7 +172,7 @@ class NoteControllerTest {
     void should_respond_with_204_when_note_is_deleted_successfully() throws Exception {
         var noteDTO = new NoteDto(UUID.randomUUID(), "title", "content");
 
-        when(noteService.deleteByIdAndAppuser(noteDTO.id())).thenReturn(noteDTO);
+        when(noteService.deleteByIdAndCurrentUser(noteDTO.id())).thenReturn(noteDTO);
 
         mockMvc
                 .perform(delete("/api/notes/" + noteDTO.id()).with(csrf()))
