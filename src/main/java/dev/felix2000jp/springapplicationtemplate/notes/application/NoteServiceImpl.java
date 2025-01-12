@@ -1,10 +1,10 @@
 package dev.felix2000jp.springapplicationtemplate.notes.application;
 
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
@@ -26,14 +26,14 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteListDTO getByAppuser(int pageNumber) {
+    public NoteListDto getByAppuser(int pageNumber) {
         var appuserId = securityService.getUser().id();
         var notes = noteRepository.getByAppuserId(appuserId, pageNumber);
         return noteMapper.toDTO(notes);
     }
 
     @Override
-    public NoteDTO getByIdAndAppuser(UUID id) {
+    public NoteDto getByIdAndAppuser(UUID id) {
         var appuserId = securityService.getUser().id();
 
         var note = noteRepository.getByIdAndAppuserId(id, appuserId);
@@ -45,7 +45,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDTO createByAppuser(CreateNoteDTO createNoteDTO) {
+    public NoteDto createByAppuser(CreateNoteDto createNoteDTO) {
         var appuserId = securityService.getUser().id();
 
         var noteToCreate = new Note(appuserId, createNoteDTO.title(), createNoteDTO.content());
@@ -55,7 +55,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDTO updateByIdAndAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO) {
+    public NoteDto updateByIdAndAppuser(UUID noteId, UpdateNoteDto updateNoteDTO) {
         var appuserId = securityService.getUser().id();
 
         var noteToUpdate = noteRepository.getByIdAndAppuserId(noteId, appuserId);
@@ -71,7 +71,7 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDTO deleteByIdAndAppuser(UUID id) {
+    public NoteDto deleteByIdAndAppuser(UUID id) {
         var appuserId = securityService.getUser().id();
 
         var noteToDelete = noteRepository.getByIdAndAppuserId(id, appuserId);

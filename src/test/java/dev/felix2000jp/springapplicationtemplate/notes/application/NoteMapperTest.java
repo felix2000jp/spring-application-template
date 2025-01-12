@@ -24,6 +24,20 @@ class NoteMapperTest {
     }
 
     @Test
+    void givenNote_whenToDTO_thenNoteDTO() {
+        // given
+        var note = new Note(UUID.randomUUID(), "title", "content");
+
+        // when
+        var actual = noteMapper.toDTO(note);
+
+        // then
+        assertEquals(note.getId(), actual.id());
+        assertEquals(note.getTitle(), actual.title());
+        assertEquals(note.getContent(), actual.content());
+    }
+
+    @Test
     void should_map_notes_to_noteListDTO_successfully() {
         var notes = List.of(new Note(UUID.randomUUID(), "title", "content"));
 

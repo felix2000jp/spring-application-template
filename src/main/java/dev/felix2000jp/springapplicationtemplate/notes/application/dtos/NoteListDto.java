@@ -4,5 +4,5 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record NoteListDTO(@NotNull List<NoteDTO> notes) {
+public record NoteListDto(@NotNull List<NoteDto> notes) {
 }

@@ -9,32 +9,45 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class NoteTest {
 
     @Test
-    void should_create_new_note_successfully() {
+    void givenAppuserIdTitleAndContent_whenNewNote_thenNoteShouldBeCreated() {
+        // given
         var appuserId = UUID.randomUUID();
+        var title = "title";
+        var content = "content";
 
-        var actual = new Note(appuserId, "title", "content");
+        // when
+        var actual = new Note(appuserId, title, content);
 
+        // then
         assertEquals(appuserId, actual.getAppuserId());
-        assertEquals("title", actual.getTitle());
-        assertEquals("content", actual.getContent());
+        assertEquals(title, actual.getTitle());
+        assertEquals(content, actual.getContent());
     }
 
     @Test
-    void should_set_title_successfully() {
+    void givenNoteAndNewTitle_whenSetTitle_thenTitleShouldBeUpdated() {
+        // given
         var note = new Note(UUID.randomUUID(), "title", "content");
+        var newTitle = "new title";
 
-        note.setTitle("new title");
+        // when
+        note.setTitle(newTitle);
 
-        assertEquals("new title", note.getTitle());
+        // then
+        assertEquals(newTitle, note.getTitle());
     }
 
     @Test
-    void should_set_content_successfully() {
+    void givenNoteAndNewContent_whenSetContent_thenContentShouldBeUpdated() {
+        // given
         var note = new Note(UUID.randomUUID(), "title", "content");
+        var newContent = "new content";
 
-        note.setContent("new content");
+        // when
+        note.setContent(newContent);
 
-        assertEquals("new content", note.getContent());
+        // then
+        assertEquals(newContent, note.getContent());
     }
 
 }

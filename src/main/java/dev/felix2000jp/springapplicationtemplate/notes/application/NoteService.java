@@ -1,23 +1,23 @@
 package dev.felix2000jp.springapplicationtemplate.notes.application;
 
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 
 import java.util.UUID;
 
 public interface NoteService {
 
-    NoteListDTO getByAppuser(int pageNumber);
+    NoteListDto getByAppuser(int pageNumber);
 
-    NoteDTO getByIdAndAppuser(UUID id);
+    NoteDto getByIdAndAppuser(UUID id);
 
-    NoteDTO createByAppuser(CreateNoteDTO createNoteDTO);
+    NoteDto createByAppuser(CreateNoteDto createNoteDTO);
 
-    NoteDTO updateByIdAndAppuser(UUID noteId, UpdateNoteDTO updateNoteDTO);
+    NoteDto updateByIdAndAppuser(UUID noteId, UpdateNoteDto updateNoteDTO);
 
-    NoteDTO deleteByIdAndAppuser(UUID id);
+    NoteDto deleteByIdAndAppuser(UUID id);
 
     void deleteByAppuserId(UUID appuserId);
 

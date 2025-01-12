@@ -1,10 +1,10 @@
 package dev.felix2000jp.springapplicationtemplate.notes.api;
 
 import dev.felix2000jp.springapplicationtemplate.notes.application.NoteService;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.http.ResponseEntity;
@@ -26,26 +26,26 @@ class NoteController {
     }
 
     @GetMapping
-    ResponseEntity<NoteListDTO> getByPage(@RequestParam(defaultValue = "0") @Min(0) int page) {
+    ResponseEntity<NoteListDto> getByPage(@RequestParam(defaultValue = "0") @Min(0) int page) {
         var body = noteService.getByAppuser(page);
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<NoteDTO> getById(@PathVariable UUID id) {
+    ResponseEntity<NoteDto> getById(@PathVariable UUID id) {
         var body = noteService.getByIdAndAppuser(id);
         return ResponseEntity.ok(body);
     }
 
     @PostMapping
-    ResponseEntity<NoteDTO> create(@RequestBody @Valid CreateNoteDTO createNoteDTO) {
+    ResponseEntity<NoteDto> create(@RequestBody @Valid CreateNoteDto createNoteDTO) {
         var body = noteService.createByAppuser(createNoteDTO);
         var location = URI.create("/api/notes/" + body.id());
         return ResponseEntity.created(location).body(body);
     }
 
     @PutMapping("/{id}")
-    ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody @Valid UpdateNoteDTO updateNoteDTO) {
+    ResponseEntity<Void> update(@PathVariable UUID id, @RequestBody @Valid UpdateNoteDto updateNoteDTO) {
         noteService.updateByIdAndAppuser(id, updateNoteDTO);
         return ResponseEntity.noContent().build();
     }

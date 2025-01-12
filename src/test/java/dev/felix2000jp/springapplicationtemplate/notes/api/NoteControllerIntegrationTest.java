@@ -1,10 +1,10 @@
 package dev.felix2000jp.springapplicationtemplate.notes.api;
 
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +53,8 @@ class NoteControllerIntegrationTest {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDTO("title", "content"), headersWithJwtToken),
-                NoteDTO.class
+                new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
+                NoteDto.class
         );
         assertEquals(201, createNoteEntity.getStatusCode().value());
         assertNotNull(createNoteEntity.getBody());
@@ -68,7 +68,7 @@ class NoteControllerIntegrationTest {
                 "/api/notes?page={page}",
                 HttpMethod.GET,
                 new HttpEntity<>(headersWithJwtToken),
-                NoteListDTO.class,
+                NoteListDto.class,
                 0
         );
         assertEquals(200, findNoteBydIdEntity.getStatusCode().value());
@@ -93,8 +93,8 @@ class NoteControllerIntegrationTest {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDTO("title", "content"), headersWithJwtToken),
-                NoteDTO.class
+                new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
+                NoteDto.class
         );
         assertEquals(201, createNoteEntity.getStatusCode().value());
         assertNotNull(createNoteEntity.getBody());
@@ -108,7 +108,7 @@ class NoteControllerIntegrationTest {
                 "/api/notes/{id}",
                 HttpMethod.GET,
                 new HttpEntity<>(headersWithJwtToken),
-                NoteDTO.class,
+                NoteDto.class,
                 noteInDatabase.getId()
         );
         assertEquals(200, findNoteBydIdEntity.getStatusCode().value());
@@ -132,8 +132,8 @@ class NoteControllerIntegrationTest {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDTO("title", "content"), headersWithJwtToken),
-                NoteDTO.class
+                new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
+                NoteDto.class
         );
         assertEquals(201, createNoteEntity.getStatusCode().value());
         assertNotNull(createNoteEntity.getBody());
@@ -146,7 +146,7 @@ class NoteControllerIntegrationTest {
         var updateNoteEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.PUT,
-                new HttpEntity<>(new UpdateNoteDTO("new title", "new content"), headersWithJwtToken),
+                new HttpEntity<>(new UpdateNoteDto("new title", "new content"), headersWithJwtToken),
                 Void.class,
                 createNoteEntity.getBody().id()
         );
@@ -176,8 +176,8 @@ class NoteControllerIntegrationTest {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDTO("title", "content"), headersWithJwtToken),
-                NoteDTO.class
+                new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
+                NoteDto.class
         );
         assertEquals(201, createNoteEntity.getStatusCode().value());
         assertNotNull(createNoteEntity.getBody());

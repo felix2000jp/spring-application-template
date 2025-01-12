@@ -1,8 +1,8 @@
 package dev.felix2000jp.springapplicationtemplate.notes.application;
 
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
@@ -80,7 +80,7 @@ class NoteServiceImplTest {
     @Test
     void should_create_note_with_title_and_content_from_dto() {
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of("Application"));
-        var createNoteDTO = new CreateNoteDTO("title", "content");
+        var createNoteDTO = new CreateNoteDto("title", "content");
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
 
@@ -93,7 +93,7 @@ class NoteServiceImplTest {
     @Test
     void should_update_note_with_title_and_content_from_dto() {
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of("Application"));
-        var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
+        var updateNoteDTO = new UpdateNoteDto("new title", "new content");
         var note = new Note(UUID.randomUUID(), "title", "content");
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
@@ -108,7 +108,7 @@ class NoteServiceImplTest {
     @Test
     void should_throw_when_note_to_update_with_title_and_content_from_dto_is_not_found() {
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of("Application"));
-        var updateNoteDTO = new UpdateNoteDTO("new title", "new content");
+        var updateNoteDTO = new UpdateNoteDto("new title", "new content");
         var note = new Note(UUID.randomUUID(), "title", "content");
 
         when(securityService.getUser()).thenReturn(authenticatedUser);

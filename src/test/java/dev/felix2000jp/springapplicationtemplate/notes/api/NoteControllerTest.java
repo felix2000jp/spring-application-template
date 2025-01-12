@@ -1,10 +1,10 @@
 package dev.felix2000jp.springapplicationtemplate.notes.api;
 
 import dev.felix2000jp.springapplicationtemplate.notes.application.NoteService;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDTO;
-import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDTO;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
+import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,8 +40,8 @@ class NoteControllerTest {
     @Test
     @WithMockUser
     void should_get_page_of_notes_from_the_logged_in_user_when_page_query_param_is_valid() throws Exception {
-        var noteDTO = new NoteDTO(UUID.randomUUID(), "title", "content");
-        var noteListDTO = new NoteListDTO(List.of(noteDTO));
+        var noteDTO = new NoteDto(UUID.randomUUID(), "title", "content");
+        var noteListDTO = new NoteListDto(List.of(noteDTO));
 
         var expectedResponse = String.format("""
                 {
@@ -76,7 +76,7 @@ class NoteControllerTest {
     @Test
     @WithMockUser
     void should_get_note_with_id_when_note_exists() throws Exception {
-        var noteDTO = new NoteDTO(UUID.randomUUID(), "title", "content");
+        var noteDTO = new NoteDto(UUID.randomUUID(), "title", "content");
         var expectedResponse = String.format("""
                 {
                     "id": "%s",
@@ -110,8 +110,8 @@ class NoteControllerTest {
     @Test
     @WithMockUser
     void should_respond_with_201_when_note_is_created_successfully() throws Exception {
-        var noteDTO = new NoteDTO(UUID.randomUUID(), "title", "content");
-        var createNoteDTO = new CreateNoteDTO(noteDTO.title(), noteDTO.content());
+        var noteDTO = new NoteDto(UUID.randomUUID(), "title", "content");
+        var createNoteDTO = new CreateNoteDto(noteDTO.title(), noteDTO.content());
 
         var requestBody = String.format("""
                 { "title": "%s", "content": "%s" }
@@ -142,8 +142,8 @@ class NoteControllerTest {
     @Test
     @WithMockUser
     void should_respond_with_204_when_note_is_updated_successfully() throws Exception {
-        var noteDTO = new NoteDTO(UUID.randomUUID(), "title", "content");
-        var updateNoteDTO = new UpdateNoteDTO(noteDTO.title(), noteDTO.content());
+        var noteDTO = new NoteDto(UUID.randomUUID(), "title", "content");
+        var updateNoteDTO = new UpdateNoteDto(noteDTO.title(), noteDTO.content());
 
         var requestBody = String.format("""
                 { "title": "%s", "content": "%s" }
@@ -170,7 +170,7 @@ class NoteControllerTest {
     @Test
     @WithMockUser
     void should_respond_with_204_when_note_is_deleted_successfully() throws Exception {
-        var noteDTO = new NoteDTO(UUID.randomUUID(), "title", "content");
+        var noteDTO = new NoteDto(UUID.randomUUID(), "title", "content");
 
         when(noteService.deleteByIdAndAppuser(noteDTO.id())).thenReturn(noteDTO);
 
