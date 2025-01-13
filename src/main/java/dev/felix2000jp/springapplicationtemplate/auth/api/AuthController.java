@@ -28,21 +28,21 @@ class AuthController {
     }
 
     @PostMapping("/login")
-    ResponseEntity<String> login() {
+    ResponseEntity<String> generateToken() {
         var body = authService.generateToken();
         return ResponseEntity.ok(body);
     }
 
     @PostMapping("/register")
-    ResponseEntity<Void> register(@Valid @RequestBody CreateAppuserDto createAppuserDTO) {
-        authService.createAppuser(createAppuserDTO);
+    ResponseEntity<Void> createAppuser(@Valid @RequestBody CreateAppuserDto createAppuserDto) {
+        authService.createAppuser(createAppuserDto);
         var location = URI.create("/api/appusers/me");
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/password")
-    ResponseEntity<Void> updatePassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDTO) {
-        authService.updatePassword(updatePasswordDTO);
+    ResponseEntity<Void> updatePassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) {
+        authService.updatePassword(updatePasswordDto);
         return ResponseEntity.noContent().build();
     }
 

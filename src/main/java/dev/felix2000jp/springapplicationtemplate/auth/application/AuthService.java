@@ -8,8 +8,8 @@ public interface AuthService extends UserDetailsService {
 
     String generateToken();
 
-    void createAppuser(CreateAppuserDto createAppuserDTO);
+    void createAppuser(CreateAppuserDto createAppuserDto);
 
-    void updatePassword(UpdatePasswordDto updatePasswordDTO);
+    void updatePassword(UpdatePasswordDto updatePasswordDto);
 
 }

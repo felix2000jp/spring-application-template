@@ -40,7 +40,7 @@ class AuthServiceImplTest {
     void should_load_appuser_given_username_when_appuser_exists() {
         var appuser = new Appuser("username", "password");
 
-        when(appuserRepository.getByUsername(appuser.getUsername())).thenReturn(appuser);
+        when(appuserRepository.findByUsername(appuser.getUsername())).thenReturn(appuser);
 
         var actual = authService.loadUserByUsername(appuser.getUsername());
 
@@ -49,7 +49,7 @@ class AuthServiceImplTest {
 
     @Test
     void should_fail_to_load_appuser_given_username_when_appuser_does_not_exists() {
-        when(appuserRepository.getByUsername("username")).thenReturn(null);
+        when(appuserRepository.findByUsername("username")).thenReturn(null);
 
         assertThrows(UsernameNotFoundException.class, () -> authService.loadUserByUsername("username"));
     }
@@ -85,31 +85,31 @@ class AuthServiceImplTest {
 
     @Test
     void should_create_appuser_when_username_is_unique() {
-        var createAppuserDTO = new CreateAppuserDto("username", "password");
+        var createAppuserDto = new CreateAppuserDto("username", "password");
 
-        when(appuserRepository.existsByUsername(createAppuserDTO.username())).thenReturn(false);
-        when(securityService.generateEncodedPassword(createAppuserDTO.password())).thenReturn("encoded-password");
+        when(appuserRepository.existsByUsername(createAppuserDto.username())).thenReturn(false);
+        when(securityService.generateEncodedPassword(createAppuserDto.password())).thenReturn("encoded-password");
 
-        authService.createAppuser(createAppuserDTO);
+        authService.createAppuser(createAppuserDto);
 
         verify(appuserRepository).save(appuserCaptor.capture());
-        assertEquals(createAppuserDTO.username(), appuserCaptor.getValue().getUsername());
+        assertEquals(createAppuserDto.username(), appuserCaptor.getValue().getUsername());
         assertEquals("encoded-password", appuserCaptor.getValue().getPassword());
 
     }
 
     @Test
     void should_fail_to_create_appuser_when_username_already_exists() {
-        var createAppuserDTO = new CreateAppuserDto("username", "password");
+        var createAppuserDto = new CreateAppuserDto("username", "password");
 
-        when(appuserRepository.existsByUsername(createAppuserDTO.username())).thenReturn(true);
+        when(appuserRepository.existsByUsername(createAppuserDto.username())).thenReturn(true);
 
-        assertThrows(AppuserAlreadyExistsException.class, () -> authService.createAppuser(createAppuserDTO));
+        assertThrows(AppuserAlreadyExistsException.class, () -> authService.createAppuser(createAppuserDto));
     }
 
     @Test
     void should_update_appuser_password_when_appuser_exists() {
-        var updatePasswordDTO = new UpdatePasswordDto("new password");
+        var updatePasswordDto = new UpdatePasswordDto("new password");
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
@@ -118,10 +118,10 @@ class AuthServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.getById(appuser.getId())).thenReturn(appuser);
-        when(securityService.generateEncodedPassword(updatePasswordDTO.password())).thenReturn("encoded-password");
+        when(appuserRepository.findById(appuser.getId())).thenReturn(appuser);
+        when(securityService.generateEncodedPassword(updatePasswordDto.password())).thenReturn("encoded-password");
 
-        authService.updatePassword(updatePasswordDTO);
+        authService.updatePassword(updatePasswordDto);
 
         verify(appuserRepository).save(appuserCaptor.capture());
         assertEquals("encoded-password", appuserCaptor.getValue().getPassword());
@@ -129,7 +129,7 @@ class AuthServiceImplTest {
 
     @Test
     void should_fail_to_update_appuser_password_when_appuser_does_not_exist() {
-        var updatePasswordDTO = new UpdatePasswordDto("new password");
+        var updatePasswordDto = new UpdatePasswordDto("new password");
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
@@ -138,9 +138,9 @@ class AuthServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.getById(appuser.getId())).thenReturn(null);
+        when(appuserRepository.findById(appuser.getId())).thenReturn(null);
 
-        assertThrows(AppuserNotFoundException.class, () -> authService.updatePassword(updatePasswordDTO));
+        assertThrows(AppuserNotFoundException.class, () -> authService.updatePassword(updatePasswordDto));
     }
 
 }

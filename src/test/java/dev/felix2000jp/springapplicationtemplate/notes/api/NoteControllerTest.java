@@ -121,16 +121,16 @@ class NoteControllerTest {
     void givenCreateNoteDto_whenCreateNoteForCurrentUser_thenReturnCreatedAndNoteDto() throws Exception {
         // given
         var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
-        var createNoteDTO = new CreateNoteDto(noteDto.title(), noteDto.content());
+        var createNoteDto = new CreateNoteDto(noteDto.title(), noteDto.content());
 
         var requestBody = String.format("""
                 { "title": "%s", "content": "%s" }
-                """, createNoteDTO.title(), createNoteDTO.content());
+                """, createNoteDto.title(), createNoteDto.content());
         var expectedResponse = String.format("""
                 { "id": "%s", "title": "%s", "content": "%s" }
                 """, noteDto.id(), noteDto.title(), noteDto.content());
 
-        when(noteService.createNoteForCurrentUser(createNoteDTO)).thenReturn(noteDto);
+        when(noteService.createNoteForCurrentUser(createNoteDto)).thenReturn(noteDto);
 
         // when and then
         mockMvc

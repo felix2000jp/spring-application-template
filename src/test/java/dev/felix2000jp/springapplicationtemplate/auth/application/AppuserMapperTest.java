@@ -12,7 +12,7 @@ class AppuserMapperTest {
     private final AppuserMapper appuserMapper = new AppuserMapper();
 
     @Test
-    void should_map_appuser_to_appuserDTO_successfully() {
+    void should_map_appuser_to_appuserDto_successfully() {
         var appuser = new Appuser("username", "password");
         appuser.addScopeApplication();
 
@@ -24,7 +24,7 @@ class AppuserMapperTest {
     }
 
     @Test
-    void should_map_appusers_to_appuserListDTO_successfully() {
+    void should_map_appusers_to_appuserListDto_successfully() {
         var appusers = List.of(new Appuser("username", "password"));
 
         var actual = appuserMapper.toDto(appusers);

@@ -59,28 +59,28 @@ class AppuserRepositoryImplTest {
 
     @Test
     void should_find_appusers_when_page_is_not_empty() {
-        var actual = appuserRepository.getAll(0);
+        var actual = appuserRepository.findAll(0);
 
         assertFalse(actual.isEmpty());
     }
 
     @Test
     void should_not_find_appusers_when_page_is_empty() {
-        var actual = appuserRepository.getAll(1);
+        var actual = appuserRepository.findAll(1);
 
         assertTrue(actual.isEmpty());
     }
 
     @Test
     void should_find_appuser_with_id_when_appuser_exists() {
-        var actual = appuserRepository.getById(appuser.getId());
+        var actual = appuserRepository.findById(appuser.getId());
 
         assertNotNull(actual);
     }
 
     @Test
     void should_not_find_appuser_with_id_when_appuser_does_not_exist() {
-        var actual = appuserRepository.getById(UUID.randomUUID());
+        var actual = appuserRepository.findById(UUID.randomUUID());
 
         assertNull(actual);
     }
@@ -101,14 +101,14 @@ class AppuserRepositoryImplTest {
 
     @Test
     void should_find_appuser_with_username_when_appuser_exists() {
-        var actual = appuserRepository.getByUsername(appuser.getUsername());
+        var actual = appuserRepository.findByUsername(appuser.getUsername());
 
         assertNotNull(actual);
     }
 
     @Test
     void should_not_find_appuser_with_username_when_appuser_does_not_exist() {
-        var actual = appuserRepository.getByUsername("non existent username");
+        var actual = appuserRepository.findByUsername("non existent username");
 
         assertNull(actual);
     }

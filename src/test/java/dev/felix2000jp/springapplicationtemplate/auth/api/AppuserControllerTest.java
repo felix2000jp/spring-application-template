@@ -37,20 +37,20 @@ class AppuserControllerTest {
     @Test
     @WithMockUser
     void should_return_200_and_a_page_of_appusers_when_page_param_is_valid() throws Exception {
-        var appuserDTO = new AppuserDto(
+        var appuserDto = new AppuserDto(
                 UUID.randomUUID(),
                 "username",
                 Set.of(SecurityService.Scope.APPLICATION.name())
         );
-        var appuserListDTO = new AppuserListDto(List.of(appuserDTO));
+        var appuserListDto = new AppuserListDto(List.of(appuserDto));
 
         var expectedResponse = String.format("""
                 {
                     "appusers": [{ "id": "%s", "username": "%s", "scopes": ["%s"] }]
                 }
-                """, appuserDTO.id(), appuserDTO.username(), appuserDTO.scopes().iterator().next());
+                """, appuserDto.id(), appuserDto.username(), appuserDto.scopes().iterator().next());
 
-        when(appuserService.getAll(0)).thenReturn(appuserListDTO);
+        when(appuserService.getAppusers(0)).thenReturn(appuserListDto);
 
         mockMvc
                 .perform(get("/api/appusers/admin"))
@@ -77,7 +77,7 @@ class AppuserControllerTest {
     @Test
     @WithMockUser
     void should_return_200_and_the_current_appuser_when_appuser_exists() throws Exception {
-        var appuserDTO = new AppuserDto(
+        var appuserDto = new AppuserDto(
                 UUID.randomUUID(),
                 "username",
                 Set.of(SecurityService.Scope.APPLICATION.name())
@@ -85,9 +85,9 @@ class AppuserControllerTest {
 
         var expectedResponse = String.format("""
                 { "id": "%s", "username": "%s", "scopes": ["%s"] }
-                """, appuserDTO.id(), appuserDTO.username(), appuserDTO.scopes().iterator().next());
+                """, appuserDto.id(), appuserDto.username(), appuserDto.scopes().iterator().next());
 
-        when(appuserService.getByCurrentUser()).thenReturn(appuserDTO);
+        when(appuserService.getAppuserForCurrentUser()).thenReturn(appuserDto);
 
         mockMvc
                 .perform(get("/api/appusers/me"))
@@ -99,7 +99,7 @@ class AppuserControllerTest {
     @WithMockUser
     void should_fail_to_get_current_appuser_and_return_404_when_appuser_does_not_exist() throws Exception {
         var exception = new AppuserNotFoundException();
-        when(appuserService.getByCurrentUser()).thenThrow(exception);
+        when(appuserService.getAppuserForCurrentUser()).thenThrow(exception);
 
         mockMvc
                 .perform(get("/api/appusers/me"))
@@ -112,18 +112,18 @@ class AppuserControllerTest {
     @Test
     @WithMockUser
     void should_return_204_and_the_updated_appuser_when_appuser_exists_and_new_username_is_unique() throws Exception {
-        var updateAppuserDTO = new UpdateAppuserDto("new username");
-        var appuserDTO = new AppuserDto(
+        var updateAppuserDto = new UpdateAppuserDto("new username");
+        var appuserDto = new AppuserDto(
                 UUID.randomUUID(),
-                updateAppuserDTO.username(),
+                updateAppuserDto.username(),
                 Set.of(SecurityService.Scope.APPLICATION.name())
         );
 
         var requestBody = String.format("""
                 { "username": "%s" }
-                """, updateAppuserDTO.username());
+                """, updateAppuserDto.username());
 
-        when(appuserService.updateByCurrentUser(updateAppuserDTO)).thenReturn(appuserDTO);
+        when(appuserService.updateAppuserForCurrentUser(updateAppuserDto)).thenReturn(appuserDto);
 
         mockMvc
                 .perform(put("/api/appusers/me").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -133,14 +133,14 @@ class AppuserControllerTest {
     @Test
     @WithMockUser
     void should_fail_to_update_appuser_and_return_404_when_appuser_does_not_exist() throws Exception {
-        var updateAppuserDTO = new UpdateAppuserDto("new username");
+        var updateAppuserDto = new UpdateAppuserDto("new username");
 
         var requestBody = String.format("""
                 { "username": "%s" }
-                """, updateAppuserDTO.username());
+                """, updateAppuserDto.username());
 
         var exception = new AppuserNotFoundException();
-        when(appuserService.updateByCurrentUser(updateAppuserDTO)).thenThrow(exception);
+        when(appuserService.updateAppuserForCurrentUser(updateAppuserDto)).thenThrow(exception);
 
         mockMvc
                 .perform(put("/api/appusers/me").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))

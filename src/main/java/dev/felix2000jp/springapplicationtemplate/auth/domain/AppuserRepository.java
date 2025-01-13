@@ -5,13 +5,13 @@ import java.util.UUID;
 
 public interface AppuserRepository {
 
-    List<Appuser> getAll(int pageNumber);
+    List<Appuser> findAll(int pageNumber);
 
-    Appuser getById(UUID id);
+    Appuser findById(UUID id);
 
     boolean existsById(UUID id);
 
-    Appuser getByUsername(String username);
+    Appuser findByUsername(String username);
 
     boolean existsByUsername(String username);
 

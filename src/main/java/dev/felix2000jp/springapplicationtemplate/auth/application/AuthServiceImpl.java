@@ -24,7 +24,7 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     public Appuser loadUserByUsername(String username) throws UsernameNotFoundException {
-        var appuser = appuserRepository.getByUsername(username);
+        var appuser = appuserRepository.findByUsername(username);
 
         if (appuser == null) {
             throw new UsernameNotFoundException(username);
@@ -46,15 +46,15 @@ class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void createAppuser(CreateAppuserDto createAppuserDTO) {
-        var doesUsernameExist = appuserRepository.existsByUsername(createAppuserDTO.username());
+    public void createAppuser(CreateAppuserDto createAppuserDto) {
+        var doesUsernameExist = appuserRepository.existsByUsername(createAppuserDto.username());
         if (doesUsernameExist) {
             throw new AppuserAlreadyExistsException();
         }
 
         var appuserToCreate = new Appuser(
-                createAppuserDTO.username(),
-                securityService.generateEncodedPassword(createAppuserDTO.password())
+                createAppuserDto.username(),
+                securityService.generateEncodedPassword(createAppuserDto.password())
         );
         appuserToCreate.addScopeApplication();
 
@@ -62,15 +62,15 @@ class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void updatePassword(UpdatePasswordDto updatePasswordDTO) {
+    public void updatePassword(UpdatePasswordDto updatePasswordDto) {
         var user = securityService.getUser();
 
-        var appuserToUpdate = appuserRepository.getById(user.id());
+        var appuserToUpdate = appuserRepository.findById(user.id());
         if (appuserToUpdate == null) {
             throw new AppuserNotFoundException();
         }
 
-        appuserToUpdate.setPassword(securityService.generateEncodedPassword(updatePasswordDTO.password()));
+        appuserToUpdate.setPassword(securityService.generateEncodedPassword(updatePasswordDto.password()));
         appuserRepository.save(appuserToUpdate);
     }
 

@@ -6,12 +6,12 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateApp
 
 public interface AppuserService {
 
-    AppuserListDto getAll(int pageNumber);
+    AppuserListDto getAppusers(int pageNumber);
 
-    AppuserDto getByCurrentUser();
+    AppuserDto getAppuserForCurrentUser();
 
-    AppuserDto updateByCurrentUser(UpdateAppuserDto updateAppuserDTO);
+    AppuserDto updateAppuserForCurrentUser(UpdateAppuserDto updateAppuserDto);
 
-    AppuserDto deleteByCurrentUser();
+    AppuserDto deleteAppuserForCurrentUser();
 
 }

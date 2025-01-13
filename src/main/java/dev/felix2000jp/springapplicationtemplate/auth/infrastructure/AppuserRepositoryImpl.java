@@ -20,14 +20,14 @@ class AppuserRepositoryImpl implements AppuserRepository {
     }
 
     @Override
-    public List<Appuser> getAll(int pageNumber) {
+    public List<Appuser> findAll(int pageNumber) {
         var pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         var page = appuserJpaRepository.findAll(pageable);
         return page.getContent();
     }
 
     @Override
-    public Appuser getById(UUID id) {
+    public Appuser findById(UUID id) {
         var optionalAppuser = appuserJpaRepository.findById(id);
         return optionalAppuser.orElse(null);
     }
@@ -38,7 +38,7 @@ class AppuserRepositoryImpl implements AppuserRepository {
     }
 
     @Override
-    public Appuser getByUsername(String username) {
+    public Appuser findByUsername(String username) {
         var optionalAppuser = appuserJpaRepository.findByUsername(username);
         return optionalAppuser.orElse(null);
     }

@@ -58,11 +58,11 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void should_return_201_and_location_when_user_is_registered() throws Exception {
-        var createAppuserDTO = new CreateAppuserDto("username", "password");
+        var createAppuserDto = new CreateAppuserDto("username", "password");
 
         var requestBody = String.format("""
                 { "username": "%s", "password": "%s" }
-                """, createAppuserDTO.username(), createAppuserDTO.password());
+                """, createAppuserDto.username(), createAppuserDto.password());
 
         mockMvc
                 .perform(post("/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -73,14 +73,14 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void should_fail_to_create_appuser_and_return_409_when_username_already_exists() throws Exception {
-        var createAppuserDTO = new CreateAppuserDto("username", "password");
+        var createAppuserDto = new CreateAppuserDto("username", "password");
 
         var requestBody = String.format("""
                 { "username": "%s", "password": "%s" }
-                """, createAppuserDTO.username(), createAppuserDTO.password());
+                """, createAppuserDto.username(), createAppuserDto.password());
 
         var exception = new AppuserAlreadyExistsException();
-        doThrow(exception).when(authService).createAppuser(createAppuserDTO);
+        doThrow(exception).when(authService).createAppuser(createAppuserDto);
 
         mockMvc
                 .perform(post("/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -104,11 +104,11 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void should_return_204_when_user_password_is_updated() throws Exception {
-        var updatePasswordDTO = new UpdatePasswordDto("password");
+        var updatePasswordDto = new UpdatePasswordDto("password");
 
         var requestBody = String.format("""
                 { "password": "%s" }
-                """, updatePasswordDTO.password());
+                """, updatePasswordDto.password());
 
         mockMvc
                 .perform(put("/auth/password").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
@@ -118,14 +118,14 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void should_fail_to_update_password_and_return_404_when_appuser_does_not_exist() throws Exception {
-        var updatePasswordDTO = new UpdatePasswordDto("password");
+        var updatePasswordDto = new UpdatePasswordDto("password");
 
         var requestBody = String.format("""
                 { "password": "%s" }
-                """, updatePasswordDTO.password());
+                """, updatePasswordDto.password());
 
         var exception = new AppuserNotFoundException();
-        doThrow(exception).when(authService).updatePassword(updatePasswordDTO);
+        doThrow(exception).when(authService).updatePassword(updatePasswordDto);
 
         mockMvc
                 .perform(put("/auth/password").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))

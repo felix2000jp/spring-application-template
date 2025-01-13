@@ -22,26 +22,26 @@ class AppuserController {
     }
 
     @GetMapping("/admin")
-    ResponseEntity<AppuserListDto> getAll(@RequestParam(defaultValue = "0") @Min(0) int page) {
-        var body = appuserService.getAll(page);
+    ResponseEntity<AppuserListDto> getAppusers(@RequestParam(defaultValue = "0") @Min(0) int page) {
+        var body = appuserService.getAppusers(page);
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/me")
-    ResponseEntity<AppuserDto> getCurrent() {
-        var body = appuserService.getByCurrentUser();
+    ResponseEntity<AppuserDto> getAppuserForCurrentUser() {
+        var body = appuserService.getAppuserForCurrentUser();
         return ResponseEntity.ok(body);
     }
 
     @PutMapping("/me")
-    ResponseEntity<Void> updateCurrent(@RequestBody @Valid UpdateAppuserDto updateAppuserDTO) {
-        appuserService.updateByCurrentUser(updateAppuserDTO);
+    ResponseEntity<Void> updateAppuserForCurrentUser(@RequestBody @Valid UpdateAppuserDto updateAppuserDto) {
+        appuserService.updateAppuserForCurrentUser(updateAppuserDto);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/me")
-    ResponseEntity<Void> deleteCurrent() {
-        appuserService.deleteByCurrentUser();
+    ResponseEntity<Void> deleteAppuserForCurrentUser() {
+        appuserService.deleteAppuserForCurrentUser();
         return ResponseEntity.noContent().build();
     }
 }

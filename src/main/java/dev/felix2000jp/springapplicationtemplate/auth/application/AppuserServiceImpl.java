@@ -33,16 +33,16 @@ class AppuserServiceImpl implements AppuserService {
     }
 
     @Override
-    public AppuserListDto getAll(int pageNumber) {
-        var appusers = appuserRepository.getAll(pageNumber);
+    public AppuserListDto getAppusers(int pageNumber) {
+        var appusers = appuserRepository.findAll(pageNumber);
         return appuserMapper.toDto(appusers);
     }
 
     @Override
-    public AppuserDto getByCurrentUser() {
+    public AppuserDto getAppuserForCurrentUser() {
         var user = securityService.getUser();
 
-        var appuser = appuserRepository.getById(user.id());
+        var appuser = appuserRepository.findById(user.id());
         if (appuser == null) {
             throw new AppuserNotFoundException();
         }
@@ -51,21 +51,21 @@ class AppuserServiceImpl implements AppuserService {
     }
 
     @Override
-    public AppuserDto updateByCurrentUser(UpdateAppuserDto updateAppuserDTO) {
+    public AppuserDto updateAppuserForCurrentUser(UpdateAppuserDto updateAppuserDto) {
         var user = securityService.getUser();
 
-        var appuserToUpdate = appuserRepository.getById(user.id());
+        var appuserToUpdate = appuserRepository.findById(user.id());
         if (appuserToUpdate == null) {
             throw new AppuserNotFoundException();
         }
 
-        var isUsernameNew = !updateAppuserDTO.username().equals(appuserToUpdate.getUsername());
-        var doesUsernameExist = appuserRepository.existsByUsername(updateAppuserDTO.username());
+        var isUsernameNew = !updateAppuserDto.username().equals(appuserToUpdate.getUsername());
+        var doesUsernameExist = appuserRepository.existsByUsername(updateAppuserDto.username());
         if (isUsernameNew && doesUsernameExist) {
             throw new AppuserAlreadyExistsException();
         }
 
-        appuserToUpdate.setUsername(updateAppuserDTO.username());
+        appuserToUpdate.setUsername(updateAppuserDto.username());
         appuserRepository.save(appuserToUpdate);
 
         return appuserMapper.toDto(appuserToUpdate);
@@ -73,10 +73,10 @@ class AppuserServiceImpl implements AppuserService {
 
     @Override
     @Transactional
-    public AppuserDto deleteByCurrentUser() {
+    public AppuserDto deleteAppuserForCurrentUser() {
         var user = securityService.getUser();
 
-        var appuserToDelete = appuserRepository.getById(user.id());
+        var appuserToDelete = appuserRepository.findById(user.id());
         if (appuserToDelete == null) {
             throw new AppuserNotFoundException();
         }

@@ -143,12 +143,12 @@ class NoteServiceImplTest {
     void givenNonExistentIdAndUpdateNoteDto_whenUpdateNoteByIdForCurrentUser_thenThrowNoteNotFoundException() {
         // given
         var id = UUID.randomUUID();
-        var updateNoteDTO = new UpdateNoteDto("new title", "new content");
+        var updateNoteDto = new UpdateNoteDto("new title", "new content");
 
         when(noteRepository.findByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(null);
 
         // when and then
-        assertThrows(NoteNotFoundException.class, () -> noteService.updateNoteByIdForCurrentUser(id, updateNoteDTO));
+        assertThrows(NoteNotFoundException.class, () -> noteService.updateNoteByIdForCurrentUser(id, updateNoteDto));
     }
 
     @Test

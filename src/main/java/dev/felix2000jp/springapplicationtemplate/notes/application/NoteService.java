@@ -13,9 +13,9 @@ public interface NoteService {
 
     NoteDto getNoteByIdForCurrentUser(UUID id);
 
-    NoteDto createNoteForCurrentUser(CreateNoteDto createNoteDTO);
+    NoteDto createNoteForCurrentUser(CreateNoteDto createNoteDto);
 
-    NoteDto updateNoteByIdForCurrentUser(UUID noteId, UpdateNoteDto updateNoteDTO);
+    NoteDto updateNoteByIdForCurrentUser(UUID noteId, UpdateNoteDto updateNoteDto);
 
     NoteDto deleteNoteByIdForCurrentUser(UUID id);
 

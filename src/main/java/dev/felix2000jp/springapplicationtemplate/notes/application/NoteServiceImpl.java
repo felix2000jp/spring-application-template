@@ -45,17 +45,17 @@ class NoteServiceImpl implements NoteService {
     }
 
     @Override
-    public NoteDto createNoteForCurrentUser(CreateNoteDto createNoteDTO) {
+    public NoteDto createNoteForCurrentUser(CreateNoteDto createNoteDto) {
         var appuserId = securityService.getUser().id();
 
-        var noteToCreate = new Note(appuserId, createNoteDTO.title(), createNoteDTO.content());
+        var noteToCreate = new Note(appuserId, createNoteDto.title(), createNoteDto.content());
         noteRepository.save(noteToCreate);
 
         return noteMapper.toDto(noteToCreate);
     }
 
     @Override
-    public NoteDto updateNoteByIdForCurrentUser(UUID noteId, UpdateNoteDto updateNoteDTO) {
+    public NoteDto updateNoteByIdForCurrentUser(UUID noteId, UpdateNoteDto updateNoteDto) {
         var appuserId = securityService.getUser().id();
 
         var noteToUpdate = noteRepository.findByIdAndAppuserId(noteId, appuserId);
@@ -63,8 +63,8 @@ class NoteServiceImpl implements NoteService {
             throw new NoteNotFoundException();
         }
 
-        noteToUpdate.setTitle(updateNoteDTO.title());
-        noteToUpdate.setContent(updateNoteDTO.content());
+        noteToUpdate.setTitle(updateNoteDto.title());
+        noteToUpdate.setContent(updateNoteDto.content());
         noteRepository.save(noteToUpdate);
 
         return noteMapper.toDto(noteToUpdate);
