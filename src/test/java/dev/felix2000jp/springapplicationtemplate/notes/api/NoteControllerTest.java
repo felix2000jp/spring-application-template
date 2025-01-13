@@ -208,7 +208,7 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void givenId_whenDelete_NoteByIdForCurrentUser_thenReturnNoContent() throws Exception {
+    void givenId_whenDeleteNoteByIdForCurrentUser_thenReturnNoContent() throws Exception {
         // given
         var id = UUID.randomUUID();
         var noteDto = new NoteDto(id, "title", "content");

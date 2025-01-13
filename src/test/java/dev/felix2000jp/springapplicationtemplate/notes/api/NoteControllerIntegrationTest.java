@@ -56,7 +56,8 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_and_fetch_page_of_notes_for_authenticated_user() {
+    void givenNotesInDatabase_whenUserFetchesNotes_thenReturnNoteListDto() {
+        // given
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -71,6 +72,7 @@ class NoteControllerIntegrationTest {
         var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
+        // when
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes?page={page}",
                 HttpMethod.GET,
@@ -78,6 +80,8 @@ class NoteControllerIntegrationTest {
                 NoteListDto.class,
                 0
         );
+
+        // then
         assertEquals(200, findNoteBydIdEntity.getStatusCode().value());
         assertNotNull(findNoteBydIdEntity.getBody());
         assertEquals(1, findNoteBydIdEntity.getBody().notes().size());
@@ -86,7 +90,8 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_and_fetch_note_for_authenticated_user() {
+    void givenNoteInDatabase_whenUserFetchesNote_thenReturnNoteDto() {
+        // given
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -101,6 +106,7 @@ class NoteControllerIntegrationTest {
         var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
+        // when
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.GET,
@@ -108,6 +114,8 @@ class NoteControllerIntegrationTest {
                 NoteDto.class,
                 noteInDatabase.getId()
         );
+
+        //then
         assertEquals(200, findNoteBydIdEntity.getStatusCode().value());
         assertNotNull(findNoteBydIdEntity.getBody());
         assertEquals("title", findNoteBydIdEntity.getBody().title());
@@ -115,7 +123,8 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_and_update_note_for_authenticated_user() {
+    void givenNoteInDatabase_whenUserUpdatesNote_thenUpdateNote() {
+        // give
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -130,6 +139,7 @@ class NoteControllerIntegrationTest {
         var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
+        // when
         var updateNoteEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.PUT,
@@ -139,6 +149,7 @@ class NoteControllerIntegrationTest {
         );
         assertEquals(204, updateNoteEntity.getStatusCode().value());
 
+        // then
         var updatedNoteInDatabase = noteRepository.findByIdAndAppuserId(
                 createNoteEntity.getBody().id(),
                 authenticatedUserId
@@ -149,7 +160,8 @@ class NoteControllerIntegrationTest {
     }
 
     @Test
-    void should_create_and_delete_note_for_authenticated_user() {
+    void givenNoteInDatabase_whenUserDeletesNote_thenDeleteNote() {
+        // given
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
@@ -164,6 +176,7 @@ class NoteControllerIntegrationTest {
         var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
         assertNotNull(noteInDatabase);
 
+        // when
         var deleteNoteEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.DELETE,
@@ -173,6 +186,7 @@ class NoteControllerIntegrationTest {
         );
         assertEquals(204, deleteNoteEntity.getStatusCode().value());
 
+        // then
         var deletedNoteInDatabase = noteRepository.findByIdAndAppuserId(
                 createNoteEntity.getBody().id(),
                 authenticatedUserId
