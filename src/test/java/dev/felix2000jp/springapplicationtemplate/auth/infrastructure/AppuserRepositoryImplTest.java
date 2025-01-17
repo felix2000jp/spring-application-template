@@ -55,7 +55,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenPageNumberWithAppusers_whenFindAll_thenReturnListOfAppusers() {
+    void givenPageNumber_whenFindAll_thenReturnListOfAppusers() {
         // given
         var pageNumber = 0;
 
@@ -67,7 +67,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenPageNumberWithNoAppusers_whenFindAll_thenReturnEmptyListOfAppusers() {
+    void givenEmptyPageNumber_whenFindAll_thenReturnEmptyListOfAppusers() {
         // given
         var pageNumber = 0;
 
@@ -79,7 +79,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserId_whenFindById_thenReturnAppuser() {
+    void givenId_whenFindById_thenReturnAppuser() {
         // given
         var id = appuser.getId();
 
@@ -103,7 +103,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserId_whenExistsById_thenReturnTrue() {
+    void givenId_whenExistsById_thenReturnTrue() {
         // given
         var id = appuser.getId();
 
@@ -127,7 +127,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserUsername_whenFindByUsername_thenReturnAppuser() {
+    void givenUsername_whenFindByUsername_thenReturnAppuser() {
         // given
         var username = appuser.getUsername();
 
@@ -148,7 +148,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserUsername_whenExistsByUsername_thenReturnTrue() {
+    void givenUsername_whenExistsByUsername_thenReturnTrue() {
         // given
         var username = appuser.getUsername();
 
@@ -169,7 +169,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserId_WhenDeleteById_thenDeleteAppuser() {
+    void givenId_WhenDeleteById_thenDeleteAppuser() {
         // given
         var id = appuser.getId();
 
@@ -183,7 +183,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenNonExistentId_WhenDeleteById_thenDoNotThrow() {
+    void givenNonExistentId_WhenDeleteById_thenDoNothing() {
         // given
         var id = UUID.randomUUID();
 
@@ -195,7 +195,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void givenValidAppuser_whenSave_thenSaveAppuser() {
+    void givenAppuser_whenSave_thenSaveAppuser() {
         // given
         var appuserToCreate = new Appuser("new username", "new password");
 
@@ -210,7 +210,7 @@ class AppuserRepositoryImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void givenInvalidValidAppuser_whenSave_thenSaveAppuser(Appuser appuserToCreate) {
+    void givenInvalidValidAppuser_whenSave_thenDoNothing(Appuser appuserToCreate) {
         // when and then
         assertThrows(Exception.class, () -> {
             appuserRepository.save(appuserToCreate);
@@ -218,7 +218,7 @@ class AppuserRepositoryImplTest {
         });
     }
 
-    private static Stream<Arguments> givenInvalidValidAppuser_whenSave_thenSaveAppuser() {
+    private static Stream<Arguments> givenInvalidValidAppuser_whenSave_thenDoNothing() {
         return Stream.of(
                 arguments(new Appuser()),
                 arguments(new Appuser(null, "new password")),
