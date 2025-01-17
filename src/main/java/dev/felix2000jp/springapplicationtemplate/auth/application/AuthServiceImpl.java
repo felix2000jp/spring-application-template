@@ -23,14 +23,10 @@ class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public Appuser loadUserByUsername(String username) throws UsernameNotFoundException {
-        var appuser = appuserRepository.findByUsername(username);
-
-        if (appuser == null) {
-            throw new UsernameNotFoundException(username);
-        }
-
-        return appuser;
+    public Appuser loadUserByUsername(String username) {
+        return appuserRepository
+                .findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     @Override
@@ -48,6 +44,7 @@ class AuthServiceImpl implements AuthService {
     @Override
     public void createAppuser(CreateAppuserDto createAppuserDto) {
         var doesUsernameExist = appuserRepository.existsByUsername(createAppuserDto.username());
+
         if (doesUsernameExist) {
             throw new AppuserAlreadyExistsException();
         }
@@ -65,10 +62,9 @@ class AuthServiceImpl implements AuthService {
     public void updatePassword(UpdatePasswordDto updatePasswordDto) {
         var user = securityService.getUser();
 
-        var appuserToUpdate = appuserRepository.findById(user.id());
-        if (appuserToUpdate == null) {
-            throw new AppuserNotFoundException();
-        }
+        var appuserToUpdate = appuserRepository
+                .findById(user.id())
+                .orElseThrow(AppuserNotFoundException::new);
 
         appuserToUpdate.setPassword(securityService.generateEncodedPassword(updatePasswordDto.password()));
         appuserRepository.save(appuserToUpdate);

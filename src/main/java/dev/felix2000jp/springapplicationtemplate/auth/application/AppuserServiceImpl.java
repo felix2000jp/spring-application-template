@@ -42,10 +42,9 @@ class AppuserServiceImpl implements AppuserService {
     public AppuserDto getAppuserForCurrentUser() {
         var user = securityService.getUser();
 
-        var appuser = appuserRepository.findById(user.id());
-        if (appuser == null) {
-            throw new AppuserNotFoundException();
-        }
+        var appuser = appuserRepository
+                .findById(user.id())
+                .orElseThrow(AppuserNotFoundException::new);
 
         return appuserMapper.toDto(appuser);
     }
@@ -54,13 +53,13 @@ class AppuserServiceImpl implements AppuserService {
     public AppuserDto updateAppuserForCurrentUser(UpdateAppuserDto updateAppuserDto) {
         var user = securityService.getUser();
 
-        var appuserToUpdate = appuserRepository.findById(user.id());
-        if (appuserToUpdate == null) {
-            throw new AppuserNotFoundException();
-        }
+        var appuserToUpdate = appuserRepository
+                .findById(user.id())
+                .orElseThrow(AppuserNotFoundException::new);
 
         var isUsernameNew = !updateAppuserDto.username().equals(appuserToUpdate.getUsername());
         var doesUsernameExist = appuserRepository.existsByUsername(updateAppuserDto.username());
+
         if (isUsernameNew && doesUsernameExist) {
             throw new AppuserAlreadyExistsException();
         }
@@ -76,10 +75,9 @@ class AppuserServiceImpl implements AppuserService {
     public AppuserDto deleteAppuserForCurrentUser() {
         var user = securityService.getUser();
 
-        var appuserToDelete = appuserRepository.findById(user.id());
-        if (appuserToDelete == null) {
-            throw new AppuserNotFoundException();
-        }
+        var appuserToDelete = appuserRepository
+                .findById(user.id())
+                .orElseThrow(AppuserNotFoundException::new);
 
         appuserRepository.deleteById(appuserToDelete.getId());
 

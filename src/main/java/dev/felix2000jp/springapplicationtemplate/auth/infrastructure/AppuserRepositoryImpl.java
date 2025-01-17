@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -27,9 +28,8 @@ class AppuserRepositoryImpl implements AppuserRepository {
     }
 
     @Override
-    public Appuser findById(UUID id) {
-        var optionalAppuser = appuserJpaRepository.findById(id);
-        return optionalAppuser.orElse(null);
+    public Optional<Appuser> findById(UUID id) {
+        return appuserJpaRepository.findById(id);
     }
 
     @Override
@@ -38,9 +38,8 @@ class AppuserRepositoryImpl implements AppuserRepository {
     }
 
     @Override
-    public Appuser findByUsername(String username) {
-        var optionalAppuser = appuserJpaRepository.findByUsername(username);
-        return optionalAppuser.orElse(null);
+    public Optional<Appuser> findByUsername(String username) {
+        return appuserJpaRepository.findByUsername(username);
     }
 
     @Override

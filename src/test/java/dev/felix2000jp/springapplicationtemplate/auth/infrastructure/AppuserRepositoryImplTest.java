@@ -1,10 +1,7 @@
 package dev.felix2000jp.springapplicationtemplate.auth.infrastructure;
 
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -58,115 +55,170 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void should_find_appusers_when_page_is_not_empty() {
-        var actual = appuserRepository.findAll(0);
+    void givenPageNumberWithAppusers_whenFindAll_thenReturnListOfAppusers() {
+        // given
+        var pageNumber = 0;
 
+        // when
+        var actual = appuserRepository.findAll(pageNumber);
+
+        // then
         assertFalse(actual.isEmpty());
     }
 
     @Test
-    void should_not_find_appusers_when_page_is_empty() {
-        var actual = appuserRepository.findAll(1);
+    void givenPageNumberWithNoAppusers_whenFindAll_thenReturnEmptyListOfAppusers() {
+        // given
+        var pageNumber = 0;
 
+        // when
+        var actual = appuserRepository.findAll(pageNumber);
+
+        // then
         assertTrue(actual.isEmpty());
     }
 
     @Test
-    void should_find_appuser_with_id_when_appuser_exists() {
-        var actual = appuserRepository.findById(appuser.getId());
+    void givenAppuserId_whenFindById_thenReturnAppuser() {
+        // given
+        var id = appuser.getId();
 
+        // when
+        var actual = appuserRepository.findById(id);
+
+        // then
+        assertTrue(actual.isPresent());
+    }
+
+    @Test
+    void givenNonExistentId_whenFindById_thenReturnNoAppuser() {
+        // given
+        var id = UUID.randomUUID();
+
+        // when
+        var actual = appuserRepository.findById(id);
+
+        // then
+        assertFalse(actual.isPresent());
+    }
+
+    @Test
+    void givenAppuserId_whenExistsById_thenReturnTrue() {
+        // given
+        var id = appuser.getId();
+
+        // when
+        var actual = appuserRepository.existsById(id);
+
+        // then
+        assertTrue(actual);
+    }
+
+    @Test
+    void givenNonExistentId_whenExistsById_thenReturnFalse() {
+        // given
+        var id = UUID.randomUUID();
+
+        // when
+        var actual = appuserRepository.existsById(id);
+
+        // then
+        assertFalse(actual);
+    }
+
+    @Test
+    void givenAppuserUsername_whenFindByUsername_thenReturnAppuser() {
+        // given
+        var username = appuser.getUsername();
+
+        // when
+        var actual = appuserRepository.findByUsername(username);
+
+        // then
         assertNotNull(actual);
     }
 
     @Test
-    void should_not_find_appuser_with_id_when_appuser_does_not_exist() {
-        var actual = appuserRepository.findById(UUID.randomUUID());
-
-        assertNull(actual);
-    }
-
-    @Test
-    void should_return_true_if_appuser_with_id_exists() {
-        var actual = appuserRepository.existsById(appuser.getId());
-
-        Assertions.assertTrue(actual);
-    }
-
-    @Test
-    void should_return_false_if_appuser_with_id_does_not_exist() {
-        var actual = appuserRepository.existsById(UUID.randomUUID());
-
-        Assertions.assertFalse(actual);
-    }
-
-    @Test
-    void should_find_appuser_with_username_when_appuser_exists() {
-        var actual = appuserRepository.findByUsername(appuser.getUsername());
-
-        assertNotNull(actual);
-    }
-
-    @Test
-    void should_not_find_appuser_with_username_when_appuser_does_not_exist() {
+    void givenNonExistentUsername_whenFindByUsername_thenReturnNoAppuser() {
+        // when
         var actual = appuserRepository.findByUsername("non existent username");
 
+        // then
         assertNull(actual);
     }
 
     @Test
-    void should_return_true_if_appuser_with_username_exists() {
-        var actual = appuserRepository.existsByUsername(appuser.getUsername());
+    void givenAppuserUsername_whenExistsByUsername_thenReturnTrue() {
+        // given
+        var username = appuser.getUsername();
 
-        Assertions.assertTrue(actual);
+        // when
+        var actual = appuserRepository.existsByUsername(username);
+
+        // then
+        assertTrue(actual);
     }
 
     @Test
-    void should_return_false_if_appuser_with_username_does_not_exist() {
+    void givenNonExistentUsername_whenExistsByUsername_thenReturnFalse() {
+        // when
         var actual = appuserRepository.existsByUsername("non existent username");
 
-        Assertions.assertFalse(actual);
+        // then
+        assertFalse(actual);
     }
 
     @Test
-    void should_delete_appuser_with_id_when_note_exists() {
-        appuserRepository.deleteById(appuser.getId());
+    void givenAppuserId_WhenDeleteById_thenDeleteAppuser() {
+        // given
+        var id = appuser.getId();
 
+        // when
+        appuserRepository.deleteById(id);
         testEntityManager.flush();
         testEntityManager.clear();
 
+        // then
         assertNull(testEntityManager.find(Appuser.class, appuser.getId()));
     }
 
     @Test
-    void should_not_throw_when_trying_to_delete_appuser_with_id_when_appuser_does_not_exist() {
+    void givenNonExistentId_WhenDeleteById_thenDoNotThrow() {
+        // given
+        var id = UUID.randomUUID();
+
+        // when and then
         assertDoesNotThrow(() -> {
-            appuserRepository.deleteById(UUID.randomUUID());
+            appuserRepository.deleteById(id);
             testEntityManager.flush();
         });
     }
 
     @Test
-    void should_save_appuser_successfully() {
+    void givenValidAppuser_whenSave_thenSaveAppuser() {
+        // given
         var appuserToCreate = new Appuser("new username", "new password");
 
+        // when
         appuserRepository.save(appuserToCreate);
-
         testEntityManager.flush();
         testEntityManager.clear();
 
+        // then
         assertNotNull(testEntityManager.find(Appuser.class, appuserToCreate.getId()));
     }
 
     @ParameterizedTest
     @MethodSource
-    void should_fail_to_save_appuser_when_appuser_data_is_invalid(Appuser appuserToCreate) {
+    void givenInvalidValidAppuser_whenSave_thenSaveAppuser(Appuser appuserToCreate) {
+        // when and then
         assertThrows(Exception.class, () -> {
             appuserRepository.save(appuserToCreate);
             testEntityManager.flush();
         });
     }
 
-    private static Stream<Arguments> should_fail_to_save_appuser_when_appuser_data_is_invalid() {
+    private static Stream<Arguments> givenInvalidValidAppuser_whenSave_thenSaveAppuser() {
         return Stream.of(
                 arguments(new Appuser()),
                 arguments(new Appuser(null, "new password")),
