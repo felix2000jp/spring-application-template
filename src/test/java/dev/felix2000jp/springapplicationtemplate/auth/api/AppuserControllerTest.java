@@ -8,6 +8,8 @@ import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserN
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,11 +21,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Stream;
 
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AppuserController.class)
@@ -150,5 +153,48 @@ class AppuserControllerTest {
                 .andExpect(jsonPath("$.status").value(404));
     }
 
-    // TODO add more tests here
+    @ParameterizedTest
+    @MethodSource
+    @WithMockUser
+    void updateAppuserForCurrentUser_given_invalid_request_body_then_return_400(String requestBody) throws Exception {
+        mockMvc
+                .perform(put("/api/appusers/me").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.status").value(400));
+    }
+
+    @Test
+    @WithMockUser
+    void deleteAppuserForCurrentUser_given_user_then_return_204() throws Exception {
+        mockMvc
+                .perform(delete("/api/appusers/me").with(csrf()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteAppuserForCurrentUser_given_not_found_user_then_return_404() throws Exception {
+        var exception = new AppuserNotFoundException();
+        when(appuserService.deleteAppuserForCurrentUser()).thenThrow(exception);
+
+        mockMvc
+                .perform(delete("/api/appusers/me").with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Not Found"))
+                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
+    private static Stream<Arguments> updateAppuserForCurrentUser_given_invalid_request_body_then_return_400() {
+        return Stream.of(
+                arguments(""),
+                arguments("{}"),
+                arguments("{ 'username': '' }"),
+                arguments("{ 'username': ' ' }"),
+                arguments("{ 'username': 'lol' }"),
+                arguments("{ 'username': '" + "l".repeat(501) + "' }")
+        );
+    }
+
 }

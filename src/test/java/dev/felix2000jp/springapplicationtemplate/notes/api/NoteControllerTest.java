@@ -202,7 +202,6 @@ class NoteControllerTest {
         mockMvc
                 .perform(delete("/api/notes/" + id).with(csrf()))
                 .andExpect(status().isNoContent());
-
     }
 
     @Test
