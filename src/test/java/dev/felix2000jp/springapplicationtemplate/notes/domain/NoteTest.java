@@ -4,50 +4,36 @@ import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class NoteTest {
 
     @Test
-    void givenNoteFieldValues_whenNewNote_thenCreateNote() {
-        // given
+    void constructor_given_valid_parameters_then_create_note() {
         var appuserId = UUID.randomUUID();
-        var title = "title";
-        var content = "content";
+        var actual = new Note(appuserId, "title", "content");
 
-        // when
-        var actual = new Note(appuserId, title, content);
-
-        // then
-        assertEquals(appuserId, actual.getAppuserId());
-        assertEquals(title, actual.getTitle());
-        assertEquals(content, actual.getContent());
+        assertThat(actual.getAppuserId()).isEqualTo(appuserId);
+        assertThat(actual.getTitle()).isEqualTo("title");
+        assertThat(actual.getContent()).isEqualTo("content");
     }
 
     @Test
-    void givenNoteAndNewTitle_whenSetTitle_thenUpdateTitle() {
-        // given
+    void setTitle_given_new_title_then_update_title() {
         var note = new Note(UUID.randomUUID(), "title", "content");
-        var newTitle = "new title";
 
-        // when
-        note.setTitle(newTitle);
+        note.setTitle("new title");
 
-        // then
-        assertEquals(newTitle, note.getTitle());
+        assertThat(note.getTitle()).isEqualTo("new title");
     }
 
     @Test
-    void givenNoteAndNewContent_whenSetContent_thenUpdateContent() {
-        // given
+    void setContent_given_new_content_then_update_content() {
         var note = new Note(UUID.randomUUID(), "title", "content");
-        var newContent = "new content";
 
-        // when
-        note.setContent(newContent);
+        note.setContent("new content");
 
-        // then
-        assertEquals(newContent, note.getContent());
+        assertThat(note.getContent()).isEqualTo("new content");
     }
 
 }

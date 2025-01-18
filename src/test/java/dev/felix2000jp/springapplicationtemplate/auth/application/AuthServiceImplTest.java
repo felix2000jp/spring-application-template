@@ -86,7 +86,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void createAppuser_given_create_appuser_dto_then_create_appuser() {
+    void createAppuser_given_dto_then_create_appuser() {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
         when(appuserRepository.existsByUsername(createAppuserDto.username())).thenReturn(false);
@@ -101,7 +101,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void createAppuser_given_duplicate_username_then_throw_appuser_already_exists_exception() {
+    void createAppuser_given_dto_with_duplicate_username_then_throw_appuser_already_exists_exception() {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
         when(appuserRepository.existsByUsername(createAppuserDto.username())).thenReturn(true);
@@ -110,7 +110,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void updatePassword_given_update_password_dto_then_update_password() {
+    void updatePassword_given_dto_then_update_password() {
         var updatePasswordDto = new UpdatePasswordDto("new password");
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(

@@ -6,36 +6,30 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class NoteMapperTest {
 
     private final NoteMapper noteMapper = new NoteMapper();
 
     @Test
-    void givenNote_whenToDto_thenReturnNoteDto() {
-        // given
+    void toDto_given_note_then_map_to_dto() {
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        // when
         var actual = noteMapper.toDto(note);
 
-        // then
-        assertEquals(note.getId(), actual.id());
-        assertEquals(note.getTitle(), actual.title());
-        assertEquals(note.getContent(), actual.content());
+        assertThat(actual.id()).isEqualTo(note.getId());
+        assertThat(actual.title()).isEqualTo(note.getTitle());
+        assertThat(actual.content()).isEqualTo(note.getContent());
     }
 
     @Test
-    void givenNotes_whenToDto_thenReturnNoteListDto() {
-        // given
+    void toDto_given_list_of_notes_then_map_to_list_dto() {
         var notes = List.of(new Note(UUID.randomUUID(), "title", "content"));
 
-        // when
         var actual = noteMapper.toDto(notes);
 
-        // then
-        assertEquals(notes.size(), actual.notes().size());
+        assertThat(actual.notes()).hasSameSizeAs(notes);
     }
 
 }

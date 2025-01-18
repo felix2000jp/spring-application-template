@@ -85,13 +85,13 @@ class AppuserServiceImplTest {
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of());
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(null);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> appuserService.getAppuserForCurrentUser()).isInstanceOf(AppuserNotFoundException.class);
     }
 
     @Test
-    void updateAppuserForCurrentUser_given_new_username_then_update_appuser() {
+    void updateAppuserForCurrentUser_given_dto_with_new_username_then_update_appuser() {
         var appuser = new Appuser("username", "password");
         var updateAppuserDto = new UpdateAppuserDto("new username");
         var authenticatedUser = new SecurityService.User(
@@ -110,7 +110,7 @@ class AppuserServiceImplTest {
     }
 
     @Test
-    void updateAppuserForCurrentUser_given_old_username_then_update_appuser() {
+    void updateAppuserForCurrentUser_given_dto_with_old_username_then_update_appuser() {
         var appuser = new Appuser("username", "password");
         var updateAppuserDto = new UpdateAppuserDto("username");
         var authenticatedUser = new SecurityService.User(
@@ -134,7 +134,7 @@ class AppuserServiceImplTest {
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of());
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(null);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.empty());
 
         assertThatThrownBy(
                 () -> appuserService.updateAppuserForCurrentUser(updateAppuserDto)
@@ -142,7 +142,7 @@ class AppuserServiceImplTest {
     }
 
     @Test
-    void updateAppuserForCurrentUser_given_duplicate_username_then_throw_appuser_already_exists_exception() {
+    void updateAppuserForCurrentUser_given_dto_with_duplicate_username_then_throw_appuser_already_exists_exception() {
         var appuser = new Appuser("username", "password");
         var updateAppuserDto = new UpdateAppuserDto("new username");
         var authenticatedUser = new SecurityService.User(
@@ -189,7 +189,7 @@ class AppuserServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(null);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.empty());
 
         assertThatThrownBy(
                 () -> appuserService.deleteAppuserForCurrentUser()
