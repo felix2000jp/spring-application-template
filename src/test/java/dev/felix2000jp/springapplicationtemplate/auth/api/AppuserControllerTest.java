@@ -36,7 +36,7 @@ class AppuserControllerTest {
 
     @Test
     @WithMockUser
-    void should_return_200_and_a_page_of_appusers_when_page_param_is_valid() throws Exception {
+    void getAppusers_given_valid_page_param_then_return_200_and_a_page_of_appusers() throws Exception {
         var appuserDto = new AppuserDto(
                 UUID.randomUUID(),
                 "username",
@@ -66,7 +66,7 @@ class AppuserControllerTest {
     @ParameterizedTest
     @ValueSource(strings = {"-1", "not a number"})
     @WithMockUser
-    void should_fail_to_get_page_of_appusers_when_page_query_param_is_invalid(String page) throws Exception {
+    void getAppusers_given_invalid_page_param_then_return_400(String page) throws Exception {
         mockMvc
                 .perform(get("/api/appusers/admin?page=" + page))
                 .andExpect(status().isBadRequest())
@@ -76,7 +76,7 @@ class AppuserControllerTest {
 
     @Test
     @WithMockUser
-    void should_return_200_and_the_current_appuser_when_appuser_exists() throws Exception {
+    void getAppuserForCurrentUser_given_user_then_return_200_and_the_current_appuser() throws Exception {
         var appuserDto = new AppuserDto(
                 UUID.randomUUID(),
                 "username",
@@ -97,7 +97,7 @@ class AppuserControllerTest {
 
     @Test
     @WithMockUser
-    void should_fail_to_get_current_appuser_and_return_404_when_appuser_does_not_exist() throws Exception {
+    void getAppuserForCurrentUser_given_non_existent_user_then_return_404() throws Exception {
         var exception = new AppuserNotFoundException();
         when(appuserService.getAppuserForCurrentUser()).thenThrow(exception);
 
@@ -111,7 +111,7 @@ class AppuserControllerTest {
 
     @Test
     @WithMockUser
-    void should_return_204_and_the_updated_appuser_when_appuser_exists_and_new_username_is_unique() throws Exception {
+    void updateAppuserForCurrentUser_given_valid_body_then_return_204() throws Exception {
         var updateAppuserDto = new UpdateAppuserDto("new username");
         var appuserDto = new AppuserDto(
                 UUID.randomUUID(),
@@ -132,7 +132,7 @@ class AppuserControllerTest {
 
     @Test
     @WithMockUser
-    void should_fail_to_update_appuser_and_return_404_when_appuser_does_not_exist() throws Exception {
+    void updateAppuserForCurrentUser_given_non_existent_user_then_return_404() throws Exception {
         var updateAppuserDto = new UpdateAppuserDto("new username");
 
         var requestBody = String.format("""
@@ -150,4 +150,5 @@ class AppuserControllerTest {
                 .andExpect(jsonPath("$.status").value(404));
     }
 
+    // TODO add more tests here
 }

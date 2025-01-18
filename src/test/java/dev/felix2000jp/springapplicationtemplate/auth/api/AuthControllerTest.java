@@ -37,7 +37,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void should_return_200_and_csrf_token_successfully() throws Exception {
+    void csrf_then_return_200_and_csrf_token() throws Exception {
         mockMvc
                 .perform(get("/auth/csrf"))
                 .andExpect(status().isOk())
@@ -46,7 +46,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void should_return_200_and_login_token_successfully() throws Exception {
+    void generateToken_then_return_200_and_login_token() throws Exception {
         when(authService.generateToken()).thenReturn("some-login-token");
 
         mockMvc
@@ -57,7 +57,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void should_return_201_and_location_when_user_is_registered() throws Exception {
+    void createAppuser_given_valid_body_then_return_201_and_location_header() throws Exception {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
         var requestBody = String.format("""
@@ -72,7 +72,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void should_fail_to_create_appuser_and_return_409_when_username_already_exists() throws Exception {
+    void createAppuser_given_duplicate_username_then_return_409() throws Exception {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
         var requestBody = String.format("""
@@ -93,7 +93,7 @@ class AuthControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void should_return_400_when_create_appuser_request_body_is_invalid(String requestBody) throws Exception {
+    void createAppuser_given_invalid_request_body_then_return_400(String requestBody) throws Exception {
         mockMvc
                 .perform(post("/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -103,7 +103,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void should_return_204_when_user_password_is_updated() throws Exception {
+    void updatePassword_given_valid_body_then_return_204() throws Exception {
         var updatePasswordDto = new UpdatePasswordDto("password");
 
         var requestBody = String.format("""
@@ -117,7 +117,7 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void should_fail_to_update_password_and_return_404_when_appuser_does_not_exist() throws Exception {
+    void updatePassword_give_non_existing_user_then_return_404() throws Exception {
         var updatePasswordDto = new UpdatePasswordDto("password");
 
         var requestBody = String.format("""
@@ -138,7 +138,7 @@ class AuthControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void should_return_400_when_update_password_request_body_is_invalid(String requestBody) throws Exception {
+    void updatePassword_given_invalid_request_body_then_return_400(String requestBody) throws Exception {
         mockMvc
                 .perform(put("/auth/password").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isBadRequest())
@@ -146,7 +146,7 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value(400));
     }
 
-    private static Stream<Arguments> should_return_400_when_create_appuser_request_body_is_invalid() {
+    private static Stream<Arguments> createAppuser_given_invalid_request_body_then_return_400() {
         return Stream.of(
                 arguments(""),
                 arguments("{}"),
@@ -165,7 +165,7 @@ class AuthControllerTest {
         );
     }
 
-    private static Stream<Arguments> should_return_400_when_update_password_request_body_is_invalid() {
+    private static Stream<Arguments> updatePassword_given_invalid_request_body_then_return_400() {
         return Stream.of(
                 arguments(""),
                 arguments("{}"),

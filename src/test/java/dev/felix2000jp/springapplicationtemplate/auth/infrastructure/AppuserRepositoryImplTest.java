@@ -1,7 +1,9 @@
 package dev.felix2000jp.springapplicationtemplate.auth.infrastructure;
 
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -17,7 +19,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @DataJpaTest
@@ -54,171 +57,117 @@ class AppuserRepositoryImplTest {
                 .executeUpdate();
     }
 
+
     @Test
-    void givenPageNumber_whenFindAll_thenReturnListOfAppusers() {
-        // given
-        var pageNumber = 0;
+    void findAll_given_page_with_data_then_return_list_with_Appusers() {
+        var actual = appuserRepository.findAll(0);
 
-        // when
-        var actual = appuserRepository.findAll(pageNumber);
-
-        // then
-        assertFalse(actual.isEmpty());
+        assertThat(actual).isNotEmpty();
     }
 
     @Test
-    void givenEmptyPageNumber_whenFindAll_thenReturnEmptyListOfAppusers() {
-        // given
-        var pageNumber = 0;
+    void findAll_given_page_with_no_data_then_return_empty_list() {
+        var actual = appuserRepository.findAll(1);
 
-        // when
-        var actual = appuserRepository.findAll(pageNumber);
-
-        // then
-        assertTrue(actual.isEmpty());
+        assertThat(actual).isEmpty();
     }
 
     @Test
-    void givenId_whenFindById_thenReturnAppuser() {
-        // given
-        var id = appuser.getId();
+    void findById_given_id_of_appuser_then_return_appuser() {
+        var actual = appuserRepository.findById(appuser.getId());
 
-        // when
-        var actual = appuserRepository.findById(id);
-
-        // then
-        assertTrue(actual.isPresent());
+        assertThat(actual).isPresent();
     }
 
     @Test
-    void givenNonExistentId_whenFindById_thenReturnNoAppuser() {
-        // given
-        var id = UUID.randomUUID();
+    void findById_given_non_existent_id_then_return_empty_optional() {
+        var actual = appuserRepository.findById(UUID.randomUUID());
 
-        // when
-        var actual = appuserRepository.findById(id);
-
-        // then
-        assertFalse(actual.isPresent());
+        assertThat(actual).isNotPresent();
     }
 
     @Test
-    void givenId_whenExistsById_thenReturnTrue() {
-        // given
-        var id = appuser.getId();
+    void existsById_given_id_of_appuser_then_return_true() {
+        var actual = appuserRepository.existsById(appuser.getId());
 
-        // when
-        var actual = appuserRepository.existsById(id);
-
-        // then
-        assertTrue(actual);
+        assertThat(actual).isTrue();
     }
 
     @Test
-    void givenNonExistentId_whenExistsById_thenReturnFalse() {
-        // given
-        var id = UUID.randomUUID();
+    void existsById_given_non_existent_id_then_return_false() {
+        var actual = appuserRepository.existsById(UUID.randomUUID());
 
-        // when
-        var actual = appuserRepository.existsById(id);
-
-        // then
-        assertFalse(actual);
+        assertThat(actual).isFalse();
     }
 
     @Test
-    void givenUsername_whenFindByUsername_thenReturnAppuser() {
-        // given
-        var username = appuser.getUsername();
+    void findByUsername_given_username_of_appuser_then_return_appuser() {
+        var actual = appuserRepository.findByUsername(appuser.getUsername());
 
-        // when
-        var actual = appuserRepository.findByUsername(username);
-
-        // then
-        assertNotNull(actual);
+        assertThat(actual).isPresent();
     }
 
     @Test
-    void givenNonExistentUsername_whenFindByUsername_thenReturnNoAppuser() {
-        // when
+    void findByUsername_given_non_existent_username_then_return_empty_optional() {
         var actual = appuserRepository.findByUsername("non existent username");
 
-        // then
-        assertNull(actual);
+        assertThat(actual).isNotPresent();
     }
 
     @Test
-    void givenUsername_whenExistsByUsername_thenReturnTrue() {
-        // given
-        var username = appuser.getUsername();
+    void existsByUsername_given_username_of_appuser_then_return_true() {
+        var actual = appuserRepository.existsByUsername(appuser.getUsername());
 
-        // when
-        var actual = appuserRepository.existsByUsername(username);
-
-        // then
-        assertTrue(actual);
+        assertThat(actual).isTrue();
     }
 
     @Test
-    void givenNonExistentUsername_whenExistsByUsername_thenReturnFalse() {
-        // when
+    void existsByUsername_given_non_existent_username_then_return_false() {
         var actual = appuserRepository.existsByUsername("non existent username");
 
-        // then
-        assertFalse(actual);
+        assertThat(actual).isFalse();
     }
 
     @Test
-    void givenId_WhenDeleteById_thenDeleteAppuser() {
-        // given
-        var id = appuser.getId();
-
-        // when
-        appuserRepository.deleteById(id);
+    void deleteById_given_id_of_appuser_then_delete_appuser() {
+        appuserRepository.deleteById(appuser.getId());
         testEntityManager.flush();
         testEntityManager.clear();
 
-        // then
-        assertNull(testEntityManager.find(Appuser.class, appuser.getId()));
+        var deletedUser = testEntityManager.find(Appuser.class, appuser.getId());
+        assertThat(deletedUser).isNull();
     }
 
     @Test
-    void givenNonExistentId_WhenDeleteById_thenDoNothing() {
-        // given
-        var id = UUID.randomUUID();
-
-        // when and then
-        assertDoesNotThrow(() -> {
-            appuserRepository.deleteById(id);
+    void deleteById_given_non_existent_id_then_fail_without_throwing() {
+        assertThatCode(() -> {
+            appuserRepository.deleteById(UUID.randomUUID());
             testEntityManager.flush();
-        });
+        }).doesNotThrowAnyException();
     }
 
     @Test
-    void givenAppuser_whenSave_thenSaveAppuser() {
-        // given
+    void save_given_appuser_then_save_appuser() {
         var appuserToCreate = new Appuser("new username", "new password");
 
-        // when
         appuserRepository.save(appuserToCreate);
         testEntityManager.flush();
         testEntityManager.clear();
 
-        // then
-        assertNotNull(testEntityManager.find(Appuser.class, appuserToCreate.getId()));
+        var createdAppuser = testEntityManager.find(Appuser.class, appuser.getId());
+        assertThat(createdAppuser).isNotNull();
     }
 
     @ParameterizedTest
     @MethodSource
-    void givenInvalidValidAppuser_whenSave_thenDoNothing(Appuser appuserToCreate) {
-        // when and then
-        assertThrows(Exception.class, () -> {
+    void save_given_invalid_appuser_then_fail_without_throwing(Appuser appuserToCreate) {
+        assertThatCode(() -> {
             appuserRepository.save(appuserToCreate);
             testEntityManager.flush();
-        });
+        }).doesNotThrowAnyException();
     }
 
-    private static Stream<Arguments> givenInvalidValidAppuser_whenSave_thenDoNothing() {
+    private static Stream<Arguments> save_given_invalid_appuser_then_fail_without_throwing() {
         return Stream.of(
                 arguments(new Appuser()),
                 arguments(new Appuser(null, "new password")),

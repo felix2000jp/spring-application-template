@@ -15,11 +15,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,7 +38,7 @@ class AppuserServiceImplTest {
     private AppuserServiceImpl appuserService;
 
     @Test
-    void should_get_appusers_when_page_is_not_empty() {
+    void getAppusers_given_page_with_data_then_return_list_of_appusers() {
         var appuser = new Appuser("username", "password");
 
         when(appuserRepository.findAll(0)).thenReturn(List.of(appuser));
@@ -45,23 +46,23 @@ class AppuserServiceImplTest {
         var actual = appuserService.getAppusers(0);
         var actualAppuser = actual.appusers().getFirst();
 
-        assertEquals(1, actual.appusers().size());
-        assertEquals(appuser.getId(), actualAppuser.id());
-        assertEquals(appuser.getUsername(), actualAppuser.username());
-        assertEquals(appuser.getAuthoritiesScopes(), actualAppuser.scopes());
+        assertThat(actual.appusers()).hasSize(1);
+        assertThat(actualAppuser.id()).isEqualTo(appuser.getId());
+        assertThat(actualAppuser.username()).isEqualTo(appuser.getUsername());
+        assertThat(actualAppuser.scopes()).isEqualTo(appuser.getAuthoritiesScopes());
     }
 
     @Test
-    void should_not_get_appusers_when_page_is_empty() {
+    void getAppusers_given_page_with_no_data_then_return_empty_list_of_appusers() {
         when(appuserRepository.findAll(0)).thenReturn(List.of());
 
         var actual = appuserService.getAppusers(0);
 
-        assertEquals(0, actual.appusers().size());
+        assertThat(actual.appusers()).isEmpty();
     }
 
     @Test
-    void should_get_authenticated_appuser_when_appuser_exists() {
+    void getAppuserForCurrentUser_given_authenticated_user_then_return_appuser_equivalent() {
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
@@ -70,27 +71,27 @@ class AppuserServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(appuser);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
 
         var actual = appuserService.getAppuserForCurrentUser();
 
-        assertEquals(appuser.getId(), actual.id());
-        assertEquals(appuser.getUsername(), actual.username());
-        assertEquals(appuser.getAuthoritiesScopes(), actual.scopes());
+        assertThat(actual.id()).isEqualTo(appuser.getId());
+        assertThat(actual.username()).isEqualTo(appuser.getUsername());
+        assertThat(actual.scopes()).isEqualTo(appuser.getAuthoritiesScopes());
     }
 
     @Test
-    void should_not_get_authenticated_appuser_when_appuser_does_not_exist() {
+    void getAppuserForCurrentUser_given_non_existent_authenticated_user_then_throw_appuser_not_found_exception() {
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of());
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.findById(authenticatedUser.id())).thenReturn(null);
 
-        assertThrows(AppuserNotFoundException.class, () -> appuserService.getAppuserForCurrentUser());
+        assertThatThrownBy(() -> appuserService.getAppuserForCurrentUser()).isInstanceOf(AppuserNotFoundException.class);
     }
 
     @Test
-    void should_update_authenticated_appuser_when_username_is_unique() {
+    void updateAppuserForCurrentUser_given_new_username_then_update_appuser() {
         var appuser = new Appuser("username", "password");
         var updateAppuserDto = new UpdateAppuserDto("new username");
         var authenticatedUser = new SecurityService.User(
@@ -100,18 +101,16 @@ class AppuserServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(appuser);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
         when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(false);
 
         var actual = appuserService.updateAppuserForCurrentUser(updateAppuserDto);
 
-        assertEquals(appuser.getId(), actual.id());
-        assertEquals(updateAppuserDto.username(), actual.username());
-        assertEquals(appuser.getAuthoritiesScopes(), actual.scopes());
+        assertThat(actual.username()).isEqualTo(updateAppuserDto.username());
     }
 
     @Test
-    void should_update_authenticated_appuser_when_username_is_not_changed() {
+    void updateAppuserForCurrentUser_given_old_username_then_update_appuser() {
         var appuser = new Appuser("username", "password");
         var updateAppuserDto = new UpdateAppuserDto("username");
         var authenticatedUser = new SecurityService.User(
@@ -121,29 +120,29 @@ class AppuserServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(appuser);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
         when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(true);
 
         var actual = appuserService.updateAppuserForCurrentUser(updateAppuserDto);
 
-        assertEquals(appuser.getId(), actual.id());
-        assertEquals(updateAppuserDto.username(), actual.username());
-        assertEquals(appuser.getAuthoritiesScopes(), actual.scopes());
+        assertThat(actual.username()).isEqualTo(updateAppuserDto.username());
     }
 
     @Test
-    void should_fail_to_update_authenticated_appuser_when_appuser_does_not_exists() {
+    void updateAppuserForCurrentUser_given_non_existent_authenticated_user_then_throw_appuser_not_found_exception() {
         var updateAppuserDto = new UpdateAppuserDto("username");
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of());
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.findById(authenticatedUser.id())).thenReturn(null);
 
-        assertThrows(AppuserNotFoundException.class, () -> appuserService.updateAppuserForCurrentUser(updateAppuserDto));
+        assertThatThrownBy(
+                () -> appuserService.updateAppuserForCurrentUser(updateAppuserDto)
+        ).isInstanceOf(AppuserNotFoundException.class);
     }
 
     @Test
-    void should_fail_to_update_authenticated_appuser_when_username_already_exists() {
+    void updateAppuserForCurrentUser_given_duplicate_username_then_throw_appuser_already_exists_exception() {
         var appuser = new Appuser("username", "password");
         var updateAppuserDto = new UpdateAppuserDto("new username");
         var authenticatedUser = new SecurityService.User(
@@ -153,14 +152,16 @@ class AppuserServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(appuser);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
         when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(true);
 
-        assertThrows(AppuserAlreadyExistsException.class, () -> appuserService.updateAppuserForCurrentUser(updateAppuserDto));
+        assertThatThrownBy(
+                () -> appuserService.updateAppuserForCurrentUser(updateAppuserDto)
+        ).isInstanceOf(AppuserAlreadyExistsException.class);
     }
 
     @Test
-    void should_delete_authenticated_appuser_when_appuser_exists() {
+    void deleteAppuserForCurrentUser_given_authenticated_user_then_delete_appuser() {
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
@@ -169,17 +170,17 @@ class AppuserServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(appuser);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
 
         var actual = appuserService.deleteAppuserForCurrentUser();
 
-        assertEquals(appuser.getId(), actual.id());
-        assertEquals(appuser.getUsername(), actual.username());
-        assertEquals(appuser.getAuthoritiesScopes(), actual.scopes());
+        assertThat(actual.id()).isEqualTo(appuser.getId());
+        assertThat(actual.username()).isEqualTo(appuser.getUsername());
+        assertThat(actual.scopes()).isEqualTo(appuser.getAuthoritiesScopes());
     }
 
     @Test
-    void should_fail_to_delete_authenticated_appuser_when_appuser_does_not_exist() {
+    void deleteAppuserForCurrentUser_given_non_existent_authenticated_user_then_throw_appuser_not_found_exception() {
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),
@@ -190,7 +191,9 @@ class AppuserServiceImplTest {
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.findById(authenticatedUser.id())).thenReturn(null);
 
-        assertThrows(AppuserNotFoundException.class, () -> appuserService.deleteAppuserForCurrentUser());
+        assertThatThrownBy(
+                () -> appuserService.deleteAppuserForCurrentUser()
+        ).isInstanceOf(AppuserNotFoundException.class);
     }
 
 }

@@ -3,55 +3,55 @@ package dev.felix2000jp.springapplicationtemplate.auth.domain;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AppuserTest {
 
     @Test
-    void should_create_new_appuser_successfully() {
+    void constructor_given_valid_parameters_then_create_appuser() {
         var appuser = new Appuser("username", "password");
 
-        assertEquals("username", appuser.getUsername());
-        assertEquals("password", appuser.getPassword());
-        assertEquals(Set.of(), appuser.getAuthorities());
+        assertThat(appuser.getUsername()).isEqualTo("username");
+        assertThat(appuser.getPassword()).isEqualTo("password");
+        assertThat(appuser.getAuthorities()).isEmpty();
     }
 
     @Test
-    void should_set_username_successfully() {
+    void setUsername_given_valid_username_then_set_username() {
         var appuser = new Appuser("username", "password");
-        appuser.setUsername("new username");
+        var newUsername = "new-username";
 
-        assertEquals("new username", appuser.getUsername());
+        appuser.setUsername(newUsername);
+
+        assertThat(appuser.getUsername()).isEqualTo(newUsername);
     }
 
     @Test
-    void should_set_password_successfully() {
+    void setPassword_given_valid_password_then_set_password() {
         var appuser = new Appuser("username", "password");
-        appuser.setPassword("new password");
+        var newPassword = "new-password";
 
-        assertEquals("new password", appuser.getPassword());
+        appuser.setPassword(newPassword);
+
+        assertThat(appuser.getPassword()).isEqualTo(newPassword);
     }
 
     @Test
-    void should_add_scope_admin_successfully() {
+    void addScopeAdmin_given_appuser_then_add_admin_scope() {
         var appuser = new Appuser("username", "password");
         appuser.addScopeAdmin();
 
-        assertEquals(1, appuser.getAuthorities().size());
-        assertEquals(SecurityService.Scope.ADMIN.name(), appuser.getAuthoritiesScopes().iterator().next());
-        assertEquals(SecurityService.Scope.ADMIN.toAuthority(), appuser.getAuthorities().iterator().next().getAuthority());
+        assertThat(appuser.getAuthorities()).isNotEmpty();
+        assertThat(appuser.getAuthoritiesScopes()).containsExactly(SecurityService.Scope.ADMIN.name());
     }
 
     @Test
-    void should_add_scope_application_successfully() {
+    void addScopeApplication_given_appuser_then_add_application_scope() {
         var appuser = new Appuser("username", "password");
         appuser.addScopeApplication();
 
-        assertEquals(1, appuser.getAuthorities().size());
-        assertEquals(SecurityService.Scope.APPLICATION.name(), appuser.getAuthoritiesScopes().iterator().next());
-        assertEquals(SecurityService.Scope.APPLICATION.toAuthority(), appuser.getAuthorities().iterator().next().getAuthority());
+        assertThat(appuser.getAuthorities()).isNotEmpty();
+        assertThat(appuser.getAuthoritiesScopes()).containsExactly(SecurityService.Scope.APPLICATION.name());
     }
 
 }

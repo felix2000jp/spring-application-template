@@ -5,31 +5,31 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class AppuserMapperTest {
 
     private final AppuserMapper appuserMapper = new AppuserMapper();
 
     @Test
-    void should_map_appuser_to_appuserDto_successfully() {
+    void toDto_given_appuser_then_map_to_dto() {
         var appuser = new Appuser("username", "password");
         appuser.addScopeApplication();
 
         var actual = appuserMapper.toDto(appuser);
 
-        assertEquals(appuser.getId(), actual.id());
-        assertEquals(appuser.getUsername(), actual.username());
-        assertEquals("APPLICATION", actual.scopes().iterator().next());
+        assertThat(actual.id()).isEqualTo(appuser.getId());
+        assertThat(actual.username()).isEqualTo(appuser.getUsername());
+        assertThat(actual.scopes()).isEqualTo(appuser.getAuthoritiesScopes());
     }
 
     @Test
-    void should_map_appusers_to_appuserListDto_successfully() {
+    void toDto_given_list_of_appusers_then_map_to_list_dto() {
         var appusers = List.of(new Appuser("username", "password"));
 
         var actual = appuserMapper.toDto(appusers);
 
-        assertEquals(appusers.size(), actual.appusers().size());
+        assertThat(actual.appusers()).hasSameSizeAs(appusers);
     }
 
 }
