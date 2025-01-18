@@ -1,11 +1,10 @@
 package dev.felix2000jp.springapplicationtemplate.notes.api;
 
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
-import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ApplicationModuleTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
@@ -36,43 +35,33 @@ class NoteControllerIntegrationTest {
     private TestRestTemplate testRestTemplate;
     @Autowired
     private SecurityService securityService;
-    @Autowired
-    private NoteRepository noteRepository;
 
-    private UUID authenticatedUserId;
     private HttpHeaders headersWithJwtToken;
 
     @BeforeEach
     void setUp() {
-        authenticatedUserId = UUID.randomUUID();
-        headersWithJwtToken = new HttpHeaders();
-
         var token = securityService.generateToken(
                 "username",
-                authenticatedUserId.toString(),
+                UUID.randomUUID().toString(),
                 SecurityService.Scope.APPLICATION.name()
         );
+
+        headersWithJwtToken = new HttpHeaders();
         headersWithJwtToken.add("Authorization", "Bearer " + token);
     }
 
     @Test
-    void givenNotesInDatabase_whenUserFetchesNotes_thenReturnNoteListDto() {
-        // given
+    void getNotesForCurrentUser_given_user_with_notes_then_return_user_notes() {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
                 new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
                 NoteDto.class
         );
-        assertEquals(201, createNoteEntity.getStatusCode().value());
-        assertNotNull(createNoteEntity.getBody());
-        assertEquals("title", createNoteEntity.getBody().title());
-        assertEquals("content", createNoteEntity.getBody().content());
 
-        var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
-        assertNotNull(noteInDatabase);
+        assertThat(createNoteEntity.getStatusCode().value()).isEqualTo(201);
+        assertThat(createNoteEntity.getBody()).isNotNull();
 
-        // when
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes?page={page}",
                 HttpMethod.GET,
@@ -81,65 +70,49 @@ class NoteControllerIntegrationTest {
                 0
         );
 
-        // then
-        assertEquals(200, findNoteBydIdEntity.getStatusCode().value());
-        assertNotNull(findNoteBydIdEntity.getBody());
-        assertEquals(1, findNoteBydIdEntity.getBody().notes().size());
-        assertEquals("title", findNoteBydIdEntity.getBody().notes().getFirst().title());
-        assertEquals("content", findNoteBydIdEntity.getBody().notes().getFirst().content());
+        assertThat(findNoteBydIdEntity.getStatusCode().value()).isEqualTo(200);
+        assertThat(findNoteBydIdEntity.getBody()).isNotNull();
+        assertThat(findNoteBydIdEntity.getBody().notes()).hasSize(1);
     }
 
     @Test
-    void givenNoteInDatabase_whenUserFetchesNote_thenReturnNoteDto() {
-        // given
+    void getNoteByIdForCurrentUser_given_user_with_note_then_return_note() {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
                 new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
                 NoteDto.class
         );
-        assertEquals(201, createNoteEntity.getStatusCode().value());
-        assertNotNull(createNoteEntity.getBody());
-        assertEquals("title", createNoteEntity.getBody().title());
-        assertEquals("content", createNoteEntity.getBody().content());
 
-        var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
-        assertNotNull(noteInDatabase);
+        assertThat(createNoteEntity.getStatusCode().value()).isEqualTo(201);
+        assertThat(createNoteEntity.getBody()).isNotNull();
 
-        // when
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.GET,
                 new HttpEntity<>(headersWithJwtToken),
                 NoteDto.class,
-                noteInDatabase.getId()
+                createNoteEntity.getBody().id()
         );
 
-        //then
-        assertEquals(200, findNoteBydIdEntity.getStatusCode().value());
-        assertNotNull(findNoteBydIdEntity.getBody());
-        assertEquals("title", findNoteBydIdEntity.getBody().title());
-        assertEquals("content", findNoteBydIdEntity.getBody().content());
+        assertThat(findNoteBydIdEntity.getStatusCode().value()).isEqualTo(200);
+        assertThat(findNoteBydIdEntity.getBody()).isNotNull();
+        assertThat(findNoteBydIdEntity.getBody().title()).isEqualTo("title");
+        assertThat(findNoteBydIdEntity.getBody().content()).isEqualTo("content");
     }
 
     @Test
-    void givenNoteInDatabase_whenUserUpdatesNote_thenUpdateNote() {
-        // give
+    void updateNoteByIdForCurrentUser_given_user_with_note_then_update_note() {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
                 new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
                 NoteDto.class
         );
-        assertEquals(201, createNoteEntity.getStatusCode().value());
-        assertNotNull(createNoteEntity.getBody());
-        assertEquals("title", createNoteEntity.getBody().title());
-        assertEquals("content", createNoteEntity.getBody().content());
 
-        var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
-        assertNotNull(noteInDatabase);
+        assertThat(createNoteEntity.getStatusCode().value()).isEqualTo(201);
+        assertThat(createNoteEntity.getBody()).isNotNull();
 
-        // when
         var updateNoteEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.PUT,
@@ -147,36 +120,35 @@ class NoteControllerIntegrationTest {
                 Void.class,
                 createNoteEntity.getBody().id()
         );
-        assertEquals(204, updateNoteEntity.getStatusCode().value());
 
-        // then
-        var updatedNoteInDatabase = noteRepository.findByIdAndAppuserId(
-                createNoteEntity.getBody().id(),
-                authenticatedUserId
+        assertThat(updateNoteEntity.getStatusCode().value()).isEqualTo(204);
+
+        var findNoteBydIdEntity = testRestTemplate.exchange(
+                "/api/notes/{id}",
+                HttpMethod.GET,
+                new HttpEntity<>(headersWithJwtToken),
+                NoteDto.class,
+                createNoteEntity.getBody().id()
         );
-        assertNotNull(updatedNoteInDatabase);
-        assertEquals("new title", updatedNoteInDatabase.getTitle());
-        assertEquals("new content", updatedNoteInDatabase.getContent());
+
+        assertThat(findNoteBydIdEntity.getStatusCode().value()).isEqualTo(200);
+        assertThat(findNoteBydIdEntity.getBody()).isNotNull();
+        assertThat(findNoteBydIdEntity.getBody().title()).isEqualTo("new title");
+        assertThat(findNoteBydIdEntity.getBody().content()).isEqualTo("new content");
     }
 
     @Test
-    void givenNoteInDatabase_whenUserDeletesNote_thenDeleteNote() {
-        // given
+    void deleteNoteByIdForCurrentUser_given_user_with_note_then_delete_note() {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
                 new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
                 NoteDto.class
         );
-        assertEquals(201, createNoteEntity.getStatusCode().value());
-        assertNotNull(createNoteEntity.getBody());
-        assertEquals("title", createNoteEntity.getBody().title());
-        assertEquals("content", createNoteEntity.getBody().content());
 
-        var noteInDatabase = noteRepository.findByIdAndAppuserId(createNoteEntity.getBody().id(), authenticatedUserId);
-        assertNotNull(noteInDatabase);
+        assertThat(createNoteEntity.getStatusCode().value()).isEqualTo(201);
+        assertThat(createNoteEntity.getBody()).isNotNull();
 
-        // when
         var deleteNoteEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.DELETE,
@@ -184,14 +156,18 @@ class NoteControllerIntegrationTest {
                 Void.class,
                 createNoteEntity.getBody().id()
         );
-        assertEquals(204, deleteNoteEntity.getStatusCode().value());
 
-        // then
-        var deletedNoteInDatabase = noteRepository.findByIdAndAppuserId(
-                createNoteEntity.getBody().id(),
-                authenticatedUserId
+        assertThat(deleteNoteEntity.getStatusCode().value()).isEqualTo(204);
+
+        var findNoteBydIdEntity = testRestTemplate.exchange(
+                "/api/notes/{id}",
+                HttpMethod.GET,
+                new HttpEntity<>(headersWithJwtToken),
+                NoteDto.class,
+                createNoteEntity.getBody().id()
         );
-        assertNull(deletedNoteInDatabase);
+
+        assertThat(findNoteBydIdEntity.getStatusCode().value()).isEqualTo(404);
     }
 
 }

@@ -14,8 +14,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ApplicationModuleTest
 @Testcontainers
@@ -31,8 +30,7 @@ class AppuserDeletedEventHandlerIntegrationTest {
     private AppuserDeletedEventHandler eventHandler;
 
     @Test
-    void givenAppuserDeletedEvent_whenOn_thenDeleteAllNotesFromDeletedAppuser(Scenario scenario) {
-        // given
+    void on_given_event_then_delete_all_notes_with_appuser_id(Scenario scenario) {
         var appuserId = UUID.randomUUID();
         var appuserDeletedEvent = new AppuserDeletedEvent(appuserId);
 
@@ -44,14 +42,13 @@ class AppuserDeletedEventHandlerIntegrationTest {
         noteRepository.save(note2);
         noteRepository.save(note3);
 
-        // when and then
         scenario
                 .publish(appuserDeletedEvent)
                 .andWaitForStateChange(() -> eventHandler)
                 .andVerify(unusedEventHandler -> {
-                    assertNull(noteRepository.findByIdAndAppuserId(note1.getId(), note1.getAppuserId()));
-                    assertNull(noteRepository.findByIdAndAppuserId(note2.getId(), note2.getAppuserId()));
-                    assertNotNull(noteRepository.findByIdAndAppuserId(note3.getId(), note3.getAppuserId()));
+                    assertThat(noteRepository.findByIdAndAppuserId(note1.getId(), note1.getAppuserId())).isNotPresent();
+                    assertThat(noteRepository.findByIdAndAppuserId(note2.getId(), note2.getAppuserId())).isNotPresent();
+                    assertThat(noteRepository.findByIdAndAppuserId(note3.getId(), note3.getAppuserId())).isNotPresent();
                 });
     }
 

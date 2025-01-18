@@ -11,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,18 +23,15 @@ class AppuserDeletedEventHandlerTest {
     private AppuserDeletedEventHandler eventHandler;
 
     @Test
-    void givenAppuserDeletedEvent_whenOn_thenDeleteAllNotesFromDeletedAppuser() {
-        // given
+    void on_given_event_then_delete_all_notes_with_appuser_id() {
         var appuserId = UUID.randomUUID();
         var appuserDeletedEvent = new AppuserDeletedEvent(appuserId);
 
-        // when
         eventHandler.on(appuserDeletedEvent);
 
-        // then
         var uuidCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(noteService).deleteNotesByAppuserId(uuidCaptor.capture());
-        assertEquals(appuserId, uuidCaptor.getValue());
+        assertThat(uuidCaptor.getValue()).isEqualTo(appuserId);
     }
 
 }
