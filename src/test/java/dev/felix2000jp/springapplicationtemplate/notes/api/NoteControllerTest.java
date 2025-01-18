@@ -86,10 +86,10 @@ class NoteControllerTest {
                 }
                 """, noteDto.id(), noteDto.title(), noteDto.content());
 
-        when(noteService.getNoteByIdForCurrentUser(UUID.randomUUID())).thenReturn(noteDto);
+        when(noteService.getNoteByIdForCurrentUser(noteDto.id())).thenReturn(noteDto);
 
         mockMvc
-                .perform(get("/api/notes/" + UUID.randomUUID()))
+                .perform(get("/api/notes/" + noteDto.id()))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedResponse));
     }

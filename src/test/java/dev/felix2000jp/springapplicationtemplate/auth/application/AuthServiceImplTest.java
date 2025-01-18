@@ -51,7 +51,7 @@ class AuthServiceImplTest {
 
     @Test
     void loadUserByUsername_given_not_found_username_then_throw_user_not_found_exception() {
-        when(appuserRepository.findByUsername("username")).thenReturn(null);
+        when(appuserRepository.findByUsername("username")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.loadUserByUsername("username")).isInstanceOf(UsernameNotFoundException.class);
     }
@@ -140,7 +140,7 @@ class AuthServiceImplTest {
         );
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(appuser.getId())).thenReturn(null);
+        when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.updatePassword(updatePasswordDto)).isInstanceOf(AppuserNotFoundException.class);
     }

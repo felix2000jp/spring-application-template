@@ -48,7 +48,7 @@ class AppuserDeletedEventHandlerIntegrationTest {
                 .andVerify(unusedEventHandler -> {
                     assertThat(noteRepository.findByIdAndAppuserId(note1.getId(), note1.getAppuserId())).isNotPresent();
                     assertThat(noteRepository.findByIdAndAppuserId(note2.getId(), note2.getAppuserId())).isNotPresent();
-                    assertThat(noteRepository.findByIdAndAppuserId(note3.getId(), note3.getAppuserId())).isNotPresent();
+                    assertThat(noteRepository.findByIdAndAppuserId(note3.getId(), note3.getAppuserId())).isPresent();
                 });
     }
 
