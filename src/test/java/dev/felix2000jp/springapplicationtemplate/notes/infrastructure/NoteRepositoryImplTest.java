@@ -19,7 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @DataJpaTest
@@ -57,135 +57,92 @@ class NoteRepositoryImplTest {
     }
 
     @Test
-    void givenAppuserIdAndPage_whenFindAllByAppuserId_thenReturnNotes() {
-        // given
-        var appuserId = note.getAppuserId();
-        var page = 0;
+    void findAllByAppuserId_given_appuser_id_and_page_then_return_notes() {
+        var actual = noteRepository.findAllByAppuserId(note.getAppuserId(), 0);
 
-        // when
-        var actual = noteRepository.findAllByAppuserId(appuserId, page);
-
-        // then
-        assertFalse(actual.isEmpty());
+        assertThat(actual).isNotEmpty();
     }
 
     @Test
-    void givenAppuserIdAndEmptyPage_whenFindAllByAppuserId_thenReturnEmptyList() {
-        // given
-        var appuserId = note.getAppuserId();
-        var page = 1;
+    void findAllByAppuserId_given_appuser_id_and_empty_page_then_return_empty_list() {
+        var actual = noteRepository.findAllByAppuserId(note.getAppuserId(), 1);
 
-        // when
-        var actual = noteRepository.findAllByAppuserId(appuserId, page);
-
-        // then
-        assertTrue(actual.isEmpty());
-
+        assertThat(actual).isEmpty();
     }
 
     @Test
-    void givenIdAndAppuserId_whenFindByIdAndAppuserId_thenReturnNote() {
-        // given
-        var id = note.getId();
-        var appuserId = note.getAppuserId();
+    void findByIdAndAppuserId_given_id_and_appuser_id_then_return_note() {
+        var actual = noteRepository.findByIdAndAppuserId(note.getId(), note.getAppuserId());
 
-        // when
-        var actual = noteRepository.findByIdAndAppuserId(id, appuserId);
-
-        // then
-        assertNotNull(actual);
+        assertThat(actual).isPresent();
     }
 
     @Test
-    void givenNonExistentIdAndAppuserId_whenFindByIdAndAppuserId_thenReturnNull() {
-        // given
-        var id = UUID.randomUUID();
-        var appuserId = UUID.randomUUID();
+    void findByIdAndAppuserId_given_not_found_id_and_not_found_appuser_id_then_return_empty_optional() {
+        var actual = noteRepository.findByIdAndAppuserId(UUID.randomUUID(), UUID.randomUUID());
 
-        // when
-        var actual = noteRepository.findByIdAndAppuserId(id, appuserId);
-
-        // then
-        assertNull(actual);
+        assertThat(actual).isNotPresent();
     }
 
     @Test
-    void givenId_whenDeleteById_thenDeleteNote() {
-        // given
-        var id = note.getId();
+    void deleteById_given_note_id_then_delete_note() {
+        noteRepository.deleteById(note.getId());
 
-        // when
-        noteRepository.deleteById(id);
         testEntityManager.flush();
         testEntityManager.clear();
 
-        // then
-        assertNull(testEntityManager.find(Note.class, note.getId()));
+        var deletedNote = testEntityManager.find(Note.class, note.getId());
+        assertThat(deletedNote).isNull();
     }
 
     @Test
-    void givenNonExistentId_deleteById_thenDoesNotThrow() {
-        // given
-        var nonExistentId = UUID.randomUUID();
-
-        // when and then
-        assertDoesNotThrow(() -> {
-            noteRepository.deleteById(nonExistentId);
+    void deleteById_given_not_found_id_then_fail_without_throwing() {
+        assertThatCode(() -> {
+            noteRepository.deleteById(UUID.randomUUID());
             testEntityManager.flush();
-        });
+        }).doesNotThrowAnyException();
     }
 
     @Test
-    void givenAppuserId_wheDeleteAllByAppuserId_thenDeleteAllNotes() {
-        // given
-        var appuserId = note.getAppuserId();
-
-        // when
-        noteRepository.deleteAllByAppuserId(appuserId);
+    void deleteAllByAppuserId_given_appuser_id_then_delete_all_notes_with_appuser_id() {
+        noteRepository.deleteAllByAppuserId(note.getAppuserId());
         testEntityManager.flush();
         testEntityManager.clear();
 
-        // then
-        assertNull(testEntityManager.find(Note.class, note.getId()));
+        var deletedNote = testEntityManager.find(Note.class, note.getId());
+        assertThat(deletedNote).isNull();
     }
 
     @Test
-    void givenNonExistentAppuserId_whenDeleteAllByAppuserId_thenDoesNotThrow() {
-        // given
-        var nonExistentAppuserId = UUID.randomUUID();
-
-        // when and then
-        assertDoesNotThrow(() -> {
-            noteRepository.deleteAllByAppuserId(nonExistentAppuserId);
+    void deleteAllByAppuserId_given_not_found_appuser_id_then_fail_without_throwing() {
+        assertThatCode(() -> {
+            noteRepository.deleteAllByAppuserId(UUID.randomUUID());
             testEntityManager.flush();
-        });
+        }).doesNotThrowAnyException();
     }
 
     @Test
-    void givenNoteToCreate_whenSave_thenSaveNote() {
-        // given
+    void save_given_note_to_create_then_save_note_to_database() {
         var noteToCreate = new Note(UUID.randomUUID(), "title 1", "content 1");
 
-        // when
         noteRepository.save(noteToCreate);
         testEntityManager.flush();
         testEntityManager.clear();
 
-        // then
-        assertNotNull(testEntityManager.find(Note.class, noteToCreate.getId()));
+        var createdNote = testEntityManager.find(Note.class, noteToCreate.getId());
+        assertThat(createdNote).isNotNull();
     }
 
     @ParameterizedTest
     @MethodSource
-    void givenInvalidNoteToCreate_whenSave_thenThrow(Note invalidNoteToCreate) {
-        // when and then
-        assertThrows(Exception.class, () -> {
+    void save_given_invalid_note_to_create_then_throw_exception(Note invalidNoteToCreate) {
+        assertThatThrownBy(() -> {
             noteRepository.save(invalidNoteToCreate);
             testEntityManager.flush();
-        });
+        }).isInstanceOf(Exception.class);
     }
 
-    private static Stream<Arguments> givenInvalidNoteToCreate_whenSave_thenThrow() {
+    private static Stream<Arguments> save_given_invalid_note_to_create_then_throw_exception() {
         return Stream.of(
                 arguments(new Note()),
                 arguments(new Note(null, "title", "content")),

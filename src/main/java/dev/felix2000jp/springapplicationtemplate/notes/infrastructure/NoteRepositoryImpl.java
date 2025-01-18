@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -27,9 +28,8 @@ class NoteRepositoryImpl implements NoteRepository {
     }
 
     @Override
-    public Note findByIdAndAppuserId(UUID id, UUID appuserId) {
-        var optionalNote = noteJpaRepository.findByIdAndAppuserId(id, appuserId);
-        return optionalNote.orElse(null);
+    public Optional<Note> findByIdAndAppuserId(UUID id, UUID appuserId) {
+        return noteJpaRepository.findByIdAndAppuserId(id, appuserId);
     }
 
     @Override

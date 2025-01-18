@@ -19,8 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @DataJpaTest
@@ -80,7 +79,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void findById_given_non_existent_id_then_return_empty_optional() {
+    void findById_given_not_found_id_then_return_empty_optional() {
         var actual = appuserRepository.findById(UUID.randomUUID());
 
         assertThat(actual).isNotPresent();
@@ -94,7 +93,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void existsById_given_non_existent_id_then_return_false() {
+    void existsById_given_not_found_id_then_return_false() {
         var actual = appuserRepository.existsById(UUID.randomUUID());
 
         assertThat(actual).isFalse();
@@ -108,7 +107,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void findByUsername_given_non_existent_username_then_return_empty_optional() {
+    void findByUsername_given_not_found_username_then_return_empty_optional() {
         var actual = appuserRepository.findByUsername("non existent username");
 
         assertThat(actual).isNotPresent();
@@ -122,7 +121,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void existsByUsername_given_non_existent_username_then_return_false() {
+    void existsByUsername_given_not_found_username_then_return_false() {
         var actual = appuserRepository.existsByUsername("non existent username");
 
         assertThat(actual).isFalse();
@@ -139,7 +138,7 @@ class AppuserRepositoryImplTest {
     }
 
     @Test
-    void deleteById_given_non_existent_id_then_fail_without_throwing() {
+    void deleteById_given_not_found_id_then_fail_without_throwing() {
         assertThatCode(() -> {
             appuserRepository.deleteById(UUID.randomUUID());
             testEntityManager.flush();
@@ -160,14 +159,14 @@ class AppuserRepositoryImplTest {
 
     @ParameterizedTest
     @MethodSource
-    void save_given_invalid_appuser_then_fail_without_throwing(Appuser appuserToCreate) {
-        assertThatCode(() -> {
+    void save_given_invalid_appuser_to_create_then_throw_exception(Appuser appuserToCreate) {
+        assertThatThrownBy(() -> {
             appuserRepository.save(appuserToCreate);
             testEntityManager.flush();
-        }).doesNotThrowAnyException();
+        }).isInstanceOf(Exception.class);
     }
 
-    private static Stream<Arguments> save_given_invalid_appuser_then_fail_without_throwing() {
+    private static Stream<Arguments> save_given_invalid_appuser_to_create_then_throw_exception() {
         return Stream.of(
                 arguments(new Appuser()),
                 arguments(new Appuser(null, "new password")),

@@ -81,7 +81,7 @@ class AppuserServiceImplTest {
     }
 
     @Test
-    void getAppuserForCurrentUser_given_non_existent_authenticated_user_then_throw_appuser_not_found_exception() {
+    void getAppuserForCurrentUser_given_not_found_authenticated_user_then_throw_appuser_not_found_exception() {
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of());
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
@@ -129,7 +129,7 @@ class AppuserServiceImplTest {
     }
 
     @Test
-    void updateAppuserForCurrentUser_given_non_existent_authenticated_user_then_throw_appuser_not_found_exception() {
+    void updateAppuserForCurrentUser_given_not_found_authenticated_user_then_throw_appuser_not_found_exception() {
         var updateAppuserDto = new UpdateAppuserDto("username");
         var authenticatedUser = new SecurityService.User(UUID.randomUUID(), "username", Set.of());
 
@@ -180,7 +180,7 @@ class AppuserServiceImplTest {
     }
 
     @Test
-    void deleteAppuserForCurrentUser_given_non_existent_authenticated_user_then_throw_appuser_not_found_exception() {
+    void deleteAppuserForCurrentUser_given_not_found_authenticated_user_then_throw_appuser_not_found_exception() {
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(
                 appuser.getId(),

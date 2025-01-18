@@ -50,7 +50,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void loadUserByUsername_given_non_existent_username_then_throw_user_not_found_exception() {
+    void loadUserByUsername_given_not_found_username_then_throw_user_not_found_exception() {
         when(appuserRepository.findByUsername("username")).thenReturn(null);
 
         assertThatThrownBy(() -> authService.loadUserByUsername("username")).isInstanceOf(UsernameNotFoundException.class);
@@ -130,7 +130,7 @@ class AuthServiceImplTest {
     }
 
     @Test
-    void updatePassword_given_non_existent_authenticated_user_then_throw_user_not_found_exception() {
+    void updatePassword_given_not_found_authenticated_user_then_throw_user_not_found_exception() {
         var updatePasswordDto = new UpdatePasswordDto("new password");
         var appuser = new Appuser("username", "password");
         var authenticatedUser = new SecurityService.User(

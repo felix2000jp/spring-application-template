@@ -1,6 +1,5 @@
 package dev.felix2000jp.springapplicationtemplate.notes.application;
 
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
@@ -8,6 +7,7 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNo
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -36,10 +36,9 @@ class NoteServiceImpl implements NoteService {
     public NoteDto getNoteByIdForCurrentUser(UUID id) {
         var appuserId = securityService.getUser().id();
 
-        var note = noteRepository.findByIdAndAppuserId(id, appuserId);
-        if (note == null) {
-            throw new NoteNotFoundException();
-        }
+        var note = noteRepository
+                .findByIdAndAppuserId(id, appuserId)
+                .orElseThrow(NoteNotFoundException::new);
 
         return noteMapper.toDto(note);
     }
@@ -58,10 +57,9 @@ class NoteServiceImpl implements NoteService {
     public NoteDto updateNoteByIdForCurrentUser(UUID noteId, UpdateNoteDto updateNoteDto) {
         var appuserId = securityService.getUser().id();
 
-        var noteToUpdate = noteRepository.findByIdAndAppuserId(noteId, appuserId);
-        if (noteToUpdate == null) {
-            throw new NoteNotFoundException();
-        }
+        var noteToUpdate = noteRepository
+                .findByIdAndAppuserId(noteId, appuserId)
+                .orElseThrow(NoteNotFoundException::new);
 
         noteToUpdate.setTitle(updateNoteDto.title());
         noteToUpdate.setContent(updateNoteDto.content());
@@ -74,10 +72,9 @@ class NoteServiceImpl implements NoteService {
     public NoteDto deleteNoteByIdForCurrentUser(UUID id) {
         var appuserId = securityService.getUser().id();
 
-        var noteToDelete = noteRepository.findByIdAndAppuserId(id, appuserId);
-        if (noteToDelete == null) {
-            throw new NoteNotFoundException();
-        }
+        var noteToDelete = noteRepository
+                .findByIdAndAppuserId(id, appuserId)
+                .orElseThrow(NoteNotFoundException::new);
 
         noteRepository.deleteById(noteToDelete.getId());
         return noteMapper.toDto(noteToDelete);

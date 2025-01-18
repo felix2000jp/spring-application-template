@@ -97,7 +97,7 @@ class AppuserControllerTest {
 
     @Test
     @WithMockUser
-    void getAppuserForCurrentUser_given_non_existent_user_then_return_404() throws Exception {
+    void getAppuserForCurrentUser_given_not_found_user_then_return_404() throws Exception {
         var exception = new AppuserNotFoundException();
         when(appuserService.getAppuserForCurrentUser()).thenThrow(exception);
 
@@ -132,7 +132,7 @@ class AppuserControllerTest {
 
     @Test
     @WithMockUser
-    void updateAppuserForCurrentUser_given_non_existent_user_then_return_404() throws Exception {
+    void updateAppuserForCurrentUser_given_not_found_user_then_return_404() throws Exception {
         var updateAppuserDto = new UpdateAppuserDto("new username");
 
         var requestBody = String.format("""
