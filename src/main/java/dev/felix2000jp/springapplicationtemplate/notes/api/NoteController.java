@@ -25,6 +25,13 @@ class NoteController {
         this.noteService = noteService;
     }
 
+    @PostMapping
+    ResponseEntity<NoteDto> createNoteForCurrentUser(@RequestBody @Valid CreateNoteDto createNoteDto) {
+        var body = noteService.createNoteForCurrentUser(createNoteDto);
+        var location = URI.create("/api/notes/" + body.id());
+        return ResponseEntity.created(location).body(body);
+    }
+
     @GetMapping
     ResponseEntity<NoteListDto> getNotesForCurrentUser(@RequestParam(defaultValue = "0") @Min(0) int page) {
         var body = noteService.getNotesForCurrentUser(page);
@@ -35,13 +42,6 @@ class NoteController {
     ResponseEntity<NoteDto> getNoteByIdForCurrentUser(@PathVariable UUID id) {
         var body = noteService.getNoteByIdForCurrentUser(id);
         return ResponseEntity.ok(body);
-    }
-
-    @PostMapping
-    ResponseEntity<NoteDto> createNoteForCurrentUser(@RequestBody @Valid CreateNoteDto createNoteDto) {
-        var body = noteService.createNoteForCurrentUser(createNoteDto);
-        var location = URI.create("/api/notes/" + body.id());
-        return ResponseEntity.created(location).body(body);
     }
 
     @PutMapping("/{id}")

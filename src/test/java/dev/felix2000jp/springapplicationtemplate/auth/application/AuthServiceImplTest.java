@@ -113,14 +113,14 @@ class AuthServiceImplTest {
     void updatePassword_given_dto_then_update_password() {
         var updatePasswordDto = new UpdatePasswordDto("new password");
         var appuser = new Appuser("username", "password");
-        var authenticatedUser = new SecurityService.User(
-                appuser.getId(),
-                appuser.getUsername(),
-                appuser.getAuthoritiesScopes()
-        );
+        var authentication = mock(Authentication.class);
+        var securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
 
-        when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.of(appuser));
+
+        when(authentication.getPrincipal()).thenReturn(appuser);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(appuserRepository.findByUsername(appuser.getUsername())).thenReturn(Optional.of(appuser));
         when(securityService.generateEncodedPassword(updatePasswordDto.password())).thenReturn("encoded-password");
 
         authService.updatePassword(updatePasswordDto);
@@ -133,14 +133,14 @@ class AuthServiceImplTest {
     void updatePassword_given_not_found_authenticated_user_then_throw_user_not_found_exception() {
         var updatePasswordDto = new UpdatePasswordDto("new password");
         var appuser = new Appuser("username", "password");
-        var authenticatedUser = new SecurityService.User(
-                appuser.getId(),
-                appuser.getUsername(),
-                appuser.getAuthoritiesScopes()
-        );
+        var authentication = mock(Authentication.class);
+        var securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
 
-        when(securityService.getUser()).thenReturn(authenticatedUser);
-        when(appuserRepository.findById(appuser.getId())).thenReturn(Optional.empty());
+
+        when(authentication.getPrincipal()).thenReturn(appuser);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(appuserRepository.findByUsername(appuser.getUsername())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.updatePassword(updatePasswordDto)).isInstanceOf(AppuserNotFoundException.class);
     }

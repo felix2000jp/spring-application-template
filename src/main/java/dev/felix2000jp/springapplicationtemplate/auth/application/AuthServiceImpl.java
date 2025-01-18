@@ -60,10 +60,11 @@ class AuthServiceImpl implements AuthService {
 
     @Override
     public void updatePassword(UpdatePasswordDto updatePasswordDto) {
-        var user = securityService.getUser();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userDetails = (Appuser) authentication.getPrincipal();
 
         var appuserToUpdate = appuserRepository
-                .findById(user.id())
+                .findByUsername(userDetails.getUsername())
                 .orElseThrow(AppuserNotFoundException::new);
 
         appuserToUpdate.setPassword(securityService.generateEncodedPassword(updatePasswordDto.password()));

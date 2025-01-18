@@ -36,7 +36,7 @@ class NoteControllerIntegrationTest {
     @Autowired
     private SecurityService securityService;
 
-    private HttpHeaders headersWithJwtToken;
+    private HttpHeaders headers;
 
     @BeforeEach
     void setUp() {
@@ -46,8 +46,8 @@ class NoteControllerIntegrationTest {
                 SecurityService.Scope.APPLICATION.name()
         );
 
-        headersWithJwtToken = new HttpHeaders();
-        headersWithJwtToken.add("Authorization", "Bearer " + token);
+        headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
     }
 
     @Test
@@ -55,7 +55,7 @@ class NoteControllerIntegrationTest {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
+                new HttpEntity<>(new CreateNoteDto("title", "content"), headers),
                 NoteDto.class
         );
 
@@ -65,7 +65,7 @@ class NoteControllerIntegrationTest {
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes?page={page}",
                 HttpMethod.GET,
-                new HttpEntity<>(headersWithJwtToken),
+                new HttpEntity<>(headers),
                 NoteListDto.class,
                 0
         );
@@ -80,7 +80,7 @@ class NoteControllerIntegrationTest {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
+                new HttpEntity<>(new CreateNoteDto("title", "content"), headers),
                 NoteDto.class
         );
 
@@ -90,7 +90,7 @@ class NoteControllerIntegrationTest {
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.GET,
-                new HttpEntity<>(headersWithJwtToken),
+                new HttpEntity<>(headers),
                 NoteDto.class,
                 createNoteEntity.getBody().id()
         );
@@ -106,7 +106,7 @@ class NoteControllerIntegrationTest {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
+                new HttpEntity<>(new CreateNoteDto("title", "content"), headers),
                 NoteDto.class
         );
 
@@ -116,7 +116,7 @@ class NoteControllerIntegrationTest {
         var updateNoteEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.PUT,
-                new HttpEntity<>(new UpdateNoteDto("new title", "new content"), headersWithJwtToken),
+                new HttpEntity<>(new UpdateNoteDto("new title", "new content"), headers),
                 Void.class,
                 createNoteEntity.getBody().id()
         );
@@ -126,7 +126,7 @@ class NoteControllerIntegrationTest {
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.GET,
-                new HttpEntity<>(headersWithJwtToken),
+                new HttpEntity<>(headers),
                 NoteDto.class,
                 createNoteEntity.getBody().id()
         );
@@ -142,7 +142,7 @@ class NoteControllerIntegrationTest {
         var createNoteEntity = testRestTemplate.exchange(
                 "/api/notes",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateNoteDto("title", "content"), headersWithJwtToken),
+                new HttpEntity<>(new CreateNoteDto("title", "content"), headers),
                 NoteDto.class
         );
 
@@ -152,7 +152,7 @@ class NoteControllerIntegrationTest {
         var deleteNoteEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.DELETE,
-                new HttpEntity<>(headersWithJwtToken),
+                new HttpEntity<>(headers),
                 Void.class,
                 createNoteEntity.getBody().id()
         );
@@ -162,7 +162,7 @@ class NoteControllerIntegrationTest {
         var findNoteBydIdEntity = testRestTemplate.exchange(
                 "/api/notes/{id}",
                 HttpMethod.GET,
-                new HttpEntity<>(headersWithJwtToken),
+                new HttpEntity<>(headers),
                 NoteDto.class,
                 createNoteEntity.getBody().id()
         );
