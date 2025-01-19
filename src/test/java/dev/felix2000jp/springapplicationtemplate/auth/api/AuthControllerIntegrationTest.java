@@ -13,10 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.modulith.test.ApplicationModuleTest;
-import org.springframework.security.web.server.csrf.DefaultCsrfToken;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -39,24 +37,9 @@ class AuthControllerIntegrationTest {
     private AppuserRepository appuserRepository;
 
     private Appuser appuser;
-    private HttpHeaders headers;
 
     @BeforeEach
     void setUp() {
-        var csrfTokenEntity = testRestTemplate.exchange(
-                "/auth/csrf",
-                HttpMethod.GET,
-                new HttpEntity<>(null),
-                DefaultCsrfToken.class
-        );
-
-        assertThat(csrfTokenEntity.getStatusCode().value()).isEqualTo(200);
-        assertThat(csrfTokenEntity.getBody()).isNotNull();
-
-        headers = new HttpHeaders();
-        headers.add("X-Csrf-Token", csrfTokenEntity.getBody().getToken());
-        headers.addAll("Cookie", csrfTokenEntity.getHeaders().getOrEmpty("SET-COOKIE"));
-
         appuser = new Appuser("username", securityService.generateEncodedPassword("password"));
         appuser.addScopeAdmin();
         appuserRepository.save(appuser);
@@ -72,7 +55,7 @@ class AuthControllerIntegrationTest {
         var loginTokenEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
                 "/auth/login",
                 HttpMethod.POST,
-                new HttpEntity<>(headers),
+                new HttpEntity<>(null),
                 String.class
         );
 
@@ -85,7 +68,7 @@ class AuthControllerIntegrationTest {
         var createAppuserEntity = testRestTemplate.exchange(
                 "/auth/register",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateAppuserDto("new username", "password"), headers),
+                new HttpEntity<>(new CreateAppuserDto("new username", "password"), null),
                 Void.class
         );
 
@@ -100,7 +83,7 @@ class AuthControllerIntegrationTest {
         var updatePasswordEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
                 "/auth/password",
                 HttpMethod.PUT,
-                new HttpEntity<>(new UpdatePasswordDto("new password"), headers),
+                new HttpEntity<>(new UpdatePasswordDto("new password"), null),
                 Void.class
         );
 

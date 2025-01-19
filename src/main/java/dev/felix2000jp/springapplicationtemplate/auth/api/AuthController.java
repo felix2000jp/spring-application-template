@@ -5,7 +5,6 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateApp
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,11 +19,6 @@ class AuthController {
 
     AuthController(AuthService authService) {
         this.authService = authService;
-    }
-
-    @GetMapping("/csrf")
-    ResponseEntity<CsrfToken> csrf(CsrfToken csrfToken) {
-        return ResponseEntity.ok(csrfToken);
     }
 
     @PostMapping("/login")
