@@ -2,6 +2,10 @@ package dev.felix2000jp.springapplicationtemplate.auth.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
+import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +33,12 @@ class AuthControllerIntegrationTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
+    @Autowired
+    private SecurityService securityService;
+    @Autowired
+    private AppuserRepository appuserRepository;
 
+    private Appuser appuser;
     private HttpHeaders headers;
 
     @BeforeEach
@@ -47,19 +56,19 @@ class AuthControllerIntegrationTest {
         headers = new HttpHeaders();
         headers.add("X-Csrf-Token", csrfTokenEntity.getBody().getToken());
         headers.addAll("Cookie", csrfTokenEntity.getHeaders().getOrEmpty("SET-COOKIE"));
+
+        appuser = new Appuser("username", securityService.generateEncodedPassword("password"));
+        appuser.addScopeAdmin();
+        appuserRepository.save(appuser);
+    }
+
+    @AfterEach
+    void tearDown() {
+        appuserRepository.deleteById(appuser.getId());
     }
 
     @Test
     void login_given_user_then_return_login_token() {
-        var createUserEntity = testRestTemplate.exchange(
-                "/auth/register",
-                HttpMethod.POST,
-                new HttpEntity<>(new CreateAppuserDto("username", "password"), headers),
-                Void.class
-        );
-
-        assertThat(createUserEntity.getStatusCode().value()).isEqualTo(201);
-
         var loginTokenEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
                 "/auth/login",
                 HttpMethod.POST,
@@ -72,16 +81,22 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
-    void updatePassword_given_user_then_update_password() {
-        var createUserEntity = testRestTemplate.exchange(
+    void createAppuser_given_username_and_password_then_create_appuser() {
+        var createAppuserEntity = testRestTemplate.exchange(
                 "/auth/register",
                 HttpMethod.POST,
-                new HttpEntity<>(new CreateAppuserDto("username", "password"), headers),
+                new HttpEntity<>(new CreateAppuserDto("new username", "password"), headers),
                 Void.class
         );
 
-        assertThat(createUserEntity.getStatusCode().value()).isEqualTo(201);
+        assertThat(createAppuserEntity.getStatusCode().value()).isEqualTo(201);
 
+        var createdAppuser = appuserRepository.findByUsername("new username");
+        assertThat(createdAppuser).isPresent();
+    }
+
+    @Test
+    void updatePassword_given_user_then_update_password() {
         var updatePasswordEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
                 "/auth/password",
                 HttpMethod.PUT,
@@ -91,14 +106,9 @@ class AuthControllerIntegrationTest {
 
         assertThat(updatePasswordEntity.getStatusCode().value()).isEqualTo(204);
 
-        var loginTokenEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
-                "/auth/login",
-                HttpMethod.POST,
-                new HttpEntity<>(headers),
-                String.class
-        );
-
-        assertThat(loginTokenEntity.getStatusCode().value()).isEqualTo(401);
+        var updatedAppuser = appuserRepository.findById(appuser.getId());
+        assertThat(updatedAppuser).isPresent();
+        assertThat(updatedAppuser.get().getPassword()).isNotEqualTo(appuser.getPassword());
     }
 
 }

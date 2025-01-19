@@ -111,13 +111,10 @@ class NoteControllerIntegrationTest {
         assertThat(createNoteEntity.getBody().title()).isEqualTo("title");
         assertThat(createNoteEntity.getBody().content()).isEqualTo("content");
 
-
-        var createdNote = noteRepository
-                .findByIdAndAppuserId(note.getId(), note.getAppuserId())
-                .orElseThrow();
-
-        assertThat(createdNote.getTitle()).isEqualTo("title");
-        assertThat(createdNote.getContent()).isEqualTo("content");
+        var createdNote = noteRepository.findByIdAndAppuserId(note.getId(), note.getAppuserId());
+        assertThat(createdNote).isPresent();
+        assertThat(createdNote.get().getTitle()).isEqualTo("title");
+        assertThat(createdNote.get().getContent()).isEqualTo("content");
     }
 
     @Test
@@ -132,12 +129,10 @@ class NoteControllerIntegrationTest {
 
         assertThat(updateNoteEntity.getStatusCode().value()).isEqualTo(204);
 
-        var updatedNote = noteRepository
-                .findByIdAndAppuserId(note.getId(), note.getAppuserId())
-                .orElseThrow();
-
-        assertThat(updatedNote.getTitle()).isEqualTo("new title");
-        assertThat(updatedNote.getContent()).isEqualTo("new content");
+        var updatedNote = noteRepository.findByIdAndAppuserId(note.getId(), note.getAppuserId());
+        assertThat(updatedNote).isPresent();
+        assertThat(updatedNote.get().getTitle()).isEqualTo("new title");
+        assertThat(updatedNote.get().getContent()).isEqualTo("new content");
     }
 
     @Test
@@ -153,7 +148,6 @@ class NoteControllerIntegrationTest {
         assertThat(deleteNoteEntity.getStatusCode().value()).isEqualTo(204);
 
         var deletedNote = noteRepository.findByIdAndAppuserId(note.getId(), note.getAppuserId());
-
         assertThat(deletedNote).isNotPresent();
     }
 
