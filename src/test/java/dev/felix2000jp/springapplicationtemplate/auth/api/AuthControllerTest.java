@@ -18,13 +18,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.emptyString;
-import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AuthController.class)
@@ -34,15 +33,6 @@ class AuthControllerTest {
     private AuthService authService;
     @Autowired
     private MockMvc mockMvc;
-
-    @Test
-    @WithMockUser
-    void csrf_then_return_200_and_csrf_token() throws Exception {
-        mockMvc
-                .perform(get("/auth/csrf"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(not(emptyString())));
-    }
 
     @Test
     @WithMockUser
