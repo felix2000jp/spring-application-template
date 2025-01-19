@@ -39,39 +39,6 @@ class NoteControllerTest {
 
     @Test
     @WithMockUser
-    void createNoteForCurrentUser_given_valid_body_then_return_201_and_location_header_and_note() throws Exception {
-        var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
-        var createNoteDto = new CreateNoteDto(noteDto.title(), noteDto.content());
-
-        var requestBody = String.format("""
-                { "title": "%s", "content": "%s" }
-                """, createNoteDto.title(), createNoteDto.content());
-        var expectedResponse = String.format("""
-                { "id": "%s", "title": "%s", "content": "%s" }
-                """, noteDto.id(), noteDto.title(), noteDto.content());
-
-        when(noteService.createNoteForCurrentUser(createNoteDto)).thenReturn(noteDto);
-
-        mockMvc
-                .perform(post("/api/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("LOCATION", "/api/notes/" + noteDto.id()))
-                .andExpect(content().json(expectedResponse));
-    }
-
-    @ParameterizedTest
-    @MethodSource
-    @WithMockUser
-    void createNoteForCurrentUser_given_invalid_request_body_then_return_404(String requestBody) throws Exception {
-        mockMvc
-                .perform(post("/api/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.title").value("Bad Request"))
-                .andExpect(jsonPath("$.status").value(400));
-    }
-
-    @Test
-    @WithMockUser
     void getNotesForCurrentUser_given_page_param_then_return_200_and_page_of_notes() throws Exception {
         var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
         var noteListDto = new NoteListDto(List.of(noteDto));
@@ -139,6 +106,39 @@ class NoteControllerTest {
                 .andExpect(jsonPath("$.title").value("Not Found"))
                 .andExpect(jsonPath("$.detail").value(exception.getMessage()))
                 .andExpect(jsonPath("$.status").value(404));
+    }
+
+    @Test
+    @WithMockUser
+    void createNoteForCurrentUser_given_valid_body_then_return_201_and_location_header_and_note() throws Exception {
+        var noteDto = new NoteDto(UUID.randomUUID(), "title", "content");
+        var createNoteDto = new CreateNoteDto(noteDto.title(), noteDto.content());
+
+        var requestBody = String.format("""
+                { "title": "%s", "content": "%s" }
+                """, createNoteDto.title(), createNoteDto.content());
+        var expectedResponse = String.format("""
+                { "id": "%s", "title": "%s", "content": "%s" }
+                """, noteDto.id(), noteDto.title(), noteDto.content());
+
+        when(noteService.createNoteForCurrentUser(createNoteDto)).thenReturn(noteDto);
+
+        mockMvc
+                .perform(post("/api/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("LOCATION", "/api/notes/" + noteDto.id()))
+                .andExpect(content().json(expectedResponse));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    @WithMockUser
+    void createNoteForCurrentUser_given_invalid_request_body_then_return_404(String requestBody) throws Exception {
+        mockMvc
+                .perform(post("/api/notes").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.status").value(400));
     }
 
     @Test
