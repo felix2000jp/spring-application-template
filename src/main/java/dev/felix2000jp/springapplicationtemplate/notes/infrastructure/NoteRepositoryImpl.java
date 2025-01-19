@@ -4,6 +4,7 @@ import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ class NoteRepositoryImpl implements NoteRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Note> findAllByAppuserId(UUID appuserId, int pageNumber) {
         var pageable = PageRequest.of(pageNumber, PAGE_SIZE);
         var page = noteJpaRepository.findByAppuserId(appuserId, pageable);
@@ -28,21 +30,25 @@ class NoteRepositoryImpl implements NoteRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Note> findByIdAndAppuserId(UUID id, UUID appuserId) {
         return noteJpaRepository.findByIdAndAppuserId(id, appuserId);
     }
 
     @Override
+    @Transactional
     public void deleteById(UUID id) {
         noteJpaRepository.deleteById(id);
     }
 
     @Override
+    @Transactional
     public void deleteAllByAppuserId(UUID appuserId) {
         noteJpaRepository.deleteAllByAppuserId(appuserId);
     }
 
     @Override
+    @Transactional
     public void save(Note note) {
         noteJpaRepository.save(note);
     }

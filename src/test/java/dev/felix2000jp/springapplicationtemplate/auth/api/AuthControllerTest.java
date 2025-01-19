@@ -46,6 +46,17 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
+    void generateToken_then_return_200_and_login_token() throws Exception {
+        when(authService.generateToken()).thenReturn("some-login-token");
+
+        mockMvc
+                .perform(post("/auth/login").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("some-login-token"));
+    }
+
+    @Test
+    @WithMockUser
     void createAppuser_given_valid_body_then_return_201_and_location_header() throws Exception {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
@@ -88,17 +99,6 @@ class AuthControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.status").value(400));
-    }
-
-    @Test
-    @WithMockUser
-    void generateToken_then_return_200_and_login_token() throws Exception {
-        when(authService.generateToken()).thenReturn("some-login-token");
-
-        mockMvc
-                .perform(post("/auth/login").with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(content().string("some-login-token"));
     }
 
     @Test

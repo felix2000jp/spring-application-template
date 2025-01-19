@@ -27,17 +27,17 @@ class AuthController {
         return ResponseEntity.ok(csrfToken);
     }
 
+    @PostMapping("/login")
+    ResponseEntity<String> generateToken() {
+        var body = authService.generateToken();
+        return ResponseEntity.ok(body);
+    }
+
     @PostMapping("/register")
     ResponseEntity<Void> createAppuser(@Valid @RequestBody CreateAppuserDto createAppuserDto) {
         authService.createAppuser(createAppuserDto);
         var location = URI.create("/api/appusers/me");
         return ResponseEntity.created(location).build();
-    }
-
-    @PostMapping("/login")
-    ResponseEntity<String> generateToken() {
-        var body = authService.generateToken();
-        return ResponseEntity.ok(body);
     }
 
     @PutMapping("/password")
