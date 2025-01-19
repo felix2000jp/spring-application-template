@@ -2,6 +2,7 @@ package dev.felix2000jp.springapplicationtemplate.auth.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
@@ -90,6 +91,37 @@ class AppuserControllerIntegrationTest {
 
         assertThat(getAppuserEntity.getStatusCode().value()).isEqualTo(200);
         assertThat(getAppuserEntity.getBody()).isNotNull();
+    }
+
+    @Test
+    void updateAppuserForCurrentUser_given_user_then_update_appuser() {
+        var updateAppuserEntity = testRestTemplate.exchange(
+                "/api/appusers/me",
+                HttpMethod.PUT,
+                new HttpEntity<>(new UpdateAppuserDto("new username"), headers),
+                Void.class
+        );
+
+        assertThat(updateAppuserEntity.getStatusCode().value()).isEqualTo(204);
+
+        var updatedAppuser = appuserRepository.findById(appuser.getId());
+        assertThat(updatedAppuser).isPresent();
+        assertThat(updatedAppuser.get().getUsername()).isEqualTo("new username");
+    }
+
+    @Test
+    void deleteAppuserForCurrentUser_given_user_then_delete_appuser() {
+        var deleteAppuserEntity = testRestTemplate.exchange(
+                "/api/appusers/me",
+                HttpMethod.DELETE,
+                new HttpEntity<>(headers),
+                Void.class
+        );
+
+        assertThat(deleteAppuserEntity.getStatusCode().value()).isEqualTo(204);
+
+        var deletedAppuser = appuserRepository.findById(appuser.getId());
+        assertThat(deletedAppuser).isNotPresent();
     }
 
 }
