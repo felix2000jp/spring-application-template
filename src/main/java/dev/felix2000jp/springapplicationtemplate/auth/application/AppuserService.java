@@ -1,14 +1,13 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
-import dev.felix2000jp.springapplicationtemplate.auth.AppuserDeletedEvent;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.events.AppuserDeletedEvent;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,18 +17,18 @@ public class AppuserService {
     private final AppuserRepository appuserRepository;
     private final AppuserMapper appuserMapper;
     private final SecurityService securityService;
-    private final ApplicationEventPublisher events;
+    private final AppuserPublisher appuserPublisher;
 
     AppuserService(
             AppuserRepository appuserRepository,
             AppuserMapper appuserMapper,
             SecurityService securityService,
-            ApplicationEventPublisher events
+            AppuserPublisher appuserPublisher
     ) {
         this.appuserRepository = appuserRepository;
         this.appuserMapper = appuserMapper;
         this.securityService = securityService;
-        this.events = events;
+        this.appuserPublisher = appuserPublisher;
     }
 
     public AppuserListDto getAppusers(int pageNumber) {
@@ -78,7 +77,7 @@ public class AppuserService {
         appuserRepository.deleteById(appuserToDelete.getId());
 
         var appuserDeletedEvent = new AppuserDeletedEvent(appuserToDelete.getId());
-        events.publishEvent(appuserDeletedEvent);
+        appuserPublisher.publish(appuserDeletedEvent);
 
         return appuserMapper.toDto(appuserToDelete);
     }

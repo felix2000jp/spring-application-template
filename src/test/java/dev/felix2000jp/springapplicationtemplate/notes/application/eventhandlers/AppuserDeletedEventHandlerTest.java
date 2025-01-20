@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.notes.application.eventhandlers;
 
-import dev.felix2000jp.springapplicationtemplate.auth.AppuserDeletedEvent;
+import dev.felix2000jp.springapplicationtemplate.auth.application.events.AppuserDeletedEvent;
 import dev.felix2000jp.springapplicationtemplate.notes.application.NoteService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
