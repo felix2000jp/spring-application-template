@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.notes.infrastructure;
+package dev.felix2000jp.springapplicationtemplate.notes.infrastructure.database;
 
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @DataJpaTest
 @Testcontainers
 @Import(NoteRepositoryImpl.class)
-class NoteRepositoryImplTest {
+class NoteRepositoryImplIntegrationTest {
 
     @Container
     @ServiceConnection

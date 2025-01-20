@@ -26,14 +26,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class AuthServiceImplTest {
+class AuthServiceTest {
 
     @Mock
     private AppuserRepository appuserRepository;
     @Mock
     private SecurityService securityService;
     @InjectMocks
-    private AuthServiceImpl authService;
+    private AuthService authService;
 
     @Captor
     private ArgumentCaptor<Appuser> appuserCaptor;

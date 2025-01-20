@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.notes.api;
+package dev.felix2000jp.springapplicationtemplate.notes.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.CreateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;

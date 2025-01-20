@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.auth.api;
+package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;

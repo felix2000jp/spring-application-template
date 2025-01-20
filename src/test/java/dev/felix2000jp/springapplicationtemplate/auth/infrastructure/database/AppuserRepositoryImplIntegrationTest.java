@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.auth.infrastructure;
+package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.database;
 
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import org.junit.jupiter.api.AfterEach;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 @DataJpaTest
 @Testcontainers
 @Import(AppuserRepositoryImpl.class)
-class AppuserRepositoryImplTest {
+class AppuserRepositoryImplIntegrationTest {
 
     @Container
     @ServiceConnection

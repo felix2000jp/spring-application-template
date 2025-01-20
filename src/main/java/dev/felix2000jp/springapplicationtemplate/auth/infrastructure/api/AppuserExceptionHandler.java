@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.auth.api;
+package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;

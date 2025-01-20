@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.notes.infrastructure;
+package dev.felix2000jp.springapplicationtemplate.notes.infrastructure.database;
 
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import org.springframework.data.domain.Page;

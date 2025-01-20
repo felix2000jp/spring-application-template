@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class AppuserServiceImplTest {
+class AppuserServiceTest {
 
     @Mock
     private AppuserRepository appuserRepository;
@@ -35,7 +35,7 @@ class AppuserServiceImplTest {
     @Mock
     private ApplicationEventPublisher events;
     @InjectMocks
-    private AppuserServiceImpl appuserService;
+    private AppuserService appuserService;
 
     @Test
     void getAppusers_given_page_with_data_then_return_list_of_appusers() {

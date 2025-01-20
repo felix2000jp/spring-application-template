@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class NoteServiceImplTest {
+class NoteServiceTest {
 
     @Mock
     private NoteRepository noteRepository;
@@ -33,7 +33,7 @@ class NoteServiceImplTest {
     @Mock
     private SecurityService securityService;
     @InjectMocks
-    private NoteServiceImpl noteService;
+    private NoteService noteService;
 
     private SecurityService.User authenticatedUser;
 

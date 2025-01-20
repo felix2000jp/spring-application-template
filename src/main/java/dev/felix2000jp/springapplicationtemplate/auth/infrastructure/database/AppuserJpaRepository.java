@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.auth.infrastructure;
+package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.database;
 
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import org.springframework.data.jpa.repository.JpaRepository;
