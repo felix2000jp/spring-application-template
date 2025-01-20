@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.notes.application.eventhandlers;
+package dev.felix2000jp.springapplicationtemplate.notes.infrastructure.queue;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.events.AppuserDeletedEvent;
 import dev.felix2000jp.springapplicationtemplate.notes.application.NoteService;
