@@ -1,24 +1,23 @@
 # Spring Application Template
 
 This project serves as template for new spring applications. It follows a modular monolith architecture enforced with
-the spring modulith package. It currently has 3 modules: appusers (for user related stuff), notes (for note related
-stuff) and shared (for common stuff like configurations). Modules can interact with each other either by direct method
-calls or by events, either way these interactions are all described in `SomeModuleManagement` classes (
-ex: `AppuserManagement` and `NoteManagement`). The spring modulith package enforces the modular monolith architecture
-with tests - during the context tests a verification of the architecture will be performed. For more information on the
-architecture click on this [link](https://spring.io/projects/spring-modulith).
+the spring modulith package as well as a simplified onion architecture enforced with j-molecules. It currently has 3
+modules: auth (for auth and user management related stuff), notes (for note related stuff) and shared (for common stuff
+like configurations).
+
+Since this is a modular monolith, dependencies between modules are limited. These are only allowed through root level
+interfaces/classes (ex: `SecurityService.java`) and named interfaces (ex `AppuserDeletedEvent`). Also, inside modules a
+simplified onion architecture is used therefore inner layers must not depend on outer layers (domain -> application ->
+infrastructure).
 
 ## Authentication
 
 This template has 2 different type of authentication: basic authentication (username and password) and bearer token
 authentication (JWT).
 
-The module `appusers` is where everything related to authentication and authorization is (except for the actual security
-configuration). I have implemented custom UserDetails, UserDetailsService and GrantedAuthority classes. This classes can
-be updated to accommodate different needs. For password encoding this template uses BCrypt.
-
-I have also created methods to convert the principals (either `Appuser` from basic auth and `Jwt` from bearer token
-auth) into the more readable type of `AuthenticatedAppuser`.
+The module `auth` is where everything related to authentication and authorization is (except for the actual security
+configuration, which is located in the shared module). This projects the uses the default configurations for both basic
+and bearer authentications apart from the fact that it disabled csrf and session state as they are not necessary.
 
 Also, Jwt authentication type requires a public and private secrets/keys in order to decode and encode the tokens. I
 have already generated the keys which are located in **resources/certificates**. To generate new keys follow these
