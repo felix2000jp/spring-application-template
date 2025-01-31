@@ -44,9 +44,9 @@ class SecurityConfiguration {
                                 SecurityService.Scope.APPLICATION.toAuthority()
                         )
                 )
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
-                .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
 
@@ -63,6 +63,8 @@ class SecurityConfiguration {
                                 SecurityService.Scope.APPLICATION.toAuthority()
                         )
                 )
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
                 .build();
     }
