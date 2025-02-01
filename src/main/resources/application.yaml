@@ -19,9 +19,13 @@ spring:
     user: postgres
     password: postgres
 management:
+  endpoints:
+    web:
+      exposure:
+        include: health
   tracing:
     sampling:
-      probability: 1
+      probability: 1.0
 logging:
   file:
     name: ./logs/log.json
