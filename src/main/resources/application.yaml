@@ -2,10 +2,6 @@ spring:
   application:
     name: spring-application-template
     version: 1.0
-  docker:
-    compose:
-      file: compose.yaml
-      enabled: true
   jpa:
     hibernate:
       ddl-auto: validate
@@ -22,16 +18,10 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,metrics
   tracing:
     sampling:
       probability: 1.0
-logging:
-  file:
-    name: ./logs/log.json
-  structured:
-    format:
-      file: logstash
 jwt:
   rsa:
     public-key: classpath:certificates/public.pem
