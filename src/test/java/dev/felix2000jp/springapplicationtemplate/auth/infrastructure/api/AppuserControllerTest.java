@@ -6,7 +6,6 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserLi
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
-import io.micrometer.tracing.Tracer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -33,8 +32,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = AppuserController.class)
 class AppuserControllerTest {
 
-    @MockitoBean
-    private Tracer tracer;
     @MockitoBean
     private AppuserService appuserService;
     @Autowired
