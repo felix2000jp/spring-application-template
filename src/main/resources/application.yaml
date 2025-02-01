@@ -1,6 +1,7 @@
 spring:
   application:
     name: spring-application-template
+    version: 1.0
   docker:
     compose:
       file: compose.yaml
@@ -17,6 +18,12 @@ spring:
     enabled: true
     user: postgres
     password: postgres
+logging:
+  file:
+    name: ./logs/log.json
+  structured:
+    format:
+      file: ecs
 jwt:
   rsa:
     public-key: classpath:certificates/public.pem
