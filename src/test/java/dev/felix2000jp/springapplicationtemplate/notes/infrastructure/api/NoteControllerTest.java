@@ -6,6 +6,7 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteListDto;
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
+import io.micrometer.tracing.Tracer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -32,6 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = NoteController.class)
 class NoteControllerTest {
 
+    @MockitoBean
+    private Tracer tracer;
     @MockitoBean
     private NoteService noteService;
     @Autowired
