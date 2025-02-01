@@ -18,12 +18,16 @@ spring:
     enabled: true
     user: postgres
     password: postgres
+management:
+  tracing:
+    sampling:
+      probability: 1
 logging:
   file:
     name: ./logs/log.json
   structured:
     format:
-      file: ecs
+      file: logstash
 jwt:
   rsa:
     public-key: classpath:certificates/public.pem
