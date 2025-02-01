@@ -14,13 +14,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 class AppuserExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AppuserExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(AppuserExceptionHandler.class);
 
     @ExceptionHandler(AppuserNotFoundException.class)
     ResponseEntity<ProblemDetail> handleAppuserNotFoundException(AppuserNotFoundException ex) {
         var problemDetails = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
 
-        LOGGER.warn(ex.getMessage(), ex);
+        log.warn(ex.getMessage(), ex);
         return ResponseEntity.of(problemDetails).build();
     }
 
@@ -28,7 +28,7 @@ class AppuserExceptionHandler extends ResponseEntityExceptionHandler {
     ResponseEntity<ProblemDetail> handleAppuserConflictException(AppuserAlreadyExistsException ex) {
         var problemDetails = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
 
-        LOGGER.warn(ex.getMessage(), ex);
+        log.warn(ex.getMessage(), ex);
         return ResponseEntity.of(problemDetails).build();
     }
 

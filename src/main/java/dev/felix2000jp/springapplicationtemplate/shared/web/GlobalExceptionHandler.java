@@ -13,13 +13,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<ProblemDetail> handleConstraintViolationException(ConstraintViolationException ex) {
         var problemDetails = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
 
-        LOGGER.warn(ex.getMessage(), ex);
+        log.warn(ex.getMessage(), ex);
         return ResponseEntity.of(problemDetails).build();
     }
 
@@ -29,7 +29,7 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetails.setTitle("Internal Server Error");
         problemDetails.setDetail("An error occurred while processing the request");
 
-        LOGGER.error(ex.getMessage(), ex);
+        log.error(ex.getMessage(), ex);
         return ResponseEntity.of(problemDetails).build();
     }
 
