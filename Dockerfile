@@ -6,7 +6,12 @@ USER spring:spring
 ARG JAR_OTEL=telemetry/opentelemetry-javaagent.jar
 ARG JAR_FILE=target/*.jar
 
-COPY ${JAR_OTEL} agent.jar
+COPY ${JAR_OTEL} opentelemetry-javaagent.jar
 COPY ${JAR_FILE} app.jar
 
-ENTRYPOINT ["java", "-javaagent:agent.jar", "-Dotel.instrumentation.logback-appender.experimental.capture-mdc-attributes=*", "-jar", "app.jar"]
+ENTRYPOINT [ \
+    "java", \
+    "-jar", "app.jar", \
+    "-javaagent:opentelemetry-javaagent.jar", \
+    "-Dotel.instrumentation.logback-appender.experimental.capture-mdc-attributes=*" \
+]
