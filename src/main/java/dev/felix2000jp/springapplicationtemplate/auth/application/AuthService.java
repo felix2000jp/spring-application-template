@@ -7,6 +7,8 @@ import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService implements UserDetailsService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
     private final AppuserRepository appuserRepository;
     private final SecurityService securityService;
@@ -55,6 +59,7 @@ public class AuthService implements UserDetailsService {
         appuserToCreate.addScopeApplication();
 
         appuserRepository.save(appuserToCreate);
+        log.info("Appuser with id {} created with scopes {}", appuserToCreate.getId(), appuserToCreate.getAuthoritiesScopes());
     }
 
     public void updatePassword(UpdatePasswordDto updatePasswordDto) {
@@ -67,6 +72,7 @@ public class AuthService implements UserDetailsService {
 
         appuserToUpdate.setPassword(securityService.generateEncodedPassword(updatePasswordDto.password()));
         appuserRepository.save(appuserToUpdate);
+        log.info("Appuser with id {} updated", appuserToUpdate.getId());
     }
 
 }
