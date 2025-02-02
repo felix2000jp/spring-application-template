@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.modulith.Modulith;
 
 @Modulith(sharedModules = "shared")
-public class SpringApplicationTemplateApplication {
+class SpringApplicationTemplateApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(SpringApplicationTemplateApplication.class, args);

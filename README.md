@@ -34,6 +34,18 @@ openssl rsa -in keypair.pem -pubout -out public.pem
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem
 ```
 
+## Logs, traces and metrics
+
+This template includes Spring Boot Actuator with both the health and metrics endpoints enabled.
+
+For storing and viewing logs, traces and metrics this template uses the Grafana LGTM stack with an OpenTelemetry
+Collector. As for capturing telemetry data, the OpenTelemetry Java Agent is configured to run alongside the application
+and publish the data to the collector via grpc.
+
+There is also the `RequestIdHeaderFilter` which creates a unique id for every http request and adds this id to both the
+response headers and the MDC. You use this id for correlating logs and requests. Note that this id only tracks the http
+request and therefore cannot be used for tracking the entire trace, for that purpose use the trace_id attribute.
+
 ## GitHub's configuration, actions and applications
 
 This GitHub repository is a template repository. It is intended to be used as a start of point for new projects. As such

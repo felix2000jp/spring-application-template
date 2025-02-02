@@ -1,10 +1,7 @@
 spring:
   application:
     name: spring-application-template
-  docker:
-    compose:
-      file: compose.yaml
-      enabled: true
+    version: 1.0
   jpa:
     hibernate:
       ddl-auto: validate
@@ -17,6 +14,14 @@ spring:
     enabled: true
     user: postgres
     password: postgres
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
+  tracing:
+    sampling:
+      probability: 1.0
 jwt:
   rsa:
     public-key: classpath:certificates/public.pem

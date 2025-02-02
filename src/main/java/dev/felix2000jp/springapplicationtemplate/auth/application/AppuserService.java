@@ -8,11 +8,15 @@ import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AppuserService {
+
+    private static final Logger log = LoggerFactory.getLogger(AppuserService.class);
 
     private final AppuserRepository appuserRepository;
     private final AppuserMapper appuserMapper;
@@ -62,6 +66,7 @@ public class AppuserService {
 
         appuserToUpdate.setUsername(updateAppuserDto.username());
         appuserRepository.save(appuserToUpdate);
+        log.info("Appuser with id {} updated", appuserToUpdate.getId());
 
         return appuserMapper.toDto(appuserToUpdate);
     }
@@ -75,9 +80,11 @@ public class AppuserService {
                 .orElseThrow(AppuserNotFoundException::new);
 
         appuserRepository.deleteById(appuserToDelete.getId());
+        log.info("Appuser with id {} deleted", appuserToDelete.getId());
 
         var appuserDeletedEvent = new AppuserDeletedEvent(appuserToDelete.getId());
         appuserPublisher.publish(appuserDeletedEvent);
+        log.info("Published AppuserDeletedEvent with appuserId {}", appuserToDelete.getId());
 
         return appuserMapper.toDto(appuserToDelete);
     }
