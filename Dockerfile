@@ -10,8 +10,7 @@ COPY ${JAR_OTEL} opentelemetry-javaagent.jar
 COPY ${JAR_FILE} app.jar
 
 ENTRYPOINT [ \
-    "java", \
-    "-jar", "app.jar", \
+    "java", "-jar", "app.jar", \
     "-javaagent:opentelemetry-javaagent.jar", \
     "-Dotel.instrumentation.logback-appender.experimental.capture-mdc-attributes=*" \
 ]
