@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="run spring application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+  <configuration default="false" name="spring-boot-application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UpdateClassesAndResources" />
     <module name="spring-application-template" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="dev.felix2000jp.springapplicationtemplate.SpringApplicationTemplateApplication" />
