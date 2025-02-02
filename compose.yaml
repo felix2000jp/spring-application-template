@@ -3,14 +3,14 @@ services:
     build: .
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/application-db
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://grafana-lgtm:4317
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://grafana:4317
       OTEL_EXPORTER_OTLP_PROTOCOL: grpc
     ports:
       - 8080:8080
     depends_on:
       postgres:
         condition: service_healthy
-      grafana-lgtm:
+      grafana:
         condition: service_started
   postgres:
     image: postgres
@@ -25,7 +25,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
-  grafana-lgtm:
+  grafana:
     image: grafana/otel-lgtm
     ports:
       - 4317:4317

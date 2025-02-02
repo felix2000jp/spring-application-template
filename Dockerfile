@@ -9,4 +9,4 @@ ARG JAR_FILE=target/*.jar
 COPY ${JAR_OTEL} agent.jar
 COPY ${JAR_FILE} app.jar
 
-ENTRYPOINT ["java", "-javaagent:agent.jar", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-javaagent:agent.jar", "-Dotel.instrumentation.logback-appender.experimental.capture-mdc-attributes=*", "-jar", "app.jar"]
