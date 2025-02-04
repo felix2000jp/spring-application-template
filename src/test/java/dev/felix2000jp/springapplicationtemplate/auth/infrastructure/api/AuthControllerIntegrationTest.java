@@ -1,7 +1,7 @@
 package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
@@ -66,7 +66,7 @@ class AuthControllerIntegrationTest {
     @Test
     void createAppuser_given_username_and_password_then_create_appuser() {
         var createAppuserEntity = testRestTemplate.exchange(
-                "/auth/register",
+                "/auth",
                 HttpMethod.POST,
                 new HttpEntity<>(new CreateAppuserDto("new username", "password"), null),
                 Void.class
@@ -79,11 +79,11 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
-    void updatePassword_given_user_then_update_password() {
+    void updateAppuser_given_user_then_update_username_and_password() {
         var updatePasswordEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
-                "/auth/password",
+                "/auth",
                 HttpMethod.PUT,
-                new HttpEntity<>(new UpdatePasswordDto("new password"), null),
+                new HttpEntity<>(new UpdateAppuserDto("new username", "new password"), null),
                 Void.class
         );
 
@@ -91,7 +91,22 @@ class AuthControllerIntegrationTest {
 
         var updatedAppuser = appuserRepository.findById(appuser.getId());
         assertThat(updatedAppuser).isPresent();
+        assertThat(updatedAppuser.get().getUsername()).isEqualTo("new username");
         assertThat(updatedAppuser.get().getPassword()).isNotEqualTo(appuser.getPassword());
     }
 
+    @Test
+    void deleteAppuser_given_user_then_delete_appuser() {
+        var deleteAppuserEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
+                "/auth",
+                HttpMethod.DELETE,
+                new HttpEntity<>(null),
+                Void.class
+        );
+
+        assertThat(deleteAppuserEntity.getStatusCode().value()).isEqualTo(204);
+
+        var deletedAppuser = appuserRepository.findById(appuser.getId());
+        assertThat(deletedAppuser).isNotPresent();
+    }
 }

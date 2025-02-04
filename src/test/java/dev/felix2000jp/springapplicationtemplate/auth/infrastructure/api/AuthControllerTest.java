@@ -2,7 +2,7 @@ package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.AuthService;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -22,8 +22,8 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AuthController.class)
@@ -55,7 +55,7 @@ class AuthControllerTest {
                 """, createAppuserDto.username(), createAppuserDto.password());
 
         mockMvc
-                .perform(post("/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .perform(post("/auth").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("LOCATION", "/api/appusers/me"));
     }
@@ -73,7 +73,7 @@ class AuthControllerTest {
         doThrow(exception).when(authService).createAppuser(createAppuserDto);
 
         mockMvc
-                .perform(post("/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .perform(post("/auth").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.title").value("Conflict"))
                 .andExpect(jsonPath("$.detail").value(exception.getMessage()))
@@ -85,7 +85,7 @@ class AuthControllerTest {
     @WithMockUser
     void createAppuser_given_invalid_request_body_then_return_400(String requestBody) throws Exception {
         mockMvc
-                .perform(post("/auth/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .perform(post("/auth").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.status").value(400));
@@ -93,32 +93,32 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void updatePassword_given_valid_body_then_return_204() throws Exception {
-        var updatePasswordDto = new UpdatePasswordDto("password");
+    void updateAppuser_given_valid_body_then_return_204() throws Exception {
+        var updateAppuserDto = new UpdateAppuserDto("new username","new password");
 
         var requestBody = String.format("""
-                { "password": "%s" }
-                """, updatePasswordDto.password());
+                { "username": "%s", "password": "%s" }
+                """, updateAppuserDto.username(), updateAppuserDto.password());
 
         mockMvc
-                .perform(put("/auth/password").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .perform(put("/auth").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @WithMockUser
-    void updatePassword_give_non_existing_user_then_return_404() throws Exception {
-        var updatePasswordDto = new UpdatePasswordDto("password");
+    void updateAppuser_give_non_existing_user_then_return_404() throws Exception {
+        var updateAppuserDto = new UpdateAppuserDto("new username","new password");
 
         var requestBody = String.format("""
-                { "password": "%s" }
-                """, updatePasswordDto.password());
+                { "username": "%s", "password": "%s" }
+                """, updateAppuserDto.username(), updateAppuserDto.password());
 
         var exception = new AppuserNotFoundException();
-        doThrow(exception).when(authService).updatePassword(updatePasswordDto);
+        doThrow(exception).when(authService).updateAppuser(updateAppuserDto);
 
         mockMvc
-                .perform(put("/auth/password").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .perform(put("/auth").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.title").value("Not Found"))
                 .andExpect(jsonPath("$.detail").value(exception.getMessage()))
@@ -128,13 +128,36 @@ class AuthControllerTest {
     @ParameterizedTest
     @MethodSource
     @WithMockUser
-    void updatePassword_given_invalid_request_body_then_return_400(String requestBody) throws Exception {
+    void updateAppuser_given_invalid_request_body_then_return_400(String requestBody) throws Exception {
         mockMvc
-                .perform(put("/auth/password").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .perform(put("/auth").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Bad Request"))
                 .andExpect(jsonPath("$.status").value(400));
     }
+
+    @Test
+    @WithMockUser
+    void deleteAppuser_given_user_then_return_204() throws Exception {
+        mockMvc
+                .perform(delete("/auth").with(csrf()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser
+    void deleteAppuser_given_not_found_user_then_return_404() throws Exception {
+        var exception = new AppuserNotFoundException();
+        doThrow(exception).when(authService).deleteAppuser();
+
+        mockMvc
+                .perform(delete("/auth").with(csrf()))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.title").value("Not Found"))
+                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
+                .andExpect(jsonPath("$.status").value(404));
+    }
+
 
     private static Stream<Arguments> createAppuser_given_invalid_request_body_then_return_400() {
         return Stream.of(
@@ -155,15 +178,22 @@ class AuthControllerTest {
         );
     }
 
-    private static Stream<Arguments> updatePassword_given_invalid_request_body_then_return_400() {
+    private static Stream<Arguments> updateAppuser_given_invalid_request_body_then_return_400() {
         return Stream.of(
                 arguments(""),
                 arguments("{}"),
-                arguments("{ 'password': null }"),
-                arguments("{ 'password': '' }"),
-                arguments("{ 'password': ' ' }"),
-                arguments("{ 'password': 'lol' }"),
-                arguments("{ 'password': '" + "a".repeat(501) + "' }")
+                arguments("{ 'username': 'username' }"),
+                arguments("{ 'password': 'password' }"),
+                arguments("{ 'username': null, 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': null }"),
+                arguments("{ 'username': '', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': '' }"),
+                arguments("{ 'username': ' ', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': ' ' }"),
+                arguments("{ 'username': 'lol', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': 'lol' }"),
+                arguments("{ 'username': '" + "a".repeat(501) + "', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': '" + "a".repeat(501) + "' }")
         );
     }
 

@@ -1,11 +1,11 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.events.AppuserDeletedEvent;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +32,8 @@ class AuthServiceTest {
     private AppuserRepository appuserRepository;
     @Mock
     private SecurityService securityService;
+    @Mock
+    private AppuserPublisher appuserPublisher;
     @InjectMocks
     private AuthService authService;
 
@@ -50,7 +52,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void loadUserByUsername_given_not_found_username_then_throw_user_not_found_exception() {
+    void loadUserByUsername_given_not_found_username_then_throw_appuser_not_found_exception() {
         when(appuserRepository.findByUsername("username")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.loadUserByUsername("username")).isInstanceOf(UsernameNotFoundException.class);
@@ -65,7 +67,9 @@ class AuthServiceTest {
 
         when(authentication.getPrincipal()).thenReturn(appuser);
         when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(securityService.generateToken(appuser.getUsername(), appuser.getId().toString(), "")).thenReturn("some-generated-token");
+        when(
+                securityService.generateToken(eq(appuser.getUsername()), any(), eq(""))
+        ).thenReturn("some-generated-token");
 
         var actual = authService.generateToken();
 
@@ -110,39 +114,54 @@ class AuthServiceTest {
     }
 
     @Test
-    void updatePassword_given_dto_then_update_password() {
-        var updatePasswordDto = new UpdatePasswordDto("new password");
+    void updateAppuser_given_dto_then_update_username_and_password() {
+        var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
         var appuser = new Appuser("username", "password");
         var authentication = mock(Authentication.class);
         var securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
-
         when(authentication.getPrincipal()).thenReturn(appuser);
         when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(appuserRepository.findByUsername(appuser.getUsername())).thenReturn(Optional.of(appuser));
-        when(securityService.generateEncodedPassword(updatePasswordDto.password())).thenReturn("encoded-password");
+        when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(false);
+        when(securityService.generateEncodedPassword(updateAppuserDto.password())).thenReturn("encoded-password");
 
-        authService.updatePassword(updatePasswordDto);
+        authService.updateAppuser(updateAppuserDto);
 
         verify(appuserRepository).save(appuserCaptor.capture());
+        assertThat(appuserCaptor.getValue().getUsername()).isEqualTo("new username");
         assertThat(appuserCaptor.getValue().getPassword()).isEqualTo("encoded-password");
     }
 
     @Test
-    void updatePassword_given_not_found_authenticated_user_then_throw_user_not_found_exception() {
-        var updatePasswordDto = new UpdatePasswordDto("new password");
+    void updateAppuser_given_dto_with_duplicate_username_then_throw_appuser_already_exists_exception() {
+        var updateAppuserDto = new UpdateAppuserDto("duplicate username", "new password");
         var appuser = new Appuser("username", "password");
         var authentication = mock(Authentication.class);
         var securityContext = mock(SecurityContext.class);
         SecurityContextHolder.setContext(securityContext);
 
+        when(authentication.getPrincipal()).thenReturn(appuser);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(true);
+
+        assertThatThrownBy(() -> authService.updateAppuser(updateAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
+    }
+
+    @Test
+    void deleteAppuser_given_authenticated_user_then_delete_appuser() {
+        var appuser = new Appuser("username", "password");
+        var authentication = mock(Authentication.class);
+        var securityContext = mock(SecurityContext.class);
+        SecurityContextHolder.setContext(securityContext);
 
         when(authentication.getPrincipal()).thenReturn(appuser);
         when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(appuserRepository.findByUsername(appuser.getUsername())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> authService.updatePassword(updatePasswordDto)).isInstanceOf(AppuserNotFoundException.class);
+        authService.deleteAppuser();
+
+        verify(appuserRepository).deleteById(appuser.getId());
+        verify(appuserPublisher).publish(new AppuserDeletedEvent(appuser.getId()));
     }
 
 }
