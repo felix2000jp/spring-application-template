@@ -1,8 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.notes.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -12,6 +10,7 @@ import java.util.UUID;
 public class Note {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @NotNull
     private UUID id;
 
@@ -31,7 +30,6 @@ public class Note {
     }
 
     public Note(UUID appuserId, String title, String content) {
-        this.id = UUID.randomUUID();
         this.title = title;
         this.content = content;
         this.appuserId = appuserId;

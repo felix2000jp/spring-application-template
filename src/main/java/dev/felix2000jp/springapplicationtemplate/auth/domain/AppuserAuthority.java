@@ -1,8 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,6 +11,7 @@ import java.util.UUID;
 public class AppuserAuthority implements GrantedAuthority {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @NotNull
     private UUID id;
 
@@ -24,7 +23,6 @@ public class AppuserAuthority implements GrantedAuthority {
     }
 
     public AppuserAuthority(String scope) {
-        this.id = UUID.randomUUID();
         this.scope = scope;
     }
 

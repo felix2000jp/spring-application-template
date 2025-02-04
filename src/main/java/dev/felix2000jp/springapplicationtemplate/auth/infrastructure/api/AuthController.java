@@ -2,7 +2,7 @@ package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.AuthService;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdatePasswordDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,16 +27,22 @@ class AuthController {
         return ResponseEntity.ok(body);
     }
 
-    @PostMapping("/register")
+    @PostMapping
     ResponseEntity<Void> createAppuser(@Valid @RequestBody CreateAppuserDto createAppuserDto) {
         authService.createAppuser(createAppuserDto);
         var location = URI.create("/api/appusers/me");
         return ResponseEntity.created(location).build();
     }
 
-    @PutMapping("/password")
-    ResponseEntity<Void> updatePassword(@Valid @RequestBody UpdatePasswordDto updatePasswordDto) {
-        authService.updatePassword(updatePasswordDto);
+    @PutMapping
+    ResponseEntity<Void> updateAppuser(@Valid @RequestBody UpdateAppuserDto updateAppuserDto) {
+        authService.updateAppuser(updateAppuserDto);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    ResponseEntity<Void> deleteAppuser() {
+        authService.deleteAppuser();
         return ResponseEntity.noContent().build();
     }
 

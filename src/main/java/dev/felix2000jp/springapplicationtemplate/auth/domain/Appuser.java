@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 public class Appuser implements UserDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @NotNull
     private UUID id;
 
@@ -37,7 +38,6 @@ public class Appuser implements UserDetails {
     }
 
     public Appuser(String username, String password) {
-        this.id = UUID.randomUUID();
         this.username = username;
         this.password = password;
         this.authorities = new HashSet<>();
