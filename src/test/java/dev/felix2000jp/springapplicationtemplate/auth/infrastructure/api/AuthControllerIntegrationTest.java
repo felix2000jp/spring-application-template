@@ -83,7 +83,7 @@ class AuthControllerIntegrationTest {
         var updatePasswordEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
                 "/auth",
                 HttpMethod.PUT,
-                new HttpEntity<>(new UpdateAppuserDto("new username", "new password"), null),
+                new HttpEntity<>(new UpdateAppuserDto("updated username", "updated password"), null),
                 Void.class
         );
 
@@ -91,7 +91,7 @@ class AuthControllerIntegrationTest {
 
         var updatedAppuser = appuserRepository.findById(appuser.getId());
         assertThat(updatedAppuser).isPresent();
-        assertThat(updatedAppuser.get().getUsername()).isEqualTo("new username");
+        assertThat(updatedAppuser.get().getUsername()).isEqualTo("updated username");
         assertThat(updatedAppuser.get().getPassword()).isNotEqualTo(appuser.getPassword());
     }
 

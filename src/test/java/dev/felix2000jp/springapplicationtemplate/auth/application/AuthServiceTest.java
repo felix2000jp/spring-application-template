@@ -17,9 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,55 +36,6 @@ class AuthServiceTest {
 
     @Captor
     private ArgumentCaptor<Appuser> appuserCaptor;
-
-    @Test
-    void loadUserByUsername_given_username_of_appuser_then_return_appuser() {
-        var appuser = new Appuser("username", "password");
-
-        when(appuserRepository.findByUsername(appuser.getUsername())).thenReturn(Optional.of(appuser));
-
-        var actual = authService.loadUserByUsername(appuser.getUsername());
-
-        assertThat(actual).isEqualTo(appuser);
-    }
-
-    @Test
-    void loadUserByUsername_given_not_found_username_then_throw_appuser_not_found_exception() {
-        when(appuserRepository.findByUsername("username")).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> authService.loadUserByUsername("username")).isInstanceOf(UsernameNotFoundException.class);
-    }
-
-    @Test
-    void generateToken_given_appuser_principal_then_generate_valid_token() {
-        var appuser = new Appuser("username", "password");
-        var authentication = mock(Authentication.class);
-        var securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
-
-        when(authentication.getPrincipal()).thenReturn(appuser);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(
-                securityService.generateToken(eq(appuser.getUsername()), any(), eq(""))
-        ).thenReturn("some-generated-token");
-
-        var actual = authService.generateToken();
-
-        assertThat(actual).isEqualTo("some-generated-token");
-    }
-
-    @Test
-    void generateToken_given_principal_of_invalid_type_then_throw_class_cast_exception() {
-        var someObject = new Object();
-        var authentication = mock(Authentication.class);
-        var securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
-
-        when(authentication.getPrincipal()).thenReturn(someObject);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-
-        assertThatThrownBy(() -> authService.generateToken()).isInstanceOf(ClassCastException.class);
-    }
 
     @Test
     void createAppuser_given_dto_then_create_appuser() {

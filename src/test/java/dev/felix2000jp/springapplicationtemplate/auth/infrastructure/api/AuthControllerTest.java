@@ -4,7 +4,6 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.AuthService;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -23,7 +22,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = AuthController.class)
@@ -94,7 +92,7 @@ class AuthControllerTest {
     @Test
     @WithMockUser
     void updateAppuser_given_valid_body_then_return_204() throws Exception {
-        var updateAppuserDto = new UpdateAppuserDto("new username","new password");
+        var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
 
         var requestBody = String.format("""
                 { "username": "%s", "password": "%s" }
@@ -107,22 +105,22 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void updateAppuser_give_non_existing_user_then_return_404() throws Exception {
-        var updateAppuserDto = new UpdateAppuserDto("new username","new password");
+    void updateAppuser_given_duplicate_username_then_return_409() throws Exception {
+        var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
 
         var requestBody = String.format("""
                 { "username": "%s", "password": "%s" }
                 """, updateAppuserDto.username(), updateAppuserDto.password());
 
-        var exception = new AppuserNotFoundException();
+        var exception = new AppuserAlreadyExistsException();
         doThrow(exception).when(authService).updateAppuser(updateAppuserDto);
 
         mockMvc
                 .perform(put("/auth").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.title").value("Not Found"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Conflict"))
                 .andExpect(jsonPath("$.detail").value(exception.getMessage()))
-                .andExpect(jsonPath("$.status").value(404));
+                .andExpect(jsonPath("$.status").value(409));
     }
 
     @ParameterizedTest
@@ -143,21 +141,6 @@ class AuthControllerTest {
                 .perform(delete("/auth").with(csrf()))
                 .andExpect(status().isNoContent());
     }
-
-    @Test
-    @WithMockUser
-    void deleteAppuser_given_not_found_user_then_return_404() throws Exception {
-        var exception = new AppuserNotFoundException();
-        doThrow(exception).when(authService).deleteAppuser();
-
-        mockMvc
-                .perform(delete("/auth").with(csrf()))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.title").value("Not Found"))
-                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
-                .andExpect(jsonPath("$.status").value(404));
-    }
-
 
     private static Stream<Arguments> createAppuser_given_invalid_request_body_then_return_400() {
         return Stream.of(
