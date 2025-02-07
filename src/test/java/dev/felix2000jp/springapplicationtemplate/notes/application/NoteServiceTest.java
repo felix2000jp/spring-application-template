@@ -5,7 +5,9 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNo
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,24 +37,24 @@ class NoteServiceTest {
     @InjectMocks
     private NoteService noteService;
 
-    private SecurityService.User authenticatedUser;
+    private SecurityUser authenticatedSecurityUser;
 
     @BeforeEach
     void setUp() {
-        authenticatedUser = new SecurityService.User(
+        authenticatedSecurityUser = new SecurityUser(
                 UUID.randomUUID(),
                 "username",
-                Set.of(SecurityService.Scope.APPLICATION.name())
+                Set.of(SecurityScope.APPLICATION.name())
         );
 
-        when(securityService.getUser()).thenReturn(authenticatedUser);
+        when(securityService.getUser()).thenReturn(authenticatedSecurityUser);
     }
 
     @Test
     void getNotesForCurrentUser_given_page_then_return_list_of_notes() {
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(noteRepository.findAllByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of(note));
+        when(noteRepository.findAllByAppuserId(authenticatedSecurityUser.id(), 0)).thenReturn(List.of(note));
 
         var actual = noteService.getNotesForCurrentUser(0);
         var actualNote = actual.notes().getFirst();
@@ -65,7 +67,7 @@ class NoteServiceTest {
 
     @Test
     void getNotesForCurrentUser_given_empty_page_then_return_empty_list_of_notes() {
-        when(noteRepository.findAllByAppuserId(authenticatedUser.id(), 0)).thenReturn(List.of());
+        when(noteRepository.findAllByAppuserId(authenticatedSecurityUser.id(), 0)).thenReturn(List.of());
 
         var actual = noteService.getNotesForCurrentUser(0);
 
@@ -76,7 +78,7 @@ class NoteServiceTest {
     void getNoteByIdForCurrentUser_given_note_id_then_return_note() {
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(Optional.of(note));
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedSecurityUser.id())).thenReturn(Optional.of(note));
 
         var actual = noteService.getNoteByIdForCurrentUser(note.getId());
 
@@ -89,7 +91,7 @@ class NoteServiceTest {
     void findByIdAndAppuserId_given_not_found_id_then_throw_note_not_found_exception() {
         var id = UUID.randomUUID();
 
-        when(noteRepository.findByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(Optional.empty());
+        when(noteRepository.findByIdAndAppuserId(id, authenticatedSecurityUser.id())).thenReturn(Optional.empty());
 
         assertThatThrownBy(
                 () -> noteService.getNoteByIdForCurrentUser(id)
@@ -111,7 +113,7 @@ class NoteServiceTest {
         var note = new Note(UUID.randomUUID(), "title", "content");
         var updateNoteDto = new UpdateNoteDto("new title", "new content");
 
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(Optional.of(note));
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedSecurityUser.id())).thenReturn(Optional.of(note));
 
         var actual = noteService.updateNoteByIdForCurrentUser(note.getId(), updateNoteDto);
 
@@ -124,7 +126,7 @@ class NoteServiceTest {
         var id = UUID.randomUUID();
         var updateNoteDto = new UpdateNoteDto("new title", "new content");
 
-        when(noteRepository.findByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(Optional.empty());
+        when(noteRepository.findByIdAndAppuserId(id, authenticatedSecurityUser.id())).thenReturn(Optional.empty());
 
         assertThatThrownBy(
                 () -> noteService.updateNoteByIdForCurrentUser(id, updateNoteDto)
@@ -135,7 +137,7 @@ class NoteServiceTest {
     void deleteNoteByIdForCurrentUser_given_note_id_then_delete_note() {
         var note = new Note(UUID.randomUUID(), "title", "content");
 
-        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedUser.id())).thenReturn(Optional.of(note));
+        when(noteRepository.findByIdAndAppuserId(note.getId(), authenticatedSecurityUser.id())).thenReturn(Optional.of(note));
 
         var actual = noteService.deleteNoteByIdForCurrentUser(note.getId());
 
@@ -148,7 +150,7 @@ class NoteServiceTest {
     void deleteNoteByIdForCurrentUser_given_not_found_id_then_throw_note_not_found_exception() {
         var id = UUID.randomUUID();
 
-        when(noteRepository.findByIdAndAppuserId(id, authenticatedUser.id())).thenReturn(Optional.empty());
+        when(noteRepository.findByIdAndAppuserId(id, authenticatedSecurityUser.id())).thenReturn(Optional.empty());
 
         assertThatThrownBy(
                 () -> noteService.deleteNoteByIdForCurrentUser(id)

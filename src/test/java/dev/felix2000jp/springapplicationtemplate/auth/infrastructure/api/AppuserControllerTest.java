@@ -4,7 +4,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.AppuserService
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -36,7 +36,7 @@ class AppuserControllerTest {
         var appuserDto = new AppuserDto(
                 UUID.randomUUID(),
                 "username",
-                Set.of(SecurityService.Scope.APPLICATION.name())
+                Set.of(SecurityScope.APPLICATION.name())
         );
         var appuserListDto = new AppuserListDto(List.of(appuserDto));
 
@@ -76,7 +76,7 @@ class AppuserControllerTest {
         var appuserDto = new AppuserDto(
                 UUID.randomUUID(),
                 "username",
-                Set.of(SecurityService.Scope.APPLICATION.name())
+                Set.of(SecurityScope.APPLICATION.name())
         );
 
         var expectedResponse = String.format("""

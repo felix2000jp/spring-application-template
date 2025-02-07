@@ -6,7 +6,8 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteList
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ class NoteControllerIntegrationTest {
         var token = securityService.generateToken(
                 "username",
                 appuserId.toString(),
-                SecurityService.Scope.APPLICATION.name()
+                SecurityScope.APPLICATION.name()
         );
 
         headers = new HttpHeaders();

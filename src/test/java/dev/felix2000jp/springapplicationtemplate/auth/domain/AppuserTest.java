@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.domain;
 
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +42,7 @@ class AppuserTest {
         appuser.addScopeAdmin();
 
         assertThat(appuser.getAuthorities()).isNotEmpty();
-        assertThat(appuser.getAuthoritiesScopes()).containsExactly(SecurityService.Scope.ADMIN.name());
+        assertThat(appuser.getAuthoritiesScopes()).containsExactly(SecurityScope.ADMIN.name());
     }
 
     @Test
@@ -51,7 +51,7 @@ class AppuserTest {
         appuser.addScopeApplication();
 
         assertThat(appuser.getAuthorities()).isNotEmpty();
-        assertThat(appuser.getAuthoritiesScopes()).containsExactly(SecurityService.Scope.APPLICATION.name());
+        assertThat(appuser.getAuthoritiesScopes()).containsExactly(SecurityScope.APPLICATION.name());
     }
 
 }
