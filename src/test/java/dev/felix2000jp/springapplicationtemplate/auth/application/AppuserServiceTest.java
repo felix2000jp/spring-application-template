@@ -4,6 +4,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
 import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -59,7 +60,7 @@ class AppuserServiceTest {
     @Test
     void getAppuserForCurrentUser_given_authenticated_user_then_return_appuser_equivalent() {
         var appuser = new Appuser("username", "password");
-        var authenticatedUser = new SecurityService.SecurityUser(
+        var authenticatedUser = new SecurityUser(
                 appuser.getId(),
                 appuser.getUsername(),
                 appuser.getAuthoritiesScopes()
@@ -77,7 +78,7 @@ class AppuserServiceTest {
 
     @Test
     void getAppuserForCurrentUser_given_not_found_authenticated_user_then_throw_appuser_not_found_exception() {
-        var authenticatedUser = new SecurityService.SecurityUser(UUID.randomUUID(), "username", Set.of());
+        var authenticatedUser = new SecurityUser(UUID.randomUUID(), "username", Set.of());
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.empty());
