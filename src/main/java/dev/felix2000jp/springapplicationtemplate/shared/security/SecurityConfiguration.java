@@ -3,7 +3,6 @@ package dev.felix2000jp.springapplicationtemplate.shared.security;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,8 +40,8 @@ class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth").permitAll()
                         .anyRequest().hasAnyAuthority(
-                                SecurityService.Scope.ADMIN.toAuthority(),
-                                SecurityService.Scope.APPLICATION.toAuthority()
+                                SecurityScope.ADMIN.toAuthority(),
+                                SecurityScope.APPLICATION.toAuthority()
                         )
                 )
                 .csrf(AbstractHttpConfigurer::disable)
@@ -57,11 +56,11 @@ class SecurityConfiguration {
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/appusers/admin/**").hasAuthority(
-                                SecurityService.Scope.ADMIN.toAuthority()
+                                SecurityScope.ADMIN.toAuthority()
                         )
                         .anyRequest().hasAnyAuthority(
-                                SecurityService.Scope.ADMIN.toAuthority(),
-                                SecurityService.Scope.APPLICATION.toAuthority()
+                                SecurityScope.ADMIN.toAuthority(),
+                                SecurityScope.APPLICATION.toAuthority()
                         )
                 )
                 .csrf(AbstractHttpConfigurer::disable)

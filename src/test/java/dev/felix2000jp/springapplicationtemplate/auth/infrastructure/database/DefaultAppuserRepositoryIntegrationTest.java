@@ -24,8 +24,8 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 @DataJpaTest
 @Testcontainers
-@Import(AppuserRepositoryImpl.class)
-class AppuserRepositoryImplIntegrationTest {
+@Import(DefaultAppuserRepository.class)
+class DefaultAppuserRepositoryIntegrationTest {
 
     @Container
     @ServiceConnection
@@ -34,7 +34,7 @@ class AppuserRepositoryImplIntegrationTest {
     @Autowired
     private TestEntityManager testEntityManager;
     @Autowired
-    private AppuserRepositoryImpl appuserRepository;
+    private DefaultAppuserRepository appuserRepository;
 
     private Appuser appuser;
 

@@ -4,7 +4,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDt
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
-import dev.felix2000jp.springapplicationtemplate.shared.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

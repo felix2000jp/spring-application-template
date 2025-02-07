@@ -10,14 +10,14 @@ import java.time.Duration;
 
 @EnableScheduling
 @Component
-class ResubmitIncompleteEventsTask {
+class ResubmitIncompleteEventsScheduledTask {
 
     @Value("${events.schedule.incomplete-event-older-than-in-minutes}")
     private int incompleteEventOlderThanInMinutes;
 
     private final IncompleteEventPublications incompleteEvents;
 
-    ResubmitIncompleteEventsTask(IncompleteEventPublications incompleteEvents) {
+    ResubmitIncompleteEventsScheduledTask(IncompleteEventPublications incompleteEvents) {
         this.incompleteEvents = incompleteEvents;
     }
 

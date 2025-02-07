@@ -11,13 +11,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-class NoteRepositoryImpl implements NoteRepository {
+class DefaultNoteRepository implements NoteRepository {
 
     private static final int PAGE_SIZE = 50;
 
     private final NoteJpaRepository noteJpaRepository;
 
-    NoteRepositoryImpl(NoteJpaRepository noteJpaRepository) {
+    DefaultNoteRepository(NoteJpaRepository noteJpaRepository) {
         this.noteJpaRepository = noteJpaRepository;
     }
 

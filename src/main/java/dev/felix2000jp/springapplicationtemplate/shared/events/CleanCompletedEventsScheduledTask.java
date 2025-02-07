@@ -10,14 +10,14 @@ import java.time.Duration;
 
 @EnableScheduling
 @Component
-class CleanCompletedEventsTask {
+class CleanCompletedEventsScheduledTask {
 
     @Value("${events.schedule.complete-event-older-than-in-minutes}")
     private int completeEventOlderThanInMinutes;
 
     private final CompletedEventPublications completeEvents;
 
-    CleanCompletedEventsTask(CompletedEventPublications completeEvents) {
+    CleanCompletedEventsScheduledTask(CompletedEventPublications completeEvents) {
         this.completeEvents = completeEvents;
     }
 
