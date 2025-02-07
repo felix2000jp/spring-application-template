@@ -15,8 +15,8 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@NamedInterface
 @Service
+@NamedInterface
 public class SecurityService {
 
     private static final String ID_CLAIM_NAME = "id";

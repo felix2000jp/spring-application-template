@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @ApplicationModuleTest
 @Testcontainers
-class AppuserPublisherImplIntegrationTest {
+class DefaultAppuserPublisherIntegrationTest {
 
     @Container
     @ServiceConnection

@@ -6,11 +6,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
-class AppuserPublisherImpl implements AppuserPublisher {
+class DefaultAppuserPublisher implements AppuserPublisher {
 
     private final ApplicationEventPublisher events;
 
-    AppuserPublisherImpl(ApplicationEventPublisher events) {
+    DefaultAppuserPublisher(ApplicationEventPublisher events) {
         this.events = events;
     }
 

@@ -11,13 +11,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-class AppuserRepositoryImpl implements AppuserRepository {
+class DefaultAppuserRepository implements AppuserRepository {
 
     private static final int PAGE_SIZE = 50;
 
     private final AppuserJpaRepository appuserJpaRepository;
 
-    AppuserRepositoryImpl(AppuserJpaRepository appuserJpaRepository) {
+    DefaultAppuserRepository(AppuserJpaRepository appuserJpaRepository) {
         this.appuserJpaRepository = appuserJpaRepository;
     }
 
