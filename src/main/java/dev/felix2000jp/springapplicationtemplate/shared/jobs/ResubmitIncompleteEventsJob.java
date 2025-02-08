@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.shared.events;
+package dev.felix2000jp.springapplicationtemplate.shared.jobs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.modulith.events.IncompleteEventPublications;
@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
-@EnableScheduling
 @Component
-class ResubmitIncompleteEventsScheduledTask {
+@EnableScheduling
+class ResubmitIncompleteEventsJob {
 
     @Value("${events.schedule.incomplete-event-older-than-in-minutes}")
     private int incompleteEventOlderThanInMinutes;
 
     private final IncompleteEventPublications incompleteEvents;
 
-    ResubmitIncompleteEventsScheduledTask(IncompleteEventPublications incompleteEvents) {
+    ResubmitIncompleteEventsJob(IncompleteEventPublications incompleteEvents) {
         this.incompleteEvents = incompleteEvents;
     }
 
