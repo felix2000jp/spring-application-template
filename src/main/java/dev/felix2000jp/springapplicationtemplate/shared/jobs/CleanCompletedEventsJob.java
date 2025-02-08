@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.shared.events;
+package dev.felix2000jp.springapplicationtemplate.shared.jobs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.modulith.events.CompletedEventPublications;
@@ -8,16 +8,16 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
-@EnableScheduling
 @Component
-class CleanCompletedEventsScheduledTask {
+@EnableScheduling
+class CleanCompletedEventsJob {
 
     @Value("${events.schedule.complete-event-older-than-in-minutes}")
     private int completeEventOlderThanInMinutes;
 
     private final CompletedEventPublications completeEvents;
 
-    CleanCompletedEventsScheduledTask(CompletedEventPublications completeEvents) {
+    CleanCompletedEventsJob(CompletedEventPublications completeEvents) {
         this.completeEvents = completeEvents;
     }
 
