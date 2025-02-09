@@ -2,9 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link th:href="@{/main.css}" rel="stylesheet"/>
+    <script th:src="@{/main.js}" defer></script>
     <title>Title</title>
 </head>
-<body>
-    <div>Hello World spring 123!</div>
+<body class="bg-slate-50">
+<header class="bg-white container mx-auto">
+    <h1 class="text-9xl" x-data="{ message: 'I ❤️ Alpine' }" x-text="message"></h1>
+    <button hx-post="/clicked"
+            hx-trigger="click">
+        Click Me!
+    </button>
+</header>
 </body>
 </html>

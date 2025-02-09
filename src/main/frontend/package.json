@@ -1,0 +1,26 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "author": "Joao Felix",
+  "license": "ISC",
+  "private": true,
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:js && npm run build:css",
+    "watch": "npm run build:js && npm run watch:css",
+    "build:js": "esbuild index.js --bundle --outfile=../resources/static/main.js",
+    "build:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/main.css",
+    "watch:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/main.css --watch"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.5",
+    "alpinejs": "^3.14.8",
+    "htmx.org": "^2.0.4",
+    "tailwindcss": "^4.0.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
