@@ -6,13 +6,9 @@
     <script th:src="@{/dist/main.js}" defer></script>
     <title>Title</title>
 </head>
-<body class="bg-slate-50">
-<header class="bg-white container mx-auto">
-    <h1 class="text-9xl" x-data="{ message: 'I ❤️ Alpine' }" x-text="message"></h1>
-    <button hx-post="/clicked"
-            hx-trigger="click">
-        Click Me!
-    </button>
+<body>
+<header>
+    <button hx-get="/app/notes">Click Me!</button>
 </header>
 </body>
 </html>
