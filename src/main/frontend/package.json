@@ -1,7 +1,7 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Project to build the frontend dependencies",
   "author": "Joao Felix",
   "license": "ISC",
   "private": true,
