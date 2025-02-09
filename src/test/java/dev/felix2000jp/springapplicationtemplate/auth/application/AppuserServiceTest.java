@@ -12,9 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +20,8 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class AppuserServiceTest {
@@ -99,12 +97,14 @@ class AppuserServiceTest {
     void updateAppuser_given_dto_then_update_username_and_password() {
         var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
         var appuser = new Appuser("username", "password");
-        var authentication = mock(Authentication.class);
-        var securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
+        var authenticatedUser = new SecurityUser(
+                appuser.getId(),
+                appuser.getUsername(),
+                appuser.getAuthoritiesScopes()
+        );
 
-        when(authentication.getPrincipal()).thenReturn(appuser);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityService.getUser()).thenReturn(authenticatedUser);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
         when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(false);
         when(securityService.generateEncodedPassword(updateAppuserDto.password())).thenReturn("encoded-password");
 
@@ -119,12 +119,14 @@ class AppuserServiceTest {
     void updateAppuser_given_dto_with_duplicate_username_then_throw_appuser_already_exists_exception() {
         var updateAppuserDto = new UpdateAppuserDto("duplicate username", "new password");
         var appuser = new Appuser("username", "password");
-        var authentication = mock(Authentication.class);
-        var securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
+        var authenticatedUser = new SecurityUser(
+                appuser.getId(),
+                appuser.getUsername(),
+                appuser.getAuthoritiesScopes()
+        );
 
-        when(authentication.getPrincipal()).thenReturn(appuser);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityService.getUser()).thenReturn(authenticatedUser);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
         when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(true);
 
         assertThatThrownBy(() -> appuserService.updateAppuser(updateAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
@@ -133,12 +135,14 @@ class AppuserServiceTest {
     @Test
     void deleteAppuser_given_authenticated_user_then_delete_appuser() {
         var appuser = new Appuser("username", "password");
-        var authentication = mock(Authentication.class);
-        var securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
+        var authenticatedUser = new SecurityUser(
+                appuser.getId(),
+                appuser.getUsername(),
+                appuser.getAuthoritiesScopes()
+        );
 
-        when(authentication.getPrincipal()).thenReturn(appuser);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(securityService.getUser()).thenReturn(authenticatedUser);
+        when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
 
         appuserService.deleteAppuser();
 

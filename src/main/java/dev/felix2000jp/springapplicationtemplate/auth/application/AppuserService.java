@@ -62,33 +62,39 @@ public class AppuserService implements UserDetailsService {
     }
 
     public void updateAppuser(UpdateAppuserDto updateAppuserDto) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var userDetails = (Appuser) authentication.getPrincipal();
+        var user = securityService.getUser();
 
-        var isUsernameNew = !updateAppuserDto.username().equals(userDetails.getUsername());
+        var appuser = appuserRepository
+                .findById(user.id())
+                .orElseThrow(AppuserNotFoundException::new);
+
+        var isUsernameNew = !updateAppuserDto.username().equals(appuser.getUsername());
         var doesUsernameExist = appuserRepository.existsByUsername(updateAppuserDto.username());
 
         if (isUsernameNew && doesUsernameExist) {
             throw new AppuserAlreadyExistsException();
         }
 
-        userDetails.setUsername(updateAppuserDto.username());
-        userDetails.setPassword(securityService.generateEncodedPassword(updateAppuserDto.password()));
-        appuserRepository.save(userDetails);
-        log.info("Appuser with id {} updated", userDetails.getId());
+        appuser.setUsername(updateAppuserDto.username());
+        appuser.setPassword(securityService.generateEncodedPassword(updateAppuserDto.password()));
+        appuserRepository.save(appuser);
+        log.info("Appuser with id {} updated", appuser.getId());
     }
 
     @Transactional
     public void deleteAppuser() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var userDetails = (Appuser) authentication.getPrincipal();
+        var user = securityService.getUser();
 
-        appuserRepository.deleteById(userDetails.getId());
-        log.info("Appuser with id {} deleted", userDetails.getId());
+        var appuser = appuserRepository
+                .findById(user.id())
+                .orElseThrow(AppuserNotFoundException::new);
 
-        var appuserDeletedEvent = new AppuserDeletedEvent(userDetails.getId());
+        appuserRepository.deleteById(appuser.getId());
+        log.info("Appuser with id {} deleted", appuser.getId());
+
+        var appuserDeletedEvent = new AppuserDeletedEvent(appuser.getId());
         appuserPublisher.publish(appuserDeletedEvent);
-        log.info("Published AppuserDeletedEvent with appuserId {}", userDetails.getId());
+        log.info("Published AppuserDeletedEvent with appuserId {}", appuser.getId());
     }
 
 }
