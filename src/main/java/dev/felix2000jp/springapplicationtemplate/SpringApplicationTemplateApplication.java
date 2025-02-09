@@ -3,7 +3,7 @@ package dev.felix2000jp.springapplicationtemplate;
 import org.springframework.boot.SpringApplication;
 import org.springframework.modulith.Modulith;
 
-@Modulith(sharedModules = "shared")
+@Modulith(sharedModules = {"auth", "shared"})
 class SpringApplicationTemplateApplication {
 
     public static void main(String[] args) {

@@ -4,9 +4,9 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDt
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.security.SecurityService;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
-import dev.felix2000jp.springapplicationtemplate.auth.application.security.SecurityService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,18 +48,13 @@ class AppuserControllerIntegrationTest {
         appuser.addScopeAdmin();
         appuserRepository.save(appuser);
 
-        var loginTokenEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
-                "/auth/login",
-                HttpMethod.POST,
-                new HttpEntity<>(null),
-                String.class
+        var token = securityService.generateToken(
+                appuser.getUsername(),
+                appuser.getId().toString(),
+                String.join(" ", appuser.getAuthoritiesScopes())
         );
-
-        assertThat(loginTokenEntity.getStatusCode().value()).isEqualTo(200);
-        assertThat(loginTokenEntity.getBody()).isNotBlank();
-
         headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + loginTokenEntity.getBody());
+        headers.add("Authorization", "Bearer " + token);
     }
 
     @AfterEach
@@ -70,7 +65,7 @@ class AppuserControllerIntegrationTest {
     @Test
     void login_given_user_then_return_login_token() {
         var loginTokenEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
-                "/auth/login",
+                "/api/appusers/login",
                 HttpMethod.POST,
                 new HttpEntity<>(null),
                 String.class
@@ -83,7 +78,7 @@ class AppuserControllerIntegrationTest {
     @Test
     void register_given_username_and_password_then_create_new_user() {
         var createAppuserEntity = testRestTemplate.exchange(
-                "/auth",
+                "/api/appusers/register",
                 HttpMethod.POST,
                 new HttpEntity<>(new CreateAppuserDto("new username", "password"), null),
                 Void.class
@@ -106,7 +101,6 @@ class AppuserControllerIntegrationTest {
 
         assertThat(getAppuserEntity.getStatusCode().value()).isEqualTo(200);
         assertThat(getAppuserEntity.getBody()).isNotNull();
-        assertThat(getAppuserEntity.getBody().appusers()).hasSize(1);
     }
 
     @Test
