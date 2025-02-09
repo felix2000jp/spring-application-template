@@ -2,6 +2,7 @@ package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
@@ -82,7 +83,7 @@ class AppuserControllerIntegrationTest {
     @Test
     void getAppuserForCurrentUser_given_user_then_return_respective_appuser() {
         var getAppuserEntity = testRestTemplate.exchange(
-                "/api/appusers/me",
+                "/api/appusers",
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 AppuserDto.class
@@ -92,4 +93,35 @@ class AppuserControllerIntegrationTest {
         assertThat(getAppuserEntity.getBody()).isNotNull();
     }
 
+    @Test
+    void updateAppuser_given_user_then_update_username_and_password() {
+        var updatePasswordEntity = testRestTemplate.exchange(
+                "/api/appusers",
+                HttpMethod.PUT,
+                new HttpEntity<>(new UpdateAppuserDto("updated username", "updated password"), headers),
+                Void.class
+        );
+
+        assertThat(updatePasswordEntity.getStatusCode().value()).isEqualTo(204);
+
+        var updatedAppuser = appuserRepository.findById(appuser.getId());
+        assertThat(updatedAppuser).isPresent();
+        assertThat(updatedAppuser.get().getUsername()).isEqualTo("updated username");
+        assertThat(updatedAppuser.get().getPassword()).isNotEqualTo(appuser.getPassword());
+    }
+
+    @Test
+    void deleteAppuser_given_user_then_delete_appuser() {
+        var deleteAppuserEntity = testRestTemplate.exchange(
+                "/api/appusers",
+                HttpMethod.DELETE,
+                new HttpEntity<>(headers),
+                Void.class
+        );
+
+        assertThat(deleteAppuserEntity.getStatusCode().value()).isEqualTo(204);
+
+        var deletedAppuser = appuserRepository.findById(appuser.getId());
+        assertThat(deletedAppuser).isNotPresent();
+    }
 }

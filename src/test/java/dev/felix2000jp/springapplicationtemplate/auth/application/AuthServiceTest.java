@@ -29,8 +29,6 @@ class AuthServiceTest {
     private AppuserRepository appuserRepository;
     @Mock
     private SecurityService securityService;
-    @Mock
-    private AppuserPublisher appuserPublisher;
     @InjectMocks
     private AuthService authService;
 
@@ -38,13 +36,13 @@ class AuthServiceTest {
     private ArgumentCaptor<Appuser> appuserCaptor;
 
     @Test
-    void createAppuser_given_dto_then_create_appuser() {
+    void register_given_dto_then_create_user() {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
         when(appuserRepository.existsByUsername(createAppuserDto.username())).thenReturn(false);
         when(securityService.generateEncodedPassword(createAppuserDto.password())).thenReturn("encoded-password");
 
-        authService.createAppuser(createAppuserDto);
+        authService.register(createAppuserDto);
 
         verify(appuserRepository).save(appuserCaptor.capture());
 
@@ -53,63 +51,12 @@ class AuthServiceTest {
     }
 
     @Test
-    void createAppuser_given_dto_with_duplicate_username_then_throw_appuser_already_exists_exception() {
+    void register_already_exists_exception() {
         var createAppuserDto = new CreateAppuserDto("username", "password");
 
         when(appuserRepository.existsByUsername(createAppuserDto.username())).thenReturn(true);
 
-        assertThatThrownBy(() -> authService.createAppuser(createAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
-    }
-
-    @Test
-    void updateAppuser_given_dto_then_update_username_and_password() {
-        var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
-        var appuser = new Appuser("username", "password");
-        var authentication = mock(Authentication.class);
-        var securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
-
-        when(authentication.getPrincipal()).thenReturn(appuser);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(false);
-        when(securityService.generateEncodedPassword(updateAppuserDto.password())).thenReturn("encoded-password");
-
-        authService.updateAppuser(updateAppuserDto);
-
-        verify(appuserRepository).save(appuserCaptor.capture());
-        assertThat(appuserCaptor.getValue().getUsername()).isEqualTo("new username");
-        assertThat(appuserCaptor.getValue().getPassword()).isEqualTo("encoded-password");
-    }
-
-    @Test
-    void updateAppuser_given_dto_with_duplicate_username_then_throw_appuser_already_exists_exception() {
-        var updateAppuserDto = new UpdateAppuserDto("duplicate username", "new password");
-        var appuser = new Appuser("username", "password");
-        var authentication = mock(Authentication.class);
-        var securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
-
-        when(authentication.getPrincipal()).thenReturn(appuser);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(appuserRepository.existsByUsername(updateAppuserDto.username())).thenReturn(true);
-
-        assertThatThrownBy(() -> authService.updateAppuser(updateAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
-    }
-
-    @Test
-    void deleteAppuser_given_authenticated_user_then_delete_appuser() {
-        var appuser = new Appuser("username", "password");
-        var authentication = mock(Authentication.class);
-        var securityContext = mock(SecurityContext.class);
-        SecurityContextHolder.setContext(securityContext);
-
-        when(authentication.getPrincipal()).thenReturn(appuser);
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-
-        authService.deleteAppuser();
-
-        verify(appuserRepository).deleteById(appuser.getId());
-        verify(appuserPublisher).publish(new AppuserDeletedEvent(appuser.getId()));
+        assertThatThrownBy(() -> authService.register(createAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
     }
 
 }

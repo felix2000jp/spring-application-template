@@ -71,6 +71,25 @@ class WebSecurityConfig {
     }
 
     @Bean
+    SecurityFilterChain sessionAuthFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/app/**")
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().hasAnyAuthority(
+                                SecurityScope.ADMIN.toAuthority(),
+                                SecurityScope.APPLICATION.toAuthority()
+                        )
+                )
+                .formLogin(form -> form
+                        .loginPage("/app/login")
+                        .defaultSuccessUrl("/app", true)
+                        .permitAll()
+                )
+                .logout(Customizer.withDefaults())
+                .build();
+    }
+
+    @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }

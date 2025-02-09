@@ -1,7 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
-import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
@@ -64,7 +63,7 @@ class AuthControllerIntegrationTest {
     }
 
     @Test
-    void createAppuser_given_username_and_password_then_create_appuser() {
+    void register_given_username_and_password_then_create_new_user() {
         var createAppuserEntity = testRestTemplate.exchange(
                 "/auth",
                 HttpMethod.POST,
@@ -78,35 +77,4 @@ class AuthControllerIntegrationTest {
         assertThat(createdAppuser).isPresent();
     }
 
-    @Test
-    void updateAppuser_given_user_then_update_username_and_password() {
-        var updatePasswordEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
-                "/auth",
-                HttpMethod.PUT,
-                new HttpEntity<>(new UpdateAppuserDto("updated username", "updated password"), null),
-                Void.class
-        );
-
-        assertThat(updatePasswordEntity.getStatusCode().value()).isEqualTo(204);
-
-        var updatedAppuser = appuserRepository.findById(appuser.getId());
-        assertThat(updatedAppuser).isPresent();
-        assertThat(updatedAppuser.get().getUsername()).isEqualTo("updated username");
-        assertThat(updatedAppuser.get().getPassword()).isNotEqualTo(appuser.getPassword());
-    }
-
-    @Test
-    void deleteAppuser_given_user_then_delete_appuser() {
-        var deleteAppuserEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
-                "/auth",
-                HttpMethod.DELETE,
-                new HttpEntity<>(null),
-                Void.class
-        );
-
-        assertThat(deleteAppuserEntity.getStatusCode().value()).isEqualTo(204);
-
-        var deletedAppuser = appuserRepository.findById(appuser.getId());
-        assertThat(deletedAppuser).isNotPresent();
-    }
 }
