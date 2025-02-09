@@ -2,13 +2,14 @@ package dev.felix2000jp.springapplicationtemplate.auth.application;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.events.AppuserDeletedEvent;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.auth.application.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -43,6 +44,33 @@ public class AppuserService implements UserDetailsService {
         return appuserRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+    }
+
+    public String login() {
+        var user = securityService.getUser();
+
+        return securityService.generateToken(
+                user.username(),
+                user.id().toString(),
+                String.join(" ", user.scopes())
+        );
+    }
+
+    public void register(CreateAppuserDto createAppuserDto) {
+        var doesUsernameExist = appuserRepository.existsByUsername(createAppuserDto.username());
+
+        if (doesUsernameExist) {
+            throw new AppuserAlreadyExistsException();
+        }
+
+        var appuserToCreate = new Appuser(
+                createAppuserDto.username(),
+                securityService.generateEncodedPassword(createAppuserDto.password())
+        );
+        appuserToCreate.addScopeApplication();
+
+        appuserRepository.save(appuserToCreate);
+        log.info("Appuser with id {} created with scopes {}", appuserToCreate.getId(), appuserToCreate.getAuthoritiesScopes());
     }
 
     public AppuserListDto getAppusers(int pageNumber) {

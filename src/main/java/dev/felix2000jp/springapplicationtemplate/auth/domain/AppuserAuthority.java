@@ -1,5 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.domain;
 
+import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityScope;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -33,6 +34,10 @@ public class AppuserAuthority implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return "SCOPE_" + scope;
+    }
+
+    public SecurityScope toSecurityScope() {
+        return SecurityScope.valueOf(scope);
     }
 
 }

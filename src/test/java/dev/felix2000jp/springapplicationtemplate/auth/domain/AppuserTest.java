@@ -1,6 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.domain;
 
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

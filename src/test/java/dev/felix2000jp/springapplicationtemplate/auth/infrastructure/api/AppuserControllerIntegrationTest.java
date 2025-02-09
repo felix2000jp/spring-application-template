@@ -2,10 +2,11 @@ package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.auth.application.security.SecurityService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -64,6 +65,34 @@ class AppuserControllerIntegrationTest {
     @AfterEach
     void tearDown() {
         appuserRepository.deleteById(appuser.getId());
+    }
+
+    @Test
+    void login_given_user_then_return_login_token() {
+        var loginTokenEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
+                "/auth/login",
+                HttpMethod.POST,
+                new HttpEntity<>(null),
+                String.class
+        );
+
+        assertThat(loginTokenEntity.getStatusCode().value()).isEqualTo(200);
+        assertThat(loginTokenEntity.getBody()).isNotBlank();
+    }
+
+    @Test
+    void register_given_username_and_password_then_create_new_user() {
+        var createAppuserEntity = testRestTemplate.exchange(
+                "/auth",
+                HttpMethod.POST,
+                new HttpEntity<>(new CreateAppuserDto("new username", "password"), null),
+                Void.class
+        );
+
+        assertThat(createAppuserEntity.getStatusCode().value()).isEqualTo(201);
+
+        var createdAppuser = appuserRepository.findByUsername("new username");
+        assertThat(createdAppuser).isPresent();
     }
 
     @Test

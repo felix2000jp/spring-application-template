@@ -3,10 +3,11 @@ package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 import dev.felix2000jp.springapplicationtemplate.auth.application.AppuserService;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityScope;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -39,6 +40,63 @@ class AppuserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Test
+    @WithMockUser
+    void login() throws Exception {
+        when(appuserService.login()).thenReturn("some-login-token");
+
+        mockMvc
+                .perform(post("/api/appusers/login").with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("some-login-token"));
+    }
+
+    @Test
+    @WithMockUser
+    void register_given_valid_body_then_return_201_and_location_header() throws Exception {
+        var createAppuserDto = new CreateAppuserDto("username", "password");
+
+        var requestBody = String.format("""
+                { "username": "%s", "password": "%s" }
+                """, createAppuserDto.username(), createAppuserDto.password());
+
+        mockMvc
+                .perform(post("/api/appusers/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("LOCATION", "/api/appusers/me"));
+    }
+
+    @Test
+    @WithMockUser
+    void register_given_duplicate_username_then_return_409() throws Exception {
+        var createAppuserDto = new CreateAppuserDto("username", "password");
+
+        var requestBody = String.format("""
+                { "username": "%s", "password": "%s" }
+                """, createAppuserDto.username(), createAppuserDto.password());
+
+        var exception = new AppuserAlreadyExistsException();
+        doThrow(exception).when(appuserService).register(createAppuserDto);
+
+        mockMvc
+                .perform(post("/api/appusers/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.title").value("Conflict"))
+                .andExpect(jsonPath("$.detail").value(exception.getMessage()))
+                .andExpect(jsonPath("$.status").value(409));
+    }
+
+    @ParameterizedTest
+    @MethodSource
+    @WithMockUser
+    void register_given_invalid_request_body_then_return_400(String requestBody) throws Exception {
+        mockMvc
+                .perform(post("/api/appusers/register").with(csrf()).contentType(MediaType.APPLICATION_JSON).content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.title").value("Bad Request"))
+                .andExpect(jsonPath("$.status").value(400));
+    }
+    
     @Test
     @WithMockUser
     void getAppusers_given_valid_page_param_then_return_200_and_a_page_of_appusers() throws Exception {
@@ -167,6 +225,25 @@ class AppuserControllerTest {
                 .andExpect(status().isNoContent());
     }
 
+    private static Stream<Arguments> register_given_invalid_request_body_then_return_400() {
+        return Stream.of(
+                arguments(""),
+                arguments("{}"),
+                arguments("{ 'username': 'username' }"),
+                arguments("{ 'password': 'password' }"),
+                arguments("{ 'username': null, 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': null }"),
+                arguments("{ 'username': '', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': '' }"),
+                arguments("{ 'username': ' ', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': ' ' }"),
+                arguments("{ 'username': 'lol', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': 'lol' }"),
+                arguments("{ 'username': '" + "a".repeat(501) + "', 'password': 'password' }"),
+                arguments("{ 'username': 'username', 'password': '" + "a".repeat(501) + "' }")
+        );
+    }
+    
     private static Stream<Arguments> updateAppuser_given_invalid_request_body_then_return_400() {
         return Stream.of(
                 arguments(""),

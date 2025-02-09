@@ -7,7 +7,7 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNo
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.auth.application.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

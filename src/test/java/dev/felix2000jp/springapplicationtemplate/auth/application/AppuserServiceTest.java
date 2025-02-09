@@ -1,13 +1,14 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.events.AppuserDeletedEvent;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityUser;
+import dev.felix2000jp.springapplicationtemplate.auth.application.security.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityUser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -39,6 +40,30 @@ class AppuserServiceTest {
 
     @Captor
     private ArgumentCaptor<Appuser> appuserCaptor;
+
+    @Test
+    void register_given_dto_then_create_user() {
+        var createAppuserDto = new CreateAppuserDto("username", "password");
+
+        when(appuserRepository.existsByUsername(createAppuserDto.username())).thenReturn(false);
+        when(securityService.generateEncodedPassword(createAppuserDto.password())).thenReturn("encoded-password");
+
+        appuserService.register(createAppuserDto);
+
+        verify(appuserRepository).save(appuserCaptor.capture());
+
+        assertThat(appuserCaptor.getValue().getUsername()).isEqualTo(createAppuserDto.username());
+        assertThat(appuserCaptor.getValue().getPassword()).isEqualTo("encoded-password");
+    }
+
+    @Test
+    void register_already_exists_exception() {
+        var createAppuserDto = new CreateAppuserDto("username", "password");
+
+        when(appuserRepository.existsByUsername(createAppuserDto.username())).thenReturn(true);
+
+        assertThatThrownBy(() -> appuserService.register(createAppuserDto)).isInstanceOf(AppuserAlreadyExistsException.class);
+    }
 
     @Test
     void getAppusers_given_page_with_data_then_return_list_of_appusers() {
