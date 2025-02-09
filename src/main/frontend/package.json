@@ -11,8 +11,8 @@
     "build": "npm run build:js && npm run build:css",
     "watch": "npm run build:js && npm run watch:css",
     "build:js": "esbuild index.js --bundle --outfile=../resources/static/main.js",
-    "build:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/main.css",
-    "watch:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/main.css --watch"
+    "build:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css",
+    "watch:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css --watch"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.5",
