@@ -10,7 +10,7 @@
   "scripts": {
     "build": "npm run build:js && npm run build:css",
     "watch": "npm run build:js && npm run watch:css",
-    "build:js": "esbuild index.js --bundle --outfile=../resources/static/main.js",
+    "build:js": "esbuild index.js --bundle --outfile=../resources/static/dist/main.js",
     "build:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css",
     "watch:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css --watch"
   },
