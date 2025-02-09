@@ -52,7 +52,7 @@ public class AppuserService implements UserDetailsService {
         return securityService.generateToken(
                 user.username(),
                 user.id().toString(),
-                String.join(" ", user.scopes())
+                String.join(" ", user.getScopesAsStrings())
         );
     }
 

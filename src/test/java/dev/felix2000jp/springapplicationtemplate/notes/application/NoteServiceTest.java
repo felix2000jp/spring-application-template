@@ -44,7 +44,7 @@ class NoteServiceTest {
         authenticatedSecurityUser = new SecurityUser(
                 UUID.randomUUID(),
                 "username",
-                Set.of(SecurityScope.APPLICATION.name())
+                Set.of(SecurityScope.APPLICATION)
         );
 
         when(securityService.getUser()).thenReturn(authenticatedSecurityUser);

@@ -92,11 +92,7 @@ class AppuserServiceTest {
     @Test
     void getAppuserForCurrentUser_given_authenticated_user_then_return_appuser_equivalent() {
         var appuser = new Appuser("username", "password");
-        var authenticatedUser = new SecurityUser(
-                appuser.getId(),
-                appuser.getUsername(),
-                appuser.getAuthoritiesScopes()
-        );
+        var authenticatedUser = appuser.toSecurityUser();
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
@@ -122,11 +118,7 @@ class AppuserServiceTest {
     void updateAppuser_given_dto_then_update_username_and_password() {
         var updateAppuserDto = new UpdateAppuserDto("new username", "new password");
         var appuser = new Appuser("username", "password");
-        var authenticatedUser = new SecurityUser(
-                appuser.getId(),
-                appuser.getUsername(),
-                appuser.getAuthoritiesScopes()
-        );
+        var authenticatedUser = appuser.toSecurityUser();
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
@@ -144,11 +136,7 @@ class AppuserServiceTest {
     void updateAppuser_given_dto_with_duplicate_username_then_throw_appuser_already_exists_exception() {
         var updateAppuserDto = new UpdateAppuserDto("duplicate username", "new password");
         var appuser = new Appuser("username", "password");
-        var authenticatedUser = new SecurityUser(
-                appuser.getId(),
-                appuser.getUsername(),
-                appuser.getAuthoritiesScopes()
-        );
+        var authenticatedUser = appuser.toSecurityUser();
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
@@ -160,11 +148,7 @@ class AppuserServiceTest {
     @Test
     void deleteAppuser_given_authenticated_user_then_delete_appuser() {
         var appuser = new Appuser("username", "password");
-        var authenticatedUser = new SecurityUser(
-                appuser.getId(),
-                appuser.getUsername(),
-                appuser.getAuthoritiesScopes()
-        );
+        var authenticatedUser = appuser.toSecurityUser();
 
         when(securityService.getUser()).thenReturn(authenticatedUser);
         when(appuserRepository.findById(authenticatedUser.id())).thenReturn(Optional.of(appuser));
