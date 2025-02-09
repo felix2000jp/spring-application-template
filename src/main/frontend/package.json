@@ -8,11 +8,13 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "npm run build:js && npm run build:css",
-    "watch": "npm run build:js && npm run watch:css",
-    "build:js": "esbuild index.js --bundle --outfile=../resources/static/dist/main.js",
-    "build:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css",
-    "watch:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css --watch"
+    "dev": "concurrently 'npm run dev:js' 'npm run dev:css'",
+    "build": "concurrently 'npm run build:js' 'npm run build:css'",
+    "clean": "rimraf node_modules ../resources/static/dist",
+    "dev:js": "esbuild index.js --bundle --outfile=../resources/static/dist/main.js --watch",
+    "build:js": "esbuild index.js --bundle --outfile=../resources/static/dist/main.js --minify",
+    "dev:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css --watch",
+    "build:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css --minify"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.5",
@@ -21,6 +23,8 @@
     "tailwindcss": "^4.0.5"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0"
+    "concurrently": "^9.1.2",
+    "esbuild": "^0.25.0",
+    "rimraf": "^6.0.1"
   }
 }
