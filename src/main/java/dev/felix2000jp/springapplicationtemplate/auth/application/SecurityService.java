@@ -1,6 +1,10 @@
-package dev.felix2000jp.springapplicationtemplate.shared.security;
+package dev.felix2000jp.springapplicationtemplate.auth.application;
 
+import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityUser;
 import org.springframework.modulith.NamedInterface;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -32,12 +36,23 @@ public class SecurityService {
 
     public SecurityUser getUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var jwt = (Jwt) authentication.getPrincipal();
+        var principal = authentication.getPrincipal();
 
-        var id = UUID.fromString(jwt.getClaimAsString(ID_CLAIM_NAME));
-        var scopes = Arrays.stream(jwt.getClaimAsString(SCOPE_CLAIM_NAME).split(" ")).collect(Collectors.toSet());
+        if (principal instanceof Appuser appuser) {
+            return appuser.toSecurityUser();
+        }
 
-        return new SecurityUser(id, jwt.getSubject(), scopes);
+        if (principal instanceof Jwt jwt) {
+            var id = UUID.fromString(jwt.getClaimAsString(ID_CLAIM_NAME));
+            var scopes = Arrays
+                    .stream(jwt.getClaimAsString(SCOPE_CLAIM_NAME).split(" "))
+                    .map(SecurityScope::valueOf)
+                    .collect(Collectors.toSet());
+
+            return new SecurityUser(id, jwt.getSubject(), scopes);
+        }
+
+        throw new AccessDeniedException("User authentication is not valid");
     }
 
     public String generateToken(String subject, String idClaimValue, String scopeClaimValue) {

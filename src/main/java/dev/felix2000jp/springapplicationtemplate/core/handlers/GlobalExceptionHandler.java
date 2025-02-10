@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.shared.handlers;
+package dev.felix2000jp.springapplicationtemplate.core.handlers;
 
 import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
