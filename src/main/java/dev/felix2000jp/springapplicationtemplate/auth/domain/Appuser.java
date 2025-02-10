@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Table(name = "appuser")
 @Entity
 public class Appuser implements UserDetails {
 
