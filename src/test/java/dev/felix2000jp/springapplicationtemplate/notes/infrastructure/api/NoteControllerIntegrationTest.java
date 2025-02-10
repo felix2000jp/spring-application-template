@@ -6,8 +6,8 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.NoteList
 import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNoteDto;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityScope;
-import dev.felix2000jp.springapplicationtemplate.auth.application.security.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.application.SecurityService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

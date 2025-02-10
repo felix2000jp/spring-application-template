@@ -7,7 +7,7 @@ import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateApp
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserAlreadyExistsException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.AppuserNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityScope;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

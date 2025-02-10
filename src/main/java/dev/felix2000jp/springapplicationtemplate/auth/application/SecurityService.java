@@ -1,10 +1,11 @@
-package dev.felix2000jp.springapplicationtemplate.auth.application.security;
+package dev.felix2000jp.springapplicationtemplate.auth.application;
 
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.InvalidAuthenticationMethodException;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityScope;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityUser;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityUser;
 import org.springframework.modulith.NamedInterface;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -52,7 +53,7 @@ public class SecurityService {
             return new SecurityUser(id, jwt.getSubject(), scopes);
         }
 
-        throw new InvalidAuthenticationMethodException();
+        throw new AccessDeniedException("User authentication is not valid");
     }
 
     public String generateToken(String subject, String idClaimValue, String scopeClaimValue) {

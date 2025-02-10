@@ -3,7 +3,7 @@ package dev.felix2000jp.springapplicationtemplate.auth.infrastructure;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.security.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityScope;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +25,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig {
+class SecurityConfiguration {
 
     @Value("${jwt.rsa.public-key}")
     private RSAPublicKey publicKey;

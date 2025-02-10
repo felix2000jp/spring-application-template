@@ -1,4 +1,4 @@
-package dev.felix2000jp.springapplicationtemplate.auth.domain.security;
+package dev.felix2000jp.springapplicationtemplate.auth.domain;
 
 import org.springframework.modulith.NamedInterface;
 
