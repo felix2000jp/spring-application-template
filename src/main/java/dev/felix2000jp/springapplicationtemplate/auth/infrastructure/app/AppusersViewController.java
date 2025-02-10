@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Validated
 @Controller
 @RequestMapping("/app")
-class AuthViewController {
+class AppusersViewController {
 
     @GetMapping
     public String homePage() {
@@ -21,7 +21,7 @@ class AuthViewController {
         return "login";
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public String registerPage() {
         return "index";
     }
