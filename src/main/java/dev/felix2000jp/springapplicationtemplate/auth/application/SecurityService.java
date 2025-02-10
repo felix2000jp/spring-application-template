@@ -1,7 +1,6 @@
 package dev.felix2000jp.springapplicationtemplate.auth.application;
 
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
-import dev.felix2000jp.springapplicationtemplate.auth.domain.exceptions.InvalidAuthenticationMethodException;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityScope;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityUser;
 import org.springframework.modulith.NamedInterface;
