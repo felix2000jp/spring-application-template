@@ -7,8 +7,24 @@
     <title>Title</title>
 </head>
 <body>
-<header>
-    <button hx-get="/app/notes">Click Me!</button>
-</header>
+<h1>Notes</h1>
+
+<!-- Notes List -->
+<ol id="notes-list">
+    <th:block th:each="note : ${notes}">
+        <li th:replace="note/note-item :: note-li"></li>
+    </th:block>
+</ol>
+
+<!-- Note Creation Form -->
+<form
+        hx-post="/app/notes"
+        hx-target="#notes-list"
+        hx-swap="beforeend">
+    <input type="text" name="title" placeholder="Title" required>
+    <input type="text" name="content" placeholder="Content" required>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <button type="submit">Create</button>
+</form>
 </body>
 </html>
