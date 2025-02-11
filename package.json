@@ -5,16 +5,15 @@
   "author": "Joao Felix",
   "license": "ISC",
   "private": true,
-  "main": "index.js",
   "type": "module",
   "scripts": {
     "dev": "concurrently 'npm run dev:js' 'npm run dev:css'",
     "build": "concurrently 'npm run build:js' 'npm run build:css'",
-    "clean": "rimraf node_modules ../resources/static/dist",
-    "dev:js": "esbuild index.js --bundle --outfile=../resources/static/dist/main.js --watch",
-    "build:js": "esbuild index.js --bundle --outfile=../resources/static/dist/main.js --minify",
-    "dev:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css --watch",
-    "build:css": "npx @tailwindcss/cli -i styles.css -o ../resources/static/dist/main.css --minify"
+    "clean": "rimraf node_modules src/main/resources/static/dist",
+    "dev:js": "esbuild src/main/js/index.js --bundle --outfile=src/main/resources/static/dist/main.js --watch",
+    "build:js": "esbuild src/main/js/index.js --bundle --outfile=src/main/resources/static/dist/main.js --minify",
+    "dev:css": "npx @tailwindcss/cli -i src/main/js/styles.css -o src/main/resources/static/dist/main.css --watch",
+    "build:css": "npx @tailwindcss/cli -i src/main/js/styles.css -o src/main/resources/static/dist/main.css --minify"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.5",
