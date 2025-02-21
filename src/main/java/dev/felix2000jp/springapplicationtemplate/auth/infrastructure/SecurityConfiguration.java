@@ -66,7 +66,9 @@ class SecurityConfiguration {
                 )
                 .formLogin(form -> form
                         .loginPage("/app/login")
-                        .defaultSuccessUrl("/app", true)
+                        .loginProcessingUrl("/app/auth/login")
+                        .successHandler((re, res, ex) -> res.setHeader("Hx-Redirect", "/app"))
+                        .failureHandler((req, res, ex) -> res.getWriter().write("Invalid credentials"))
                         .permitAll()
                 )
                 .logout(Customizer.withDefaults())

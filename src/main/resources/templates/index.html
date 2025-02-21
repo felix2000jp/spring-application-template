@@ -18,7 +18,7 @@
 
 <!-- Note Creation Form -->
 <form
-        hx-post="/app/notes"
+        th:hx-post="@{/app/notes}"
         hx-target="#notes-list"
         hx-swap="beforeend">
     <input type="text" name="title" placeholder="Title" required>

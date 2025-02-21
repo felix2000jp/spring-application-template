@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link th:href="@{/dist/main.css}" rel="stylesheet"/>
+    <script th:src="@{/dist/main.js}" defer></script>
+    <title>Register</title>
+</head>
+<body>
+
+<h1>Please Register</h1>
+
+<div id="error-message" style="display: none; color: red;"></div>
+
+<form th:hx-post="@{/app/auth/register}"
+      hx-target="#error-message"
+      hx-swap="innerHTML"
+>
+    <input type="text" name="username" aria-label="username" placeholder="Username" required/>
+    <input type="password" name="password" aria-label="password" placeholder="Password" required/>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+    <button type="submit">Register</button>
+</form>
+
+</body>
+</html>

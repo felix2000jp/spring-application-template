@@ -1,8 +1,12 @@
 package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.app;
 
+import dev.felix2000jp.springapplicationtemplate.auth.application.AppuserService;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -10,6 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/app")
 class AppusersViewController {
+
+    private final AppuserService appuserService;
+
+    AppusersViewController(AppuserService appuserService) {
+        this.appuserService = appuserService;
+    }
 
     @GetMapping
     public String homePage() {
@@ -21,9 +31,16 @@ class AppusersViewController {
         return "login";
     }
 
-    @PostMapping("/register")
+    @GetMapping("/register")
     public String registerPage() {
-        return "index";
+        return "register";
+    }
+
+
+    @PostMapping("/auth/register")
+    public String register(@Valid @ModelAttribute CreateAppuserDto createAppuserDto) {
+        appuserService.register(createAppuserDto);
+        return "redirect:/app/login";
     }
 
 }
