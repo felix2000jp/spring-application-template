@@ -1,13 +1,2 @@
 <div th:fragment="note-card-deleted" th:id="'note-' + ${note.id}" hidden>
-    <span th:text="${note.id}"></span>,
-    <span th:text="${note.title}"></span>,
-    <span th:text="${note.content}"></span>
-
-    <form th:hx-delete="@{/app/notes}"
-          th:hx-target="'#note-' + ${note.id}"
-          hx-swap="delete">
-        <input type="hidden" name="id" th:value="${note.id}"/>
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-        <button type="submit">Delete</button>
-    </form>
 </div>
