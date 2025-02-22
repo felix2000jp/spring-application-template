@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.UUID;
 
+@Table(name = "appuser_authority")
 @Entity
 public class AppuserAuthority implements GrantedAuthority {
 
@@ -33,6 +34,10 @@ public class AppuserAuthority implements GrantedAuthority {
     @Override
     public String getAuthority() {
         return "SCOPE_" + scope;
+    }
+
+    public SecurityScope toSecurityScope() {
+        return SecurityScope.valueOf(scope);
     }
 
 }

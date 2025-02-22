@@ -13,11 +13,11 @@ infrastructure).
 ## Authentication
 
 This template has 2 different type of authentication: basic authentication (username and password) and bearer token
-authentication (JWT).
+authentication (JWT). It also uses sessions for the frontend as they safer and easier to use in this use case
 
-The module `auth` is where everything related to authentication and authorization is (except for the actual security
-configuration, which is located in the shared module). This projects the uses the default configurations for both basic
-and bearer authentications apart from the fact that it disabled csrf and session state as they are not necessary.
+The module `auth` is where everything related to authentication and authorization is. This projects uses the default
+configurations for both basic and bearer authentications apart from the fact that it disabled csrf and session state as
+they are not necessary.
 
 Also, Jwt authentication type requires a public and private secrets/keys in order to decode and encode the tokens. I
 have already generated the keys which are located in **resources/certificates**. To generate new keys follow these
@@ -45,6 +45,19 @@ and publish the data to the collector via grpc.
 There is also the `RequestIdHeaderFilter` which creates a unique id for every http request and adds this id to both the
 response headers and the MDC. You use this id for correlating logs and requests. Note that this id only tracks the http
 request and therefore cannot be used for tracking the entire trace, for that purpose use the trace_id attribute.
+
+## Frontend
+
+The frontend is built using a combination of 4 technologies: Thymeleaf, Tailwind css, HTMX and AlpineJs. The frontend
+folder contains a npm project with all the necessary js dependencies which are then built to `static/dist` and included
+in the html templates present in `templates`. As such during development alongside the spring application and its
+dependencies (present in `compose.yml`), if we want to see the web app we also need to run the frontend project with the
+command `npm run dev`.
+
+To make this production ready, I integrated the npm install and build workflow into the maven lifecycles with the
+plugin `frontend-maven-plugin`. When compiling the spring boot app this plugin will install node and npm,
+run `npm install` and then `npm run build`, therefore ensuring that the final jar file has the UI code needed to run the
+webapp alongside the server.
 
 ## GitHub's configuration, actions and applications
 

@@ -2,9 +2,11 @@ package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.api;
 
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserDto;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.AppuserListDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.UpdateAppuserDto;
+import dev.felix2000jp.springapplicationtemplate.auth.application.SecurityService;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.Appuser;
 import dev.felix2000jp.springapplicationtemplate.auth.domain.AppuserRepository;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,8 +48,24 @@ class AppuserControllerIntegrationTest {
         appuser.addScopeAdmin();
         appuserRepository.save(appuser);
 
+        var token = securityService.generateToken(
+                appuser.getUsername(),
+                appuser.getId().toString(),
+                String.join(" ", appuser.getAuthoritiesScopes())
+        );
+        headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+    }
+
+    @AfterEach
+    void tearDown() {
+        appuserRepository.deleteById(appuser.getId());
+    }
+
+    @Test
+    void login_given_user_then_return_login_token() {
         var loginTokenEntity = testRestTemplate.withBasicAuth("username", "password").exchange(
-                "/auth/login",
+                "/api/appusers/login",
                 HttpMethod.POST,
                 new HttpEntity<>(null),
                 String.class
@@ -55,14 +73,21 @@ class AppuserControllerIntegrationTest {
 
         assertThat(loginTokenEntity.getStatusCode().value()).isEqualTo(200);
         assertThat(loginTokenEntity.getBody()).isNotBlank();
-
-        headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + loginTokenEntity.getBody());
     }
 
-    @AfterEach
-    void tearDown() {
-        appuserRepository.deleteById(appuser.getId());
+    @Test
+    void register_given_username_and_password_then_create_new_user() {
+        var createAppuserEntity = testRestTemplate.exchange(
+                "/api/appusers/register",
+                HttpMethod.POST,
+                new HttpEntity<>(new CreateAppuserDto("new username", "password"), null),
+                Void.class
+        );
+
+        assertThat(createAppuserEntity.getStatusCode().value()).isEqualTo(201);
+
+        var createdAppuser = appuserRepository.findByUsername("new username");
+        assertThat(createdAppuser).isPresent();
     }
 
     @Test
@@ -76,13 +101,12 @@ class AppuserControllerIntegrationTest {
 
         assertThat(getAppuserEntity.getStatusCode().value()).isEqualTo(200);
         assertThat(getAppuserEntity.getBody()).isNotNull();
-        assertThat(getAppuserEntity.getBody().appusers()).hasSize(1);
     }
 
     @Test
     void getAppuserForCurrentUser_given_user_then_return_respective_appuser() {
         var getAppuserEntity = testRestTemplate.exchange(
-                "/api/appusers/me",
+                "/api/appusers",
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
                 AppuserDto.class
@@ -92,4 +116,35 @@ class AppuserControllerIntegrationTest {
         assertThat(getAppuserEntity.getBody()).isNotNull();
     }
 
+    @Test
+    void updateAppuser_given_user_then_update_username_and_password() {
+        var updatePasswordEntity = testRestTemplate.exchange(
+                "/api/appusers",
+                HttpMethod.PUT,
+                new HttpEntity<>(new UpdateAppuserDto("updated username", "updated password"), headers),
+                Void.class
+        );
+
+        assertThat(updatePasswordEntity.getStatusCode().value()).isEqualTo(204);
+
+        var updatedAppuser = appuserRepository.findById(appuser.getId());
+        assertThat(updatedAppuser).isPresent();
+        assertThat(updatedAppuser.get().getUsername()).isEqualTo("updated username");
+        assertThat(updatedAppuser.get().getPassword()).isNotEqualTo(appuser.getPassword());
+    }
+
+    @Test
+    void deleteAppuser_given_user_then_delete_appuser() {
+        var deleteAppuserEntity = testRestTemplate.exchange(
+                "/api/appusers",
+                HttpMethod.DELETE,
+                new HttpEntity<>(headers),
+                Void.class
+        );
+
+        assertThat(deleteAppuserEntity.getStatusCode().value()).isEqualTo(204);
+
+        var deletedAppuser = appuserRepository.findById(appuser.getId());
+        assertThat(deletedAppuser).isNotPresent();
+    }
 }

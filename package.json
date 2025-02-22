@@ -1,0 +1,30 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Project to build the frontend dependencies",
+  "author": "Joao Felix",
+  "license": "ISC",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently 'npm run dev:js' 'npm run dev:css'",
+    "build": "concurrently 'npm run build:js' 'npm run build:css'",
+    "clean": "rimraf node_modules src/main/resources/static/dist",
+    "dev:js": "esbuild src/main/js/index.js --bundle --outfile=src/main/resources/static/dist/main.js --watch",
+    "build:js": "esbuild src/main/js/index.js --bundle --outfile=src/main/resources/static/dist/main.js --minify",
+    "dev:css": "npx @tailwindcss/cli -i src/main/js/styles.css -o src/main/resources/static/dist/main.css --watch",
+    "build:css": "npx @tailwindcss/cli -i src/main/js/styles.css -o src/main/resources/static/dist/main.css --minify"
+  },
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.5",
+    "alpinejs": "^3.14.8",
+    "htmx.org": "^2.0.4",
+    "tailwindcss": "^4.0.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "daisyui": "^5.0.0-beta.8",
+    "esbuild": "^0.25.0",
+    "rimraf": "^6.0.1"
+  }
+}

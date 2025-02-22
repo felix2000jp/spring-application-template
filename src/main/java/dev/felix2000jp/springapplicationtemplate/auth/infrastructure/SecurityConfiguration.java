@@ -1,13 +1,12 @@
-package dev.felix2000jp.springapplicationtemplate.shared.configs;
+package dev.felix2000jp.springapplicationtemplate.auth.infrastructure;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityScope;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,7 +25,7 @@ import java.security.interfaces.RSAPublicKey;
 
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig {
+class SecurityConfiguration {
 
     @Value("${jwt.rsa.public-key}")
     private RSAPublicKey publicKey;
@@ -35,27 +34,11 @@ class WebSecurityConfig {
     private RSAPrivateKey privateKey;
 
     @Bean
-    SecurityFilterChain basicAuthFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .securityMatcher("/auth/**")
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/auth").permitAll()
-                        .anyRequest().hasAnyAuthority(
-                                SecurityScope.ADMIN.toAuthority(),
-                                SecurityScope.APPLICATION.toAuthority()
-                        )
-                )
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .httpBasic(Customizer.withDefaults())
-                .build();
-    }
-
-    @Bean
-    SecurityFilterChain tokenAuthFilterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain apiAuthFilterChain(HttpSecurity http) throws Exception {
         return http
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/appusers/register").permitAll()
                         .requestMatchers("/api/appusers/admin/**").hasAuthority(
                                 SecurityScope.ADMIN.toAuthority()
                         )
@@ -66,7 +49,23 @@ class WebSecurityConfig {
                 )
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(c -> c.jwt(Customizer.withDefaults()))
+                .build();
+    }
+
+    @Bean
+    SecurityFilterChain appAuthFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .securityMatcher("/app/**")
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest().hasAnyAuthority(
+                                SecurityScope.ADMIN.toAuthority(),
+                                SecurityScope.APPLICATION.toAuthority()
+                        )
+                )
+                .formLogin(form -> form.loginPage("/app/login").defaultSuccessUrl("/app", true).permitAll())
+                .logout(form -> form.logoutUrl("/app/logout").logoutSuccessUrl("/app/login?logout").permitAll())
                 .build();
     }
 

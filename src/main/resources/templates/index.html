@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html data-theme="cupcake" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/dist/main.css}"/>
+    <script defer th:src="@{/dist/main.js}"></script>
+    <title>Notes</title>
+</head>
+<body>
+
+<form class="m-5 text-end" method="post" th:action="@{/app/logout}">
+    <button class="btn btn-neutral" type="submit">Logout</button>
+</form>
+
+<div>
+    <div th:replace="~{notes/notes}"></div>
+</div>
+
+</body>
+</html>

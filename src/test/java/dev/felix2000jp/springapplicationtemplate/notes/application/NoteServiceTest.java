@@ -5,9 +5,9 @@ import dev.felix2000jp.springapplicationtemplate.notes.application.dtos.UpdateNo
 import dev.felix2000jp.springapplicationtemplate.notes.domain.Note;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.NoteRepository;
 import dev.felix2000jp.springapplicationtemplate.notes.domain.exceptions.NoteNotFoundException;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityScope;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityService;
-import dev.felix2000jp.springapplicationtemplate.shared.security.SecurityUser;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityScope;
+import dev.felix2000jp.springapplicationtemplate.auth.application.SecurityService;
+import dev.felix2000jp.springapplicationtemplate.auth.domain.SecurityUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +44,7 @@ class NoteServiceTest {
         authenticatedSecurityUser = new SecurityUser(
                 UUID.randomUUID(),
                 "username",
-                Set.of(SecurityScope.APPLICATION.name())
+                Set.of(SecurityScope.APPLICATION)
         );
 
         when(securityService.getUser()).thenReturn(authenticatedSecurityUser);
