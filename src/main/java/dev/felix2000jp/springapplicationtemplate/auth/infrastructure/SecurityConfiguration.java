@@ -65,13 +65,7 @@ class SecurityConfiguration {
                                 SecurityScope.APPLICATION.toAuthority()
                         )
                 )
-                .formLogin(form -> form
-                        .loginPage("/app/login")
-                        .loginProcessingUrl("/app/appusers/login")
-                        .successHandler((req, res, ex) -> res.setHeader("Hx-Redirect", "/app"))
-                        .failureHandler((req, res, ex) -> res.getWriter().write("Ups... " + ex.getMessage()))
-                        .permitAll()
-                )
+                .formLogin(form -> form.loginPage("/app/login").loginProcessingUrl("/app/login").permitAll())
                 .logout(Customizer.withDefaults())
                 .build();
     }
