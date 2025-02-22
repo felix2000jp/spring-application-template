@@ -1,5 +1,5 @@
 <div th:fragment="notes">
-    <ol id="notes-list">
+    <ol id="notes-list" class="grid grid-cols-4 gap-3">
         <li th:each="note : ${notes}" th:insert="~{notes/note-card}"></li>
     </ol>
 </div>
