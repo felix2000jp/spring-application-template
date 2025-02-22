@@ -1,5 +1,5 @@
-<li th:fragment="note-li" th:id="'note-' + ${note.id}">
+<div th:fragment="note-card">
     <span th:text="${note.id}"></span>,
     <span th:text="${note.title}"></span>,
     <span th:text="${note.content}"></span>
-</li>
+</div>
