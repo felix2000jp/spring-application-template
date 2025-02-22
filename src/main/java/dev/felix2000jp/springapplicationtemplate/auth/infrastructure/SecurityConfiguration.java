@@ -59,19 +59,13 @@ class SecurityConfiguration {
         return http
                 .securityMatcher("/app/**")
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/app/register", "/app/appusers/register").permitAll()
                         .anyRequest().hasAnyAuthority(
                                 SecurityScope.ADMIN.toAuthority(),
                                 SecurityScope.APPLICATION.toAuthority()
                         )
                 )
-                .formLogin(form -> form
-                        .loginPage("/app/login")
-                        .loginProcessingUrl("/app/login")
-                        .defaultSuccessUrl("/app")
-                        .permitAll()
-                )
-                .logout(Customizer.withDefaults())
+                .formLogin(form -> form.loginPage("/app/login").defaultSuccessUrl("/app", true).permitAll())
+                .logout(form -> form.logoutUrl("/app/logout").logoutSuccessUrl("/app/login?logout").permitAll())
                 .build();
     }
 
