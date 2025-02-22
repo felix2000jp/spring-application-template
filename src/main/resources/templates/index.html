@@ -1,28 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="cupcake" lang="en">
 <head>
     <meta charset="UTF-8">
-    <link th:href="@{/dist/main.css}" rel="stylesheet"/>
-    <script th:src="@{/dist/main.js}" defer></script>
-    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/dist/main.css}"/>
+    <script defer th:src="@{/dist/main.js}"></script>
+    <title>Notes</title>
 </head>
 <body>
 
-<h1>Notes</h1>
-
-<!-- Notes List -->
-<div th:replace="~{notes/notes}"></div>
-
-<!-- Note Creation Form -->
-<form th:hx-post="@{/app/notes}"
-      hx-target="#notes-list"
-      hx-swap="beforeend">
-    <input type="text" name="title" aria-label="text" placeholder="Title" required>
-    <input type="text" name="content" aria-label="content" placeholder="Content" required>
-    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-
-    <button type="submit">Create</button>
-</form>
+<div class="m-10">
+    <div th:replace="~{notes/notes}"></div>
+</div>
 
 </body>
 </html>

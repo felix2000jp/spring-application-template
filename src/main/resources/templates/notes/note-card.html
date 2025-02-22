@@ -1,8 +1,8 @@
-<div class="card bg-primary text-primary-content w-85 p-3"
+<div class="card card-border bg-base-200 w-90 h-50 p-3"
      th:fragment="note-card"
      th:id="'note-' + ${note.id}">
 
-    <div class="card-body">
+    <div class="card-body p-3">
         <h2 class="card-title" th:text="${note.title}"></h2>
         <p th:text="${note.content}"></p>
     </div>
@@ -16,7 +16,7 @@
         <input name="id" th:value="${note.id}" type="hidden"/>
         <input th:name="${_csrf.parameterName}" th:value="${_csrf.token}" type="hidden"/>
 
-        <button class="btn" type="submit">Delete</button>
+        <button class="btn btn-secondary" type="submit">Delete</button>
     </form>
 
 </div>
