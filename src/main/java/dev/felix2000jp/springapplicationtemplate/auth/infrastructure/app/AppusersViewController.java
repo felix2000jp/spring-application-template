@@ -3,6 +3,7 @@ package dev.felix2000jp.springapplicationtemplate.auth.infrastructure.app;
 import dev.felix2000jp.springapplicationtemplate.auth.application.AppuserService;
 import dev.felix2000jp.springapplicationtemplate.auth.application.dtos.CreateAppuserDto;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,11 +37,14 @@ class AppusersViewController {
         return "register";
     }
 
-
-    @PostMapping("/auth/register")
-    public String register(@Valid @ModelAttribute CreateAppuserDto createAppuserDto) {
-        appuserService.register(createAppuserDto);
-        return "redirect:/app/login";
+    @PostMapping("/appusers/register")
+    public ResponseEntity<String> register(@Valid @ModelAttribute CreateAppuserDto createAppuserDto) {
+        try {
+            appuserService.register(createAppuserDto);
+            return ResponseEntity.ok().header("Hx-Redirect", "/app/login").build();
+        } catch (RuntimeException ex) {
+            return ResponseEntity.ok("Ups... " + ex.getMessage());
+        }
     }
 
 }

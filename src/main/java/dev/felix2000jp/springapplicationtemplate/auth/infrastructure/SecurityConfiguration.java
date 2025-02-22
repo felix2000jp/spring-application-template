@@ -59,6 +59,7 @@ class SecurityConfiguration {
         return http
                 .securityMatcher("/app/**")
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/app/register", "/app/appusers/register").permitAll()
                         .anyRequest().hasAnyAuthority(
                                 SecurityScope.ADMIN.toAuthority(),
                                 SecurityScope.APPLICATION.toAuthority()
@@ -66,9 +67,9 @@ class SecurityConfiguration {
                 )
                 .formLogin(form -> form
                         .loginPage("/app/login")
-                        .loginProcessingUrl("/app/auth/login")
-                        .successHandler((re, res, ex) -> res.setHeader("Hx-Redirect", "/app"))
-                        .failureHandler((req, res, ex) -> res.getWriter().write("Invalid credentials"))
+                        .loginProcessingUrl("/app/appusers/login")
+                        .successHandler((req, res, ex) -> res.setHeader("Hx-Redirect", "/app"))
+                        .failureHandler((req, res, ex) -> res.getWriter().write("Ups... " + ex.getMessage()))
                         .permitAll()
                 )
                 .logout(Customizer.withDefaults())
