@@ -9,6 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @Validated
 @Controller
 @RequestMapping("/app")
@@ -34,6 +36,14 @@ class NoteViewController {
         model.addAttribute("note", newNote);
 
         return "notes/note-card";
+    }
+
+    @DeleteMapping("/notes")
+    public String deleteNote(@RequestParam UUID id, Model model) {
+        var deletedNote = noteService.deleteNoteByIdForCurrentUser(id);
+        model.addAttribute("note", deletedNote);
+
+        return "notes/note-card-deleted";
     }
 
 }

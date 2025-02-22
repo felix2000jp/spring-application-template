@@ -7,12 +7,11 @@
     <title>Title</title>
 </head>
 <body>
+
 <h1>Notes</h1>
 
 <!-- Notes List -->
-<ol id="notes-list">
-    <li th:each="note : ${notes}" th:insert="notes/note-card"></li>
-</ol>
+<div th:replace="~{notes/notes}"></div>
 
 <!-- Note Creation Form -->
 <form th:hx-post="@{/app/notes}"

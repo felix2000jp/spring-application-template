@@ -1,0 +1,5 @@
+<div th:fragment="notes">
+    <ol id="notes-list">
+        <li th:each="note : ${notes}" th:insert="~{notes/note-card}"></li>
+    </ol>
+</div>
