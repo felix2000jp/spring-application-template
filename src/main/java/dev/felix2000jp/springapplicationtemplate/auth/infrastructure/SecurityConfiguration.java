@@ -65,7 +65,12 @@ class SecurityConfiguration {
                                 SecurityScope.APPLICATION.toAuthority()
                         )
                 )
-                .formLogin(form -> form.loginPage("/app/login").loginProcessingUrl("/app/login").permitAll())
+                .formLogin(form -> form
+                        .loginPage("/app/login")
+                        .loginProcessingUrl("/app/login")
+                        .defaultSuccessUrl("/app")
+                        .permitAll()
+                )
                 .logout(Customizer.withDefaults())
                 .build();
     }
