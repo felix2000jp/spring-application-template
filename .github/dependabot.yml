@@ -6,7 +6,8 @@ updates:
       interval: "weekly"
     groups:
       github-actions:
-        patterns: [ * ]
+        patterns:
+          - "*"
     commit-message:
       prefix: chore
       include: scope
@@ -16,7 +17,8 @@ updates:
       interval: "weekly"
     groups:
       docker:
-        patterns: [ * ]
+        patterns:
+          - "*"
     commit-message:
       prefix: chore
       include: scope
@@ -26,7 +28,8 @@ updates:
       interval: "weekly"
     groups:
       npm:
-        patterns: [ * ]
+        patterns:
+          - "*"
     commit-message:
       prefix: chore
       include: scope
