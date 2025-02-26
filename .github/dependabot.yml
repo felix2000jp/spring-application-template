@@ -4,13 +4,19 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      github-actions:
+        patterns: [ * ]
     commit-message:
       prefix: chore
       include: scope
-  - package-ecosystem: "maven"
+  - package-ecosystem: "docker"
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      docker:
+        patterns: [ * ]
     commit-message:
       prefix: chore
       include: scope
@@ -18,10 +24,13 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    groups:
+      npm:
+        patterns: [ * ]
     commit-message:
       prefix: chore
       include: scope
-  - package-ecosystem: "docker"
+  - package-ecosystem: "maven"
     directory: "/"
     schedule:
       interval: "weekly"
