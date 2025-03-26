@@ -19,7 +19,7 @@
     "@tailwindcss/cli": "^4.0.14",
     "alpinejs": "^3.14.9",
     "htmx.org": "^2.0.4",
-    "tailwindcss": "^4.0.8"
+    "tailwindcss": "^4.0.14"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
