@@ -141,3 +141,4 @@ it bugs, vulnerabilities, technical debt, decreased coverage or an increased cod
 
 GitHub code scanning results are configured to read form the trivy scan results. Merges are blocked if results are found
 with medium or higher severity as well as any errors or warnings.
+test
