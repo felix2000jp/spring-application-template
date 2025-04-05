@@ -7,9 +7,14 @@ services:
       POSTGRES_PASSWORD: postgres
     ports:
       - 5432:5432
+    profiles:
+      - dev
+      - prod
   grafana:
     image: grafana/otel-lgtm
     ports:
       - 4317:4317
       - 4318:4318
       - 3000:3000
+    profiles:
+      - prod
